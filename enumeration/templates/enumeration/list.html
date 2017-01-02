@@ -1,0 +1,41 @@
+{% load tz %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+   <div class="container">
+      <div class="col-md-12">
+        <div class="panel panel-info">
+          <div class="panel-heading clearfix"><i class="fa fa-home fa-lg"></i>{% include 'edc_search/search_form.html' %}</div>
+            <div class="panel-body">
+              <div class="table table-responsive">
+                    <table class="table table-condensed table-hover small">
+                      <thead>
+	                      <th>#</th>
+                        <th></th>
+                        <th>Community</th>
+                        <th>Modified</th>
+                        <th>Host</th>
+                      </thead>
+                      <tbody>
+                      	{%  for obj in results %}
+      						<tr> 
+            				<td>{{ forloop.counter }}</td>
+            				<td style="white-space: nowrap">
+                      <a title="plot" role="button" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=obj.plot.plot_identifier %}"><i class="fa fa-building-o fa-md"></i></a>
+                      <a title="household" role="button" class="btn btn-sm btn-success" href="{% url 'household:household_admin:household_household_change' obj.pk %}?next={% url 'household:list_url' household_identifier=obj.household_identifier %}"><i class="fa fa-home fa-lg"></i> {{ obj.household_identifier }} <i class="fa fa-pencil fa-sm"></i></a>
+                      <a title="household logs" role="button" class="btn btn-sm btn-default" href="{% url 'household:household_admin:household_householdlogentry_changelist' %}?q={{ obj.household_identifier }}"><i class="fa fa-files-o fa-lg"></i></a>
+            				  <a title="enumeration" role="button" class="btn btn-sm btn-default" href="{% url 'enumeration_dashboard_url' obj.household_identifier %}"><i class="fa fa-tachometer" aria-hidden="true"></i> Composition</a>
+                      <a title="members" role="button" class="btn btn-sm btn-default{% if not obj.members %} disabled{% endif %}" href="{% url 'member:list_url' plot_identifier=obj.plot.plot_identifier %}"><i class="fa fa-group fa-md"></i></a>
+                    </td>  
+                    <td>{{ obj.community_name|title }}</td>
+                    <td>{{ obj.modified|date:"Y-m-d H:i" }}</td>
+                    <td>{{ obj.hostname_created }}</td>
+            			</tr>
+            			{% endfor %}
+                  </tbody>
+                  </table></div>
+                  {% include 'edc_search/paginator.html' %}
+                  </div>
+            </div>
+          </div>
+  </div>
