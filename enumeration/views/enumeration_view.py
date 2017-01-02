@@ -11,14 +11,15 @@ from edc_search.forms import SearchForm
 from edc_search.view_mixins import SearchViewMixin
 
 from household.models import HouseholdStructure
+from django.utils.html import format_html
 
-app_config = django_apps.get_app_config('enumeraion')
+app_config = django_apps.get_app_config('enumeration')
 
 
 class SearchPlotForm(SearchForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.helper.form_action = reverse('household:list_url')
+        self.helper.form_action = reverse('enumeration:list_url')
 
 
 class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView):
@@ -30,6 +31,7 @@ class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView)
     search_model = HouseholdStructure
     url_lookup_parameters = [
         'id',
+        'survey',
         ('household_identifier', 'household__household_identifier'),
         ('plot_identifier', 'household__plot__plot_identifier')]
 
@@ -51,7 +53,9 @@ class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView)
         HouseholdMember = django_apps.get_model(*'member.householdmember'.split('.'))
         for obj in qs:
             obj.plot_identifier = obj.household.plot.plot_identifier
-            obj.community_name = ' '.join(obj.household.plot.map_area.split('_'))
+            obj.household_identifier = obj.household.household_identifier
+            _, obj.survey_year, obj.survey_name, obj.community_name = obj.survey.split('.')
+            obj.community_name = ' '.join(obj.community_name.split('_'))
             obj.members = HouseholdMember.objects.filter(
                 household_structure=obj)
             results.append(obj)
@@ -59,5 +63,12 @@ class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(navbar_selected='enumeration')
+        if context.get('survey'):
+            survey_breadcrumb = format_html(' &#9654; '.join(context.get('survey').split('.')))
+        else:
+            survey_breadcrumb = None
+        context.update(
+            navbar_selected='enumeration',
+            survey_breadcrumb=survey_breadcrumb)
+        print(self.filter_options)
         return context

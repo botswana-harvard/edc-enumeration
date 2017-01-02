@@ -1,0 +1,58 @@
+            <div class="table-responsive">
+                <table class="table table-striped table-condensed">
+                  <thead>
+                  		<th>Firstname</th>
+                  		<th>Initials</th>
+                  		<th>Sex</th>
+                  		<th>Age</th>
+                  		<th>Survival Status</th>
+                  		<th>Relation</th>
+                  		<th>Resident</th>
+                  		<th>Attempts</th>
+                  		<th>Participation</th>
+                  		<th>Report/Action</th>
+                  </thead>
+                  {% if household_members %}
+                    <tbody>
+                        {% for household_member in household_members %}
+                        <tr>
+                          <td>
+                            {% if todays_household_log_entry %}
+                          	   <a role="button" class="btn btn-sm btn-success" href="{% url 'member_admin:member_householdmember_change' household_member.id %}?next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}"><span class="glyphicon glyphicon-pencil"></span> {{ household_member.first_name }}</a>
+                            {% else %}
+                          	   <a role="button" class="btn btn-sm btn-success disabled" href="{% url 'member_admin:member_householdmember_change' household_member.id %}?next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}"><span class="glyphicon glyphicon-pencil"></span> {{ household_member.first_name }}</a>
+                            {% endif %}
+                          </td>
+                          <td>{{ household_member.initials }}</td>
+                          <td>{{ household_member.gender }}</td>
+                          <td>{{ household_member.age_in_years }}</td>
+                          <td>{{ household_member.survival_status }}</td>
+                          <td>{{ household_member.relation }}</td>
+                          <td>{{ household_member.study_resident }}</td>
+                          <td>{{ household_member.visit_attempts }}</td>
+                          <td>{{ household_member.member_status }}</td>
+                          <td>
+                            {% if todays_household_log_entry %}
+                              {% if not household_member.enrollment_eligibility %}
+    		              	         <a title="add enrollment eligibility" href="{% url 'member_admin:member_enrollmentchecklist_add' %}?household_member={{household_member.id}}&next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}" class="btn btn-sm btn-default" role="button">
+    		              	           <i class="fa fa-plus fa-sm"></i> Add Head of Household Eligibility</a>
+    	              	        {% else %}
+    	              		         <a role="button" class="btn btn-sm btn-success" href="{% url 'member_admin:member_enrollmentchecklist_change' household_member.id %}?next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}"><span class="glyphicon glyphicon-pencil"></span>Edit Enrolment Eligibility</a>
+    	              		         {% comment %} TODO: if eligible allow to consent {% endcomment %}
+    	              	        {% endif %}
+                            {% endif %}
+                          </td>
+                          <td>
+                            {% if not household_member.enrollment_eligibility %}
+          		              	<a title="add enrollment eligibility" class="btn btn-sm btn-default disabled" role="button" href="{% url 'member_admin:member_enrollmentchecklist_add' %}?household_member={{household_member.id}}&next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}">
+            		              	 <i class="fa fa-plus fa-sm"></i> Head of Household Eligibility</a>
+                          	{% else %}
+            	              		<a role="button" class="btn btn-sm btn-success disabled" href="{% url 'member_admin:member_enrollmentchecklist_change' household_member.id %}?next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}">
+                                  <i class="fa fa-pencil fa-sm"></i> Enrolment Eligibility</a>
+                	              		{% comment %} TODO: if eligible allow to consent {% endcomment %}
+                          	{% endif %}
+                         </tr>
+                        {% endfor %}
+                    </tbody>
+                  {% endif %}
+                </table>

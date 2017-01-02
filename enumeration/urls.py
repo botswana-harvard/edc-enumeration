@@ -19,12 +19,17 @@ from edc_constants.constants import UUID_PATTERN
 
 from household.patterns import household_identifier
 from plot.patterns import plot_identifier
+from survey.patterns import survey
 
-from .views import EnumerationView
+from .views import EnumerationView, EnumerationDashboardView
 
 urlpatterns = [
-    url(r'^list/(?P<page>\d+)/', EnumerationView.as_view(), name='list_url'),
+    url(r'^dashboard/(?P<household_identifier>' + household_identifier + ')/(?P<survey>' + survey + ')/',
+        EnumerationDashboardView.as_view(), name='dashboard_url'),
+    url(r'^list/(?P<page>\d+)/', EnumerationDashboardView.as_view(), name='list_url'),
     url(r'^list/(?P<plot_identifier>' + plot_identifier + ')/', EnumerationView.as_view(), name='list_url'),
+    url(r'^list/(?P<household_identifier>' + household_identifier + ')/(?P<survey>' + survey + ')/',
+        EnumerationView.as_view(), name='list_url'),
     url(r'^list/(?P<household_identifier>' + household_identifier + ')/',
         EnumerationView.as_view(), name='list_url'),
     url(r'^list/(?P<id>' + UUID_PATTERN.pattern + ')/', EnumerationView.as_view(), name='list_url'),

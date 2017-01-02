@@ -9,6 +9,7 @@ style = color_style()
 class AppConfig(DjangoAppConfig):
     name = 'enumeration'
     list_template_name = None
+    enumeration_dashboard_base_html = 'edc_base/base.html'
 
     def ready(self):
         sys.stdout.write('Loading {} ...\n'.format(self.verbose_name))

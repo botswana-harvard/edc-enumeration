@@ -5,7 +5,13 @@
    <div class="container">
       <div class="col-md-12">
         <div class="panel panel-info">
-          <div class="panel-heading clearfix"><i class="fa fa-home fa-lg"></i>{% include 'edc_search/search_form.html' %}</div>
+          <div class="panel-heading clearfix"><i class="fa fa-sitemap fa-lg"></i>
+            <span class="text small">
+              {% if household_identifier %}
+                &nbsp;&nbsp;<span class="text text-muted" style="font-size:14px;">{{ household_identifier }}</span>
+                {% if survey %} <span class="text text-muted" style="font-size:14px;"> &#9654; {{ survey_breadcrumb }}</span> {% endif %}
+              {% endif %}
+              {% include 'edc_search/search_form.html' %}</div>
             <div class="panel-body">
               <div class="table table-responsive">
                     <table class="table table-condensed table-hover small">
@@ -13,6 +19,8 @@
 	                      <th>#</th>
                         <th></th>
                         <th>Community</th>
+                        <th>Survey</th>
+                        <th>Year</th>
                         <th>Modified</th>
                         <th>Host</th>
                       </thead>
@@ -21,13 +29,20 @@
       						<tr> 
             				<td>{{ forloop.counter }}</td>
             				<td style="white-space: nowrap">
-                      <a title="plot" role="button" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=obj.plot.plot_identifier %}"><i class="fa fa-building-o fa-md"></i></a>
-                      <a title="household" role="button" class="btn btn-sm btn-success" href="{% url 'household:household_admin:household_household_change' obj.pk %}?next={% url 'household:list_url' household_identifier=obj.household_identifier %}"><i class="fa fa-home fa-lg"></i> {{ obj.household_identifier }} <i class="fa fa-pencil fa-sm"></i></a>
+                      <a title="plot" role="button" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=obj.plot_identifier %}"><i class="fa fa-building-o fa-md"></i></a>
+                      <a title="household" role="button" class="btn btn-sm btn-default" href="{% url 'household:list_url' obj.household_identifier %}"><i class="fa fa-home fa-lg"></i> {{ obj.household_identifier }}</i></a>
                       <a title="household logs" role="button" class="btn btn-sm btn-default" href="{% url 'household:household_admin:household_householdlogentry_changelist' %}?q={{ obj.household_identifier }}"><i class="fa fa-files-o fa-lg"></i></a>
-            				  <a title="enumeration" role="button" class="btn btn-sm btn-default" href="{% url 'enumeration_dashboard_url' obj.household_identifier %}"><i class="fa fa-tachometer" aria-hidden="true"></i> Composition</a>
-                      <a title="members" role="button" class="btn btn-sm btn-default{% if not obj.members %} disabled{% endif %}" href="{% url 'member:list_url' plot_identifier=obj.plot.plot_identifier %}"><i class="fa fa-group fa-md"></i></a>
+                      {% if survey %}
+            				    <a title="enumeration" role="button" class="btn btn-sm btn-default" href="{% url 'enumeration:list_url' household_identifier=obj.household_identifier %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
+                        <a title="enumeration dashboard" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:dashboard_url' household_identifier=obj.household_identifier survey=obj.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard</a>
+                      {% else %}
+                        <a title="enumeration" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:list_url' household_identifier=obj.household_identifier survey=obj.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
+                        <a title="members" role="button" class="btn btn-sm btn-default{% if not obj.members %} disabled{% endif %}" href="{% url 'member:list_url' plot_identifier=obj.plot_identifier %}"><i class="fa fa-group fa-md"></i></a>
+                      {% endif %}
                     </td>  
                     <td>{{ obj.community_name|title }}</td>
+                    <td>{{ obj.survey_name|upper }}</td>
+                    <td>{{ obj.survey_year|upper }}</td>
                     <td>{{ obj.modified|date:"Y-m-d H:i" }}</td>
                     <td>{{ obj.hostname_created }}</td>
             			</tr>
