@@ -19,49 +19,34 @@
     </div>
     </div>
 
+    <div class="panel-group">
       <div class="col-md-9">
-        <div class="panel panel-default">
-          {% include 'enumeration/dashboard/log_entries.html' %}
+        <div class="panel panel-info">
+
+          <div class="panel-heading clearfix">
+            {% include 'enumeration/dashboard/members_panel_heading.html' %}
+          </div><!--end panel heading-->
+
+          <div class="panel-body">
+            {% include 'enumeration/dashboard/members.html' %}
+          </div>
         </div>
       </div>
 
       <div class="col-md-3">
-        <div class="panel panel-warning">
-            <div class="panel-heading">Stats</div>
-            {% include 'enumeration/dashboard/statistics.html' %}
-        </div>
-      </div>
-
-    <div class="panel-group">
-      <div class="col-md-12">
-        <div class="panel panel-info">
-          <div class="panel-heading clearfix">
-           <a title="add household member"  class="btn btn-sm btn-default" role="button" href="{% url 'member_admin:member_householdmember_add' %}?household_structure={{household_structure.id}}&next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}">
-              <i class="fa fa-plus fa-sm"></i> Household member</a>
-
-           {% if not representative_eligibility %}
-	            <a title="add representative eligibility" class="btn btn-sm btn-warning" role="button" href="{% url 'member_admin:member_representativeeligibility_add' %}?next=&household_structure={{household_structure.id}}&household_member={{head_of_household.id}}">
-	              <i class="fa fa-plus fa-sm"></i> Representative eligibility</a>
-           {% else %}
-              <a title="change representative eligibility" class="btn btn-sm btn-default" role="button" href="{% url 'member_admin:member_representativeeligibility_change' representative_eligibility.id %}?next=enumeration:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_structure={{household_structure.id}}&household_member={{representative_eligibility.id}}">
-                <i class="fa fa-pencil fa-sm"></i> Representative eligibility</a>
-            {% endif %}
-
-            {% if not head_of_household_eligibility %}
-	            <a title="add head of household eligibility" class="btn btn-sm btn-warning" role="button" href="{% url 'member_admin:member_householdheadeligibility_add' %}?next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}&household_structure={{household_structure.id}}&household_member={{head_of_household.id}}">
-	              <i class="fa fa-plus fa-sm"></i> Head of household eligibility</a>
-            {% else %}
-              <a title="change head of household eligibility" role="button" class="btn btn-sm btn-default" href="{% url 'member_admin:member_householdheadeligibility_change' head_of_household_eligibility.id %}?next={% url 'enumeration:dashboard_url' household_identifier=household_identifier survey=survey %}&household_structure={{household_structure.id}}&household_member={{head_of_household.id}}">
-                <fa class="fa fa-pencil fa-sm"> Head of household eligibility</a>
-            {% endif %}
-          </div><!--end panel heading-->
-
-          <div class="panel-body">
-          {% include 'enumeration/dashboard/members.html' %}
-              </div>
-            </div>
+        <div class="panel-group">
+          <div class="panel panel-default">
+            {% include 'enumeration/dashboard/log_entries.html' %}
+          </div>
+  
+          <div class="panel panel-warning">
+              <div class="panel-heading">Stats</div>
+              {% include 'enumeration/dashboard/statistics.html' %}
           </div>
         </div>
       </div>
-    </div>
+
+  </div>
+</div>
+
 {% endblock main %}

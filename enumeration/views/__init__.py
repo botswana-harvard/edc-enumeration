@@ -1,2 +1,2 @@
+from .dashboard_view import DashboardView
 from .enumeration_view import EnumerationView
-from .enumeration_dashboard_view import EnumerationDashboardView

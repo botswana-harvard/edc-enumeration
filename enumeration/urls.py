@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+import sys
+
 from django.conf.urls import url
 
 from edc_constants.constants import UUID_PATTERN
@@ -21,12 +23,13 @@ from household.patterns import household_identifier
 from plot.patterns import plot_identifier
 from survey.patterns import survey
 
-from .views import EnumerationView, EnumerationDashboardView
+from .views import EnumerationView, DashboardView
+
 
 urlpatterns = [
     url(r'^dashboard/(?P<household_identifier>' + household_identifier + ')/(?P<survey>' + survey + ')/',
-        EnumerationDashboardView.as_view(), name='dashboard_url'),
-    url(r'^list/(?P<page>\d+)/', EnumerationDashboardView.as_view(), name='list_url'),
+        DashboardView.as_view(), name='dashboard_url'),
+    url(r'^list/(?P<page>\d+)/', DashboardView.as_view(), name='list_url'),
     url(r'^list/(?P<plot_identifier>' + plot_identifier + ')/', EnumerationView.as_view(), name='list_url'),
     url(r'^list/(?P<household_identifier>' + household_identifier + ')/(?P<survey>' + survey + ')/',
         EnumerationView.as_view(), name='list_url'),
@@ -34,4 +37,17 @@ urlpatterns = [
         EnumerationView.as_view(), name='list_url'),
     url(r'^list/(?P<id>' + UUID_PATTERN.pattern + ')/', EnumerationView.as_view(), name='list_url'),
     url(r'^list/', EnumerationView.as_view(), name='list_url'),
+    url(r'', EnumerationView.as_view(), name='home_url'),
 ]
+
+if 'test' in sys.argv:
+    from django.conf.urls import include
+    from django.contrib import admin
+    from edc_base.views import LoginView, LogoutView
+    urlpatterns += [
+        url(r'^admin/', admin.site.urls),
+        url(r'^edc/', include('edc_base.urls', 'edc-base')),
+        url(r'^tz_detect/', include('tz_detect.urls')),
+        url(r'login', LoginView.as_view(), name='login_url'),
+        url(r'logout', LogoutView.as_view(pattern_name='login_url'), name='logout_url'),
+    ]
