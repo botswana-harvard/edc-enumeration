@@ -12,7 +12,7 @@
     		<th>Log entries</th>
       </thead>
       <tbody>
-      {% if not household_log_entries %}
+      {% if not household_log_entries or not todays_household_log_entry%}
         <tr>
           <td colspan="4">
             <span class="label label-danger">
@@ -34,7 +34,7 @@
           <td>
             {{ obj.report_datetime|date:"Y-m-d H:i" }}&nbsp;
             {{ obj.get_household_status_display }}</br>
-            {{ obj.next_appt_datetime|default:'' }}&nbsp;{{ obj.next_appt_datetime_source|default:"" }}&nbsp;
+            {{ obj.next_appt_datetime|default:"" }}&nbsp;{{ obj.next_appt_datetime_source|default:"" }}&nbsp;
             {% if obj.user_created %}({{ obj.user_created }}/{{ obj.user_modified }}){% endif %}
           </td>
         </tr>

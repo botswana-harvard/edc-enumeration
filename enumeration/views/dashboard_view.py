@@ -115,7 +115,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         if not btn.member:
             btn.member = self.head_of_household
         # can edit anytime, but can only add if have todays log...
-        if not self.todays_household_log_entry and btn.add:
+        if (not self.todays_household_log_entry and btn.add) or not self.household_members:
             btn.disabled = True
         eligibility_buttons.append(btn)
         return eligibility_buttons
