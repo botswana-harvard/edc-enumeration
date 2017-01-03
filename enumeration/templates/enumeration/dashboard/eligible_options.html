@@ -1,0 +1,20 @@
+
+<!-- begin screening options -->
+  <div class="btn-group">
+    {% if household_member.enrollmentchecklist.is_eligible %}
+      <button class="btn btn-default btn-sm" type="button">
+        Consent
+      </button>
+    {% endif %}
+    {% if not household_member.final_status_pending %}
+    <button class="btn btn-default btn-sm" type="button">
+      HTC
+    </button>
+    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#"><i class="fa fa-square-o"></i> HTC Enrollment</a></li>
+      <li><a href="#"><i class="fa fa-square-o"></i> HTC Refusal</a></li>
+    </ul>    
+    {% endif %}
+</div> 
+<!-- begin screening options -->

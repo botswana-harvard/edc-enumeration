@@ -12,11 +12,12 @@ from edc_constants.constants import ALIVE, YES, MALE
 from household.models.household_log import HouseholdLog
 from household.models.household_log_entry import HouseholdLogEntry
 from household.models.household_structure.household_structure import HouseholdStructure
-from member.constants import HEAD_OF_HOUSEHOLD
+from member.constants import HEAD_OF_HOUSEHOLD, AVAILABLE
 from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility
 from member.participation_status import ParticipationStatus
 
 from .utils import survey_from_label
+from survey.site_surveys import site_surveys
 
 
 class Button:
@@ -51,7 +52,13 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
 
     def member_wrapper(self, member):
         member.participation_status = ParticipationStatus(member).participation_status
+        member.get_participation_status_display = ParticipationStatus(
+            member).get_participation_status_display()
+        if member.participation_status == AVAILABLE:
+            member.get_participation_status_display = None
         member.final_status_pending = ParticipationStatus(member).final_status_pending
+        if member.refused:
+            member.done = True
         return member
 
     def get_context_data(self, **kwargs):
@@ -60,6 +67,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         self.today = context.get('today', arrow.utcnow())  # for tests
         self.household_identifier = context.get('household_identifier')
         survey = survey_from_label(context.get('survey'))
+        survey_objects = site_surveys.surveys
         try:
             self.household_structure = HouseholdStructure.objects.get(
                 household__household_identifier=self.household_identifier,
@@ -84,6 +92,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
             enumeration_dashboard_base_html=app_config.enumeration_dashboard_base_html,
             navbar_selected='enumeration',
             survey_breadcrumbs=survey.survey_breadcrumbs,
+            survey_objects=survey_objects,
             map_area=survey.map_area_display,
             household_log=self.household_log,
             household_log_entries=self.household_log_entries,

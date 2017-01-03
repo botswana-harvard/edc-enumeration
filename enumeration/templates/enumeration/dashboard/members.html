@@ -1,18 +1,11 @@
-<div class="table-responsive">
+<div class="table table-responsive">
   <table class="table table-striped table-condensed table-hover small">
-    <thead>
-    </thead>
+    <thead></thead>
     {% if household_members %}
       <tbody>
           {% for household_member in household_members %}
           <tr>
-            <td> {{ forloop.counter }}
-              {% if not household_member.eligible_member %}
-                <span title="not eligible">
-                  <i class="fa fa-ban fa-lg text-danger"></i>
-                </span>
-              {% endif %}
-            </td>
+            <td><span class="text text-default small">{{ forloop.counter }}</span></td>
             <td>
             	 <a role="button" class="btn btn-sm btn-success {% if not todays_household_log_entry %}disabled{% endif %}" href="{% url 'member_admin:member_householdmember_change' household_member.id %}?next=enumeration:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_structure={{ household_structure.id }}">
                  <i class="fa fa-pencil fa-sm"></i>&nbsp;
@@ -23,25 +16,30 @@
             <td>
               <span class="text text-default">
                 {{ household_member.first_name|lower|capfirst }}&nbsp;{{ household_member.initials }}&nbsp;
-                {{ household_member.age_in_years }}y</span>
-            </td>
-            <td>
+                {{ household_member.age_in_years }}</span>
               <span class="label label-info">{{ household_member.get_relation_display|lower|capfirst }}</span>
               <span class="label label-info">{% if household_member.study_resident == YES %}resident{% else %}non-resident{% endif %}</span>
             </td>
             <td>
-              {% if household_member.eligible_member %}
-                {% include 'enumeration/dashboard/attempts.html' %}
+              {% if not household_member.eligible_member %}
+                <span title="not eligible">
+                  <i class="fa fa-ban fa-lg text-danger"></i> <span class="text text-muted">Not eligible</span>
+                </span>
+              {% else %}
+                <div class="btn-group">
+                  {% if household_member.eligible_member %}
+                    {% include 'enumeration/dashboard/attempts.html' %}
+                  {% endif %}
+                  {% if household_member.eligible_member %}
+                    {% include 'enumeration/dashboard/screening_options.html' %}
+                  {% endif %}
+                  {% if household_member.eligible_member %}
+                    {% include 'enumeration/dashboard/eligible_options.html' %}
+                  {% endif %}
+                </div>
               {% endif %}
             </td>
-            <td>
-              {% if household_member.eligible_member %}
-                {% include 'enumeration/dashboard/screening_options.html' %}
-              {% endif %}
-            </td>
-            <td>
-            </td>
-            <td></td>
+            <td>{% if household_member.done %}<i class="fa fa-check fa-lg"></i>{% endif %}</td>
            </tr>
           {% endfor %}
       </tbody>

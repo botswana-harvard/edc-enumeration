@@ -1,18 +1,19 @@
 
 <!-- begin attempts -->
-<div class="dropdown">
-  <button class="btn btn-default dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
-    <span class="badge">{{ household_member.visit_attempts }}</span> <span class="text text-default text-small">Screening attempts</span>
-  <span class="caret"></span></button>
+<div class="btn-group">
+  <button class="btn btn-default btn-sm dropdown-toggle " type="button" data-toggle="dropdown">
+    <span class="text text-default text-small"><i class="fa fa-history fa-lg"></i> {{ household_member.visit_attempts }}</span>
+  </button>
+  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu">
    <li class="dropdown-header">Absent</li>
-  {% for obj in household_member.absentmember_set.all %}
-    <li><a href="#">{{ obj.report_date|date:"Y-m-d" }}</a></li>
-  {% endfor %}
+    {% for obj in household_member.absentmember_set.all %}
+      <li><a href="#">{{ obj.report_date|date:"Y-m-d" }}</a></li>
+    {% endfor %}
    <li class="dropdown-header">Undecided</li>
-  {% for obj in household_member.undecidedmember_set.all %}
-    <li><a href="#">{{ obj.report_date|date:"Y-m-d" }}</a></li>
-  {% endfor %}
+    {% for obj in household_member.undecidedmember_set.all %}
+      <li><a href="#">{{ obj.report_date|date:"Y-m-d" }}</a></li>
+    {% endfor %}
   </ul>
 </div> 
 

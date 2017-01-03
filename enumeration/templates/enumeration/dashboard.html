@@ -25,7 +25,10 @@ $(document).ready(function(){
         <div class="panel-heading clearfix">
           <i class="fa fa-sitemap fa-lg"></i> 
             &nbsp;&nbsp;<span class="text text-muted small" style="font-size:14px;">{{ household_identifier }}  &rsaquo; {{ survey_breadcrumbs|join:" &rsaquo; " }}</span>
-          <span class="pull-right"><a title="close" role="button" class="btn btn-primary btn-sm" href="{% url 'enumeration:list_url' household_identifier=household_identifier survey=survey %}"><i class="fa fa-reply" aria-hidden="true"></i> Close</a></span>
+          <span class="pull-right">
+            <a title="close" role="button" class="btn btn-primary btn-sm" href="{% url 'enumeration:list_url' household_identifier=household_identifier survey=survey %}">
+              <i class="fa fa-reply" aria-hidden="true"></i> Close
+            </a></span>
         </div>
       </div>
     </div>
@@ -39,7 +42,7 @@ $(document).ready(function(){
             {% include 'enumeration/dashboard/members_panel_heading.html' %}
           </div><!--end panel heading-->
 
-          <div class="panel-body panel-extended">
+          <div class="panel-body">
             {% include 'enumeration/dashboard/members.html' %}
           </div>
         </div>
