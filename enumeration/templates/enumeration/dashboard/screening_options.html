@@ -1,0 +1,27 @@
+
+<!-- begin screening options -->
+ <div class="dropdown">
+  <button class="btn btn-{% if household_member.final_status_pending %}warning{% else %}default{% endif%} dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
+    Screening Options: {{ household_member.participation_status|lower|title }}
+  <span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    <li><a href="{% url 'member:member_admin:member_enrollmentchecklist_add' %}?next=member:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_member={{ household_member.id }}">
+          <i class="fa fa-square-o"></i>&nbsp;
+          Check eligibility</a></li>
+    <li class="dropdown-header">Reports</li>
+    <li><a href="{% url 'member:member_admin:member_absentmember_add' %}?next=member:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_member={{ household_member.id }}">
+          {% if household_member.absentmember_set.all %}<i class="fa fa-check-square-o"></i>{% else %}<i class="fa fa-square-o"></i>{% endif %}&nbsp;
+          Absent {% if household_member.absentmember_set.all %}again{% endif %} <span class="badge">{{ household_member.absentmember_set.all.count }}</span></a></li>
+    <li><a href="{% url 'member:member_admin:member_undecidedmember_add' %}?next=member:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_member={{ household_member.id }}">
+          {% if household_member.undecidedmember_set.all %}<i class="fa fa-check-square-o"></i>{% else %}<i class="fa fa-square-o"></i>{% endif %}&nbsp;
+          Undecided {% if household_member.undecidedmember_set.all %}again{% endif %}</a></li>
+    <li><a href="{% if household_member.refusedmember %}{% url 'member:member_admin:member_refusedmember_change' household_member.refusedmember.id %}{% else %}{% url 'member:member_admin:member_refusedmember_add' %}{% endif %}?next=member:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_member={{ household_member.id }}">
+          {% if household_member.refusedmember %}<i class="fa fa-check-square-o"></i>{% else %}<i class="fa fa-square-o"></i>{% endif %}&nbsp;
+          Refused {% if household_member.refusedmember %}<span class="text text-muted">{{ household_member.refusedmember.report_date|date:"Y-m-d" }}</span>{% endif %}</a></li>
+    <li><a href="{% if household_member.deceasedmember %}{% url 'member:member_admin:member_deceasedmember_change' household_member.deceasedmember.id %}{% else %}{% url 'member:member_admin:member_deceasedmember_add' %}{% endif %}?next=member:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_member={{ household_member.id }}">
+          {% if household_member.deceasedmember %}<i class="fa fa-check-square-o"></i>{% else %}<i class="fa fa-square-o"></i>{% endif %}&nbsp;
+          Deceased {% if household_member.deceasedmember %}<span class="text text-muted">{{ household_member.deceasedmember.report_date|date:"Y-m-d" }}</span>{% endif %}</a></li>
+  </ul>
+</div> 
+
+<!-- begin screening options -->

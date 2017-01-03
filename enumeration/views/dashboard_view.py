@@ -4,17 +4,19 @@ from django.apps import apps as django_apps
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.utils.html import format_html
 from django.views.generic import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
+from edc_constants.constants import ALIVE, YES, MALE
 
+from household.models.household_log import HouseholdLog
 from household.models.household_log_entry import HouseholdLogEntry
 from household.models.household_structure.household_structure import HouseholdStructure
 from member.constants import HEAD_OF_HOUSEHOLD
 from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility
-from household.models.household_log import HouseholdLog
-from edc_constants.constants import ALIVE, YES, MALE
+from member.participation_status import ParticipationStatus
+
+from .utils import survey_from_label
 
 
 class Button:
@@ -47,26 +49,33 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         self.survey = None
         super().__init__(**kwargs)
 
+    def member_wrapper(self, member):
+        member.participation_status = ParticipationStatus(member).participation_status
+        member.final_status_pending = ParticipationStatus(member).final_status_pending
+        return member
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         app_config = django_apps.get_app_config('enumeration')
-        self.survey = context.get('survey')
         self.today = context.get('today', arrow.utcnow())  # for tests
-        try:
-            survey_breadcrumb = format_html(' &#9654; '.join(context.get('survey').split('.')))
-        except AttributeError:
-            survey_breadcrumb = None
         self.household_identifier = context.get('household_identifier')
+        survey = survey_from_label(context.get('survey'))
         try:
             self.household_structure = HouseholdStructure.objects.get(
                 household__household_identifier=self.household_identifier,
-                survey=self.survey)
+                survey=survey.label)
         except HouseholdStructure.DoesNotExist:
             self.household_structure = None
-        self.household_log_entries = HouseholdLogEntry.objects.filter(
-            household_log__household_structure=self.household_structure).order_by('-report_datetime')
-        self.household_members = HouseholdMember.objects.filter(
-            household_structure=self.household_structure).order_by('first_name')
+            self.household_log = None
+            self.household_log_entries = None
+            self.household_members = None
+        else:
+            self.household_log = HouseholdLog.objects.get(household_structure=self.household_structure)
+            self.household_log_entries = HouseholdLogEntry.objects.filter(
+                household_log__household_structure=self.household_structure).order_by('-report_datetime')
+            self.household_members = HouseholdMember.objects.filter(
+                household_structure=self.household_structure).order_by('first_name')
+            self.household_members = [self.member_wrapper(obj) for obj in self.household_members]
         context.update(
             site_header=admin.site.site_header,
             ALIVE=ALIVE,
@@ -74,13 +83,14 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
             MALE=MALE,
             enumeration_dashboard_base_html=app_config.enumeration_dashboard_base_html,
             navbar_selected='enumeration',
-            survey_breadcrumb=survey_breadcrumb,
-            can_add_members=self.can_add_members,
-            household_log=HouseholdLog.objects.get(household_structure=self.household_structure),
+            survey_breadcrumbs=survey.survey_breadcrumbs,
+            map_area=survey.map_area_display,
+            household_log=self.household_log,
             household_log_entries=self.household_log_entries,
             household_members=self.household_members,
             household_structure=self.household_structure,
             todays_household_log_entry=self.todays_household_log_entry,
+            can_add_members=self.can_add_members,
             eligibility_buttons=self.eligibility_buttons
         )
         return context
@@ -95,12 +105,6 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         if not self.representative_eligibility or not self.todays_household_log_entry:
             return False
         return True
-
-    @property
-    def can_add_hoh_eligibility(self):
-        if self.household_members:
-            return True
-        return False
 
     @property
     def eligibility_buttons(self):
@@ -122,7 +126,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
 
     @property
     def todays_household_log_entry(self):
-        """Return "today's" household log entry, or none."""
+        """Return "today's" household log entry model instance, or none."""
         todays_household_log_entry = None
         try:
             obj = self.household_log_entries.order_by('report_datetime').last()
@@ -134,7 +138,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
 
     @property
     def head_of_household(self):
-        """Returns the household member that is the Head of Household."""
+        """Returns the household member model instance that is the Head of Household or None."""
         try:
             obj = HouseholdMember.objects.get(
                 household_structure=self.household_structure,
@@ -145,7 +149,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
 
     @property
     def head_of_household_eligibility(self):
-        """Return the head of household eligibility."""
+        """Return the head of household eligibility model instance or None."""
         try:
             obj = HouseholdHeadEligibility.objects.get(
                 household_member=self.head_of_household)
@@ -155,7 +159,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
 
     @property
     def representative_eligibility(self):
-        """Return the representative eligibility."""
+        """Return the representative eligibility model instance."""
         try:
             obj = RepresentativeEligibility.objects.get(
                 household_structure=self.household_structure)

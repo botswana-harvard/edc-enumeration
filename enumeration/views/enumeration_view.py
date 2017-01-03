@@ -3,15 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.urls.base import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import FormView
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_search.forms import SearchForm
 from edc_search.view_mixins import SearchViewMixin
 
 from household.models import HouseholdStructure
-from django.utils.html import format_html
+
+from .utils import survey_from_label
 
 app_config = django_apps.get_app_config('enumeration')
 
@@ -63,12 +63,9 @@ class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if context.get('survey'):
-            survey_breadcrumb = format_html(' &#9654; '.join(context.get('survey').split('.')))
-        else:
-            survey_breadcrumb = None
+        survey = survey_from_label(context.get('survey'))
         context.update(
             navbar_selected='enumeration',
-            survey_breadcrumb=survey_breadcrumb)
-        print(self.filter_options)
+            survey_breadcrumbs=survey.survey_breadcrumbs,
+            map_area=survey.map_area_display)
         return context

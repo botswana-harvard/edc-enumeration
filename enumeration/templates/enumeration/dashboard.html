@@ -1,8 +1,20 @@
 {% extends enumeration_dashboard_base_html %}
 {% load staticfiles %}
 
+{% block extra-styles %}
+{{ block.super }}
+  .panel-extended {
+    min-height: 200px;
+    overflow-y: scroll;
+  }
+{% endblock %}
 {% block extra-scripts %}
 {{ block.super }}
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
 {% endblock extra-scripts %} 
 
 {% block main %}
@@ -12,7 +24,7 @@
       <div class="panel panel-info">
         <div class="panel-heading clearfix">
           <i class="fa fa-sitemap fa-lg"></i> 
-            &nbsp;&nbsp;<span class="text text-muted small" style="font-size:14px;">{{ household_identifier }} &#9654; {{ survey_breadcrumb }}</span>
+            &nbsp;&nbsp;<span class="text text-muted small" style="font-size:14px;">{{ household_identifier }}  &rsaquo; {{ survey_breadcrumbs|join:" &rsaquo; " }}</span>
           <span class="pull-right"><a title="close" role="button" class="btn btn-primary btn-sm" href="{% url 'enumeration:list_url' household_identifier=household_identifier survey=survey %}"><i class="fa fa-reply" aria-hidden="true"></i> Close</a></span>
         </div>
       </div>
@@ -27,7 +39,7 @@
             {% include 'enumeration/dashboard/members_panel_heading.html' %}
           </div><!--end panel heading-->
 
-          <div class="panel-body">
+          <div class="panel-body panel-extended">
             {% include 'enumeration/dashboard/members.html' %}
           </div>
         </div>
