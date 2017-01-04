@@ -65,8 +65,12 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         app_config = django_apps.get_app_config('enumeration')
         self.today = context.get('today', arrow.utcnow())  # for tests
-        self.household_identifier = context.get('household_identifier')
-        survey = survey_from_label(context.get('survey'))
+        if context.get('household_member'):
+            self.household_identifier = context.get('household_member').household_structure.household.household_identifier
+            survey = survey_from_label(context.get('household_member').household_structure.survey)
+        else:
+            self.household_identifier = context.get('household_identifier')
+            survey = survey_from_label(context.get('survey'))
         survey_objects = site_surveys.surveys
         try:
             self.household_structure = HouseholdStructure.objects.get(

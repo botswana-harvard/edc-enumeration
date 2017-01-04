@@ -14,6 +14,14 @@
                {% if household_member.survival_status != ALIVE %}<span class="label label-info">{{ household_member.get_survival_status_display }}</span>{% endif %}
             </td>
             <td>
+              {% if household_member.done %}
+                <i class="fa fa-check fa-lg"></i>
+              {% else %}
+                <button data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}"><i class="fa fa-tasks fa-lg"></i></button>
+              {% endif %}
+            </td>
+            
+            <td>
               <span class="text text-default">
                 {{ household_member.first_name|lower|capfirst }}&nbsp;{{ household_member.initials }}&nbsp;
                 {{ household_member.age_in_years }}</span>
@@ -39,8 +47,8 @@
                 </div>
               {% endif %}
             </td>
-            <td>{% if household_member.done %}<i class="fa fa-check fa-lg"></i>{% endif %}</td>
            </tr>
+           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You still have more to do!</td></tr>
           {% endfor %}
       </tbody>
     {% endif %}
