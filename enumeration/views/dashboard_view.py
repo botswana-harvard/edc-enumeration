@@ -12,11 +12,10 @@ from edc_constants.constants import ALIVE, YES, MALE
 from household.models.household_log import HouseholdLog
 from household.models.household_log_entry import HouseholdLogEntry
 from household.models.household_structure.household_structure import HouseholdStructure
+from household.utils import survey_from_label
 from member.constants import HEAD_OF_HOUSEHOLD, AVAILABLE
-from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility
+from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility, HouseholdInfo
 from member.participation_status import ParticipationStatus
-
-from .utils import survey_from_label
 from survey.site_surveys import site_surveys
 
 
@@ -35,9 +34,13 @@ class Button:
             self.add = True
         self.disabled = False
         try:
-            self.member = obj.household_member
+            self.household_member = obj.household_member
         except AttributeError:
-            self.member = None
+            self.household_member = None
+        try:
+            self.household_structure = obj.household_structure
+        except AttributeError:
+            self.household_structure = None
 
 
 class DashboardView(EdcBaseViewMixin, TemplateView):
@@ -122,19 +125,37 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
     @property
     def eligibility_buttons(self):
 
+        # representative_eligibility
         eligibility_buttons = []
         btn = Button(self.representative_eligibility or RepresentativeEligibility())
         # can edit anytime, but can only add if have todays log...
         if not self.todays_household_log_entry and btn.add:
             btn.disabled = True
         eligibility_buttons.append(btn)
+
+        # head_of_household_eligibility
         btn = Button(self.head_of_household_eligibility or HouseholdHeadEligibility())
-        if not btn.member:
-            btn.member = self.head_of_household
+        if not btn.household_member:
+            btn.household_member = self.head_of_household
+        # only enable if hoh exists
+        if not btn.household_member:
+            btn.disabled = True
         # can edit anytime, but can only add if have todays log...
         if (not self.todays_household_log_entry and btn.add) or not self.household_members:
             btn.disabled = True
         eligibility_buttons.append(btn)
+
+        # household_info
+        try:
+            household_info = HouseholdInfo.objects.get(household_structure=self.household_structure)
+        except HouseholdInfo.DoesNotExist:
+            household_info = HouseholdInfo()
+        if not self.representative_eligibility:
+            btn.disabled = True
+        if not self.todays_household_log_entry and btn.add:
+            btn.disabled = True
+        btn = Button(household_info)
+
         return eligibility_buttons
 
     @property

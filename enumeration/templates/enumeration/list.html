@@ -20,34 +20,38 @@
                         <th></th>
                         <th>Community</th>
                         <th>Survey</th>
-                        <th>Year</th>
                         <th>Modified</th>
                         <th>Host</th>
-                      </thead>
-                      <tbody>
-                      	{%  for obj in results %}
-      						<tr> 
-            				<td>{{ forloop.counter }}</td>
-            				<td style="white-space: nowrap">
-                      <a title="plot" role="button" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=obj.plot_identifier %}"><i class="fa fa-building-o fa-md"></i></a>
-                      <a title="household" role="button" class="btn btn-sm btn-default" href="{% url 'household:list_url' obj.household_identifier %}"><i class="fa fa-home fa-lg"></i> {{ obj.household_identifier }}</i></a>
-                      <a title="household logs" role="button" class="btn btn-sm btn-default" href="{% url 'household:household_admin:household_householdlogentry_changelist' %}?q={{ obj.household_identifier }}"><i class="fa fa-files-o fa-lg"></i></a>
-                      {% if survey %}
-            				    <a title="enumeration" role="button" class="btn btn-sm btn-default" href="{% url 'enumeration:list_url' household_identifier=obj.household_identifier %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
-                        <a title="enumeration dashboard" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:dashboard_url' household_identifier=obj.household_identifier survey=obj.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard</a>
-                      {% else %}
-                        <a title="enumeration" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:list_url' household_identifier=obj.household_identifier survey=obj.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
-                        <a title="members" role="button" class="btn btn-sm btn-default{% if not obj.members %} disabled{% endif %}" href="{% url 'member:list_url' plot_identifier=obj.plot_identifier %}"><i class="fa fa-group fa-md"></i></a>
-                      {% endif %}
-                    </td>  
-                    <td>{{ obj.community_name|title }}</td>
-                    <td>{{ obj.survey_name|upper }}</td>
-                    <td>{{ obj.survey_year|upper }}</td>
-                    <td>{{ obj.modified|date:"Y-m-d H:i" }}</td>
-                    <td>{{ obj.hostname_created }}</td>
-            			</tr>
-            			{% endfor %}
-                  </tbody>
+                    </thead>
+                    <tbody>
+                      {% for result in results %}
+            						<tr> 
+                  				<td>{{ forloop.counter }}</td>
+                  				<td style="white-space: nowrap">
+                            <a title="plot" role="button" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=result.plot_identifier %}"><i class="fa fa-building-o fa-md"></i></a>
+                            <a title="household" role="button" class="btn btn-sm btn-default" href="{% url 'household:list_url' result.household_identifier %}"><i class="fa fa-home fa-lg"></i> </a>
+
+                            <a title="household logs" role="button" class="btn btn-sm btn-default" href="{% url 'household:household_admin:household_householdlogentry_changelist' %}?q={{ result.household_identifier }}"><i class="fa fa-files-o fa-lg"></i></a>
+
+                            {% with history_objects=result.household_log_entries title="Household logs" add_button=survey current_history_object=result.household_log_entry %}
+                              {% include 'edc_base/controls/history_button.html' %}
+                            {% endwith %}
+
+                            {% if survey %}
+                  				    <a title="enumeration" role="button" class="btn btn-sm btn-default" href="{% url 'enumeration:list_url' household_identifier=result.household_identifier %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
+                              <a title="enumeration dashboard" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:dashboard_url' household_identifier=result.household_identifier survey=result.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard</a>
+                            {% else %}
+                              <a title="enumeration" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:list_url' household_identifier=result.household_identifier survey=result.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
+                              <a title="members" role="button" class="btn btn-sm btn-default{% if not result.members %} disabled{% endif %}" href="{% url 'member:list_url' plot_identifier=result.plot_identifier %}"><i class="fa fa-group fa-md"></i></a>
+                            {% endif %}
+                          </td>  
+                          <td>{{ result.survey.short_name }}</td>
+                          <td>{{ result.community_name|title }}</td>
+                          <td>{{ result.modified|date:"Y-m-d H:i" }}</td>
+                          <td>{{ result.hostname_created }}</td>
+                  			</tr>
+              			  {% endfor %}
+                    </tbody>
                   </table>
                 </div>
                   {% include 'edc_search/paginator.html' %}

@@ -10,8 +10,8 @@ from edc_search.forms import SearchForm
 from edc_search.view_mixins import SearchViewMixin
 
 from household.models import HouseholdStructure
-
-from .utils import survey_from_label
+from household.utils import survey_from_label
+from household.views import HouseholdStructureResultWrapper
 
 app_config = django_apps.get_app_config('enumeration')
 
@@ -20,6 +20,17 @@ class SearchPlotForm(SearchForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.form_action = reverse('enumeration:list_url')
+
+
+class ResultWrapper(HouseholdStructureResultWrapper):
+
+    @property
+    def querystring(self):
+        return [
+            'next={},household_structure'.format('enumeration:list_url'),
+            'household_structure={}'.format(self.id),
+            'household_log={}'.format(self.household_log.id),
+        ]
 
 
 class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView):
@@ -50,15 +61,8 @@ class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView)
 
     def queryset_wrapper(self, qs):
         results = []
-        HouseholdMember = django_apps.get_model(*'member.householdmember'.split('.'))
         for obj in qs:
-            obj.plot_identifier = obj.household.plot.plot_identifier
-            obj.household_identifier = obj.household.household_identifier
-            _, obj.survey_year, obj.survey_name, obj.community_name = obj.survey.split('.')
-            obj.community_name = ' '.join(obj.community_name.split('_'))
-            obj.members = HouseholdMember.objects.filter(
-                household_structure=obj)
-            results.append(obj)
+            results.append(ResultWrapper(obj))
         return results
 
     def get_context_data(self, **kwargs):
