@@ -37,9 +37,13 @@
                               {% include 'edc_base/controls/history_button.html' %}
                             {% endwith %}
 
+                            {% with members=result.members %}
+                              {% include 'enumeration/members_button.html' %}
+                            {% endwith %}
+
                             {% if survey %}
                   				    <a title="enumeration" role="button" class="btn btn-sm btn-default" href="{% url 'enumeration:list_url' household_identifier=result.household_identifier %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
-                              <a title="enumeration dashboard" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:dashboard_url' household_identifier=result.household_identifier survey=result.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard</a>
+                              <a title="enumeration dashboard" role="button" class="btn btn-sm {% if not result.household_log_entries %} btn-default disabled{% else %}btn-success{% endif %}" href="{% url 'enumeration:dashboard_url' household_identifier=result.household_identifier survey=result.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard</a>
                             {% else %}
                               <a title="enumeration" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:list_url' household_identifier=result.household_identifier survey=result.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
                               <a title="members" role="button" class="btn btn-sm btn-default{% if not result.members %} disabled{% endif %}" href="{% url 'member:list_url' plot_identifier=result.plot_identifier %}"><i class="fa fa-group fa-md"></i></a>
@@ -53,6 +57,13 @@
               			  {% endfor %}
                     </tbody>
                   </table>
+                    <table>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    </table>
                 </div>
                   {% include 'edc_search/paginator.html' %}
               </div>

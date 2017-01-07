@@ -17,10 +17,11 @@ from member.constants import HEAD_OF_HOUSEHOLD, AVAILABLE
 from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility, HouseholdInfo
 from member.participation_status import ParticipationStatus
 from survey.site_surveys import site_surveys
+from edc_base.utils import get_utcnow
 
 
 class Button:
-    def __init__(self, obj):
+    def __init__(self, obj, household_structure=None):
         self.name = obj._meta.label_lower
         self.verbose_name = obj._meta.verbose_name
         self.url_name = 'member:member_admin:{}'.format('_'.join(obj._meta.label_lower.split('.')))
@@ -40,7 +41,7 @@ class Button:
         try:
             self.household_structure = obj.household_structure
         except AttributeError:
-            self.household_structure = None
+            self.household_structure = household_structure
 
 
 class DashboardView(EdcBaseViewMixin, TemplateView):
@@ -67,9 +68,10 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         app_config = django_apps.get_app_config('enumeration')
-        self.today = context.get('today', arrow.utcnow())  # for tests
+        self.today = context.get('today')  # for tests
         if context.get('household_member'):
-            self.household_identifier = context.get('household_member').household_structure.household.household_identifier
+            self.household_identifier = context.get(
+                'household_member').household_structure.household.household_identifier
             survey = survey_from_label(context.get('household_member').household_structure.survey)
         else:
             self.household_identifier = context.get('household_identifier')
@@ -105,9 +107,9 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
             household_log_entries=self.household_log_entries,
             household_members=self.household_members,
             household_structure=self.household_structure,
-            todays_household_log_entry=self.todays_household_log_entry,
+            current_household_log_entry=self.current_household_log_entry,
             can_add_members=self.can_add_members,
-            eligibility_buttons=self.eligibility_buttons
+            eligibility_buttons=self.eligibility_buttons(self.household_structure)
         )
         return context
 
@@ -118,30 +120,31 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
     @property
     def can_add_members(self):
         """Returns True if the user will be allowed to add new members."""
-        if not self.representative_eligibility or not self.todays_household_log_entry:
+        if not self.representative_eligibility or not self.current_household_log_entry:
             return False
         return True
 
-    @property
-    def eligibility_buttons(self):
+    def eligibility_buttons(self, household_structure):
 
         # representative_eligibility
         eligibility_buttons = []
-        btn = Button(self.representative_eligibility or RepresentativeEligibility())
+        btn = Button(self.representative_eligibility or RepresentativeEligibility(),
+                     household_structure=household_structure)
         # can edit anytime, but can only add if have todays log...
-        if not self.todays_household_log_entry and btn.add:
+        if not self.current_household_log_entry and btn.add:
             btn.disabled = True
         eligibility_buttons.append(btn)
 
         # head_of_household_eligibility
-        btn = Button(self.head_of_household_eligibility or HouseholdHeadEligibility())
+        btn = Button(self.head_of_household_eligibility or HouseholdHeadEligibility(),
+                     household_structure=household_structure)
         if not btn.household_member:
             btn.household_member = self.head_of_household
         # only enable if hoh exists
         if not btn.household_member:
             btn.disabled = True
         # can edit anytime, but can only add if have todays log...
-        if (not self.todays_household_log_entry and btn.add) or not self.household_members:
+        if (not self.current_household_log_entry and btn.add) or not self.household_members:
             btn.disabled = True
         eligibility_buttons.append(btn)
 
@@ -152,23 +155,24 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
             household_info = HouseholdInfo()
         if not self.representative_eligibility:
             btn.disabled = True
-        if not self.todays_household_log_entry and btn.add:
+        if not self.current_household_log_entry and btn.add:
             btn.disabled = True
-        btn = Button(household_info)
+        btn = Button(household_info, household_structure=household_structure)
 
         return eligibility_buttons
 
     @property
-    def todays_household_log_entry(self):
-        """Return "today's" household log entry model instance, or none."""
-        todays_household_log_entry = None
+    def current_household_log_entry(self):
+        """Return current household log entry model instance, or none."""
+        current_household_log_entry = None
+        today = self.today or get_utcnow()
+        obj = self.household_log_entries.order_by('report_datetime').last()
         try:
-            obj = self.household_log_entries.order_by('report_datetime').last()
-            if obj.report_datetime.date() == self.today.date():
-                todays_household_log_entry = obj
+            if obj.report_datetime.date() == today.date():
+                current_household_log_entry = obj
         except AttributeError:
             pass
-        return todays_household_log_entry
+        return current_household_log_entry
 
     @property
     def head_of_household(self):

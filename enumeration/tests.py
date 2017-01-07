@@ -50,13 +50,13 @@ class TestDashboard(MemberMixin, TestCase):
         response = DashboardView.as_view()(request)
         self.assertEqual(response.status_code, 200)
 
-    def test_todays_household_log_entry_is_none(self):
+    def test_current_household_log_entry_is_none(self):
         view = DashboardView()
         view.get_context_data(
             household_identifier=self.household_structure.household.household_identifier,
             survey=self.household_structure.survey)
 
-    def test_todays_household_log_entry_is_not_none(self):
+    def test_current_household_log_entry_is_not_none(self):
         household_log_entry = HouseholdLogEntry.objects.filter(
             household_log__household_structure=self.household_structure).order_by(
                 'report_datetime').last()
@@ -65,7 +65,7 @@ class TestDashboard(MemberMixin, TestCase):
             household_identifier=self.household_structure.household.household_identifier,
             survey=self.household_structure.survey,
             today=household_log_entry.report_datetime)
-        self.assertIsNotNone(view.todays_household_log_entry)
+        self.assertIsNotNone(view.current_household_log_entry)
 
     def test_can_add_members_if_log_entry_today(self):
         household_log_entry = HouseholdLogEntry.objects.filter(

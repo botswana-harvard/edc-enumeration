@@ -12,6 +12,7 @@ from edc_search.view_mixins import SearchViewMixin
 from household.models import HouseholdStructure
 from household.utils import survey_from_label
 from household.views import HouseholdStructureResultWrapper
+from edc_constants.constants import MALE
 
 app_config = django_apps.get_app_config('enumeration')
 
@@ -43,6 +44,7 @@ class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView)
     url_lookup_parameters = [
         'id',
         'survey',
+        ('household_structure', 'id'),
         ('household_identifier', 'household__household_identifier'),
         ('plot_identifier', 'household__plot__plot_identifier')]
 
@@ -70,6 +72,7 @@ class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView)
         survey = survey_from_label(context.get('survey'))
         context.update(
             navbar_selected='enumeration',
+            MALE=MALE,
             survey_breadcrumbs=survey.survey_breadcrumbs,
             map_area=survey.map_area_display)
         return context
