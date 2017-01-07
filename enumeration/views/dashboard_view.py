@@ -48,6 +48,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
 
     template_name = 'enumeration/dashboard.html'
     paginate_by = 4
+    base_html = 'bcpp/base.html'
 
     def __init__(self, **kwargs):
         self.household_identifier = None
