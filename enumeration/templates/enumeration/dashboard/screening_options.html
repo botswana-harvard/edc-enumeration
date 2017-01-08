@@ -13,7 +13,7 @@
       <li class="dropdown-item {% if not may_add and not may_edit %}disabled{% endif %}">
         <a class="dropdown-item " href="{% if not may_add %}#{% else %}{% if enrollment_checklist %}{% url 'member:member_admin:member_enrollmentchecklist_change' enrollment_checklist.id %}{% else %}{% url 'member:member_admin:member_enrollmentchecklist_add' %}{% endif %}?next=enumeration:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_member={{ household_member.id }}{% endif %}">
             {% if enrollment_checklist %}<i class="fa fa-check-square-o"></i>{% else %}<i class="fa fa-square-o"></i>{% endif %}&nbsp;
-            {% if enrollment_checklist %}{{ household_member.get_participation_status_display }}{% else %}Check eligibility{% endif %}</a>
+            {% if enrollment_checklist %}Complete ({{ household_member.get_participation_status_display }}){% else %}Check eligibility{% endif %}</a>
       </li>
     {% endwith %}
 

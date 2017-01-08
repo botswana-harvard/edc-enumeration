@@ -16,6 +16,7 @@ from member.participation_status import ParticipationStatus
 from survey.site_surveys import site_surveys
 from survey.survey import DummySurvey
 from edc_base.utils import get_utcnow
+from member.models.household_member.utils import is_minor, is_adult
 
 
 class Button:
@@ -60,6 +61,8 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         if member.participation_status == AVAILABLE:
             member.get_participation_status_display = None
         member.final_status_pending = ParticipationStatus(member).final_status_pending
+        member.is_minor = is_minor(member.age_in_years)
+        member.is_adult = is_adult(member.age_in_years)
         if member.refused:
             member.done = True
         return member

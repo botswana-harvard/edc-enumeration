@@ -27,7 +27,14 @@
                 {{ household_member.first_name|lower|capfirst }}&nbsp;{{ household_member.initials }}&nbsp;
                 {{ household_member.age_in_years }}</span></br>
               <span class="label label-info">{{ household_member.get_relation_display|lower|capfirst }}</span>
-              <span class="label label-info">{% if household_member.study_resident == YES %}resident{% else %}non-resident{% endif %}</span>
+              {% if household_member.is_minor %}
+                <span class="label label-warning">Minor</span>
+              {% elif household_member.is_adult %}
+                <span class="label label-info">Adult</span>
+              {% else %}
+                <span class="label label-info">Child</span>
+              {% endif %}
+              <span class="label label-info">{% if household_member.study_resident == YES %}Resident{% else %}Non-resident{% endif %}</span>
             </td>
             <td>
               {% if not household_member.eligible_member %}
