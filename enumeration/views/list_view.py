@@ -10,9 +10,10 @@ from edc_search.forms import SearchForm
 from edc_search.view_mixins import SearchViewMixin
 
 from household.models import HouseholdStructure
-from household.utils import survey_from_label
 from household.views import HouseholdStructureResultWrapper
 from edc_constants.constants import MALE
+from survey.site_surveys import site_surveys
+from survey.survey import DummySurvey
 
 app_config = django_apps.get_app_config('enumeration')
 
@@ -34,7 +35,7 @@ class ResultWrapper(HouseholdStructureResultWrapper):
         ]
 
 
-class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView):
+class ListView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView):
 
     form_class = SearchPlotForm
     template_name = app_config.list_template_name
@@ -69,10 +70,10 @@ class EnumerationView(EdcBaseViewMixin, TemplateView, SearchViewMixin, FormView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        survey = survey_from_label(context.get('survey'))
+        survey = site_surveys.get_survey_from_field_value(context.get('survey')) or DummySurvey()
         context.update(
             navbar_selected='enumeration',
             MALE=MALE,
-            survey_breadcrumbs=survey.survey_breadcrumbs,
+            survey=survey,
             map_area=survey.map_area_display)
         return context

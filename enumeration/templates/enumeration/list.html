@@ -31,7 +31,8 @@
                             <a title="plot" role="button" class="btn btn-sm btn-default" href="{% url 'plot:list_url' plot_identifier=result.plot_identifier %}"><i class="fa fa-building-o fa-md"></i></a>
                             <a title="household" role="button" class="btn btn-sm btn-default" href="{% url 'household:list_url' result.household_identifier %}"><i class="fa fa-home fa-lg"></i> </a>
 
-                            <a title="household logs" role="button" class="btn btn-sm btn-default" href="{% url 'household:household_admin:household_householdlogentry_changelist' %}?q={{ result.household_identifier }}"><i class="fa fa-files-o fa-lg"></i></a>
+                            <a title="household logs" role="button" class="btn btn-sm btn-default" href="{% url 'household:household_admin:household_householdlogentry_changelist' %}?q={{ result.household_identifier }}">
+                              <i class="fa fa-files-o fa-lg"></i></a>
 
                             {% with history_objects=result.household_log_entries title="Household logs" add_button=survey current_history_object=result.household_log_entry %}
                               {% include 'edc_base/controls/history_button.html' %}
@@ -43,10 +44,13 @@
 
                             {% if survey %}
                   				    <a title="enumeration" role="button" class="btn btn-sm btn-default" href="{% url 'enumeration:list_url' household_identifier=result.household_identifier %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
-                              <a title="enumeration dashboard" role="button" class="btn btn-sm {% if not result.household_log_entries %} btn-default disabled{% else %}btn-success{% endif %}" href="{% url 'enumeration:dashboard_url' household_identifier=result.household_identifier survey=result.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard</a>
+                              <a title="enumeration dashboard" role="button" class="btn btn-sm {% if not result.household_log_entries %} btn-default disabled{% else %}btn-success{% endif %}" href="{% url 'enumeration:dashboard_url' household_identifier=result.household_identifier survey=result.survey.field_value %}">
+                                <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard</a>
                             {% else %}
-                              <a title="enumeration" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:list_url' household_identifier=result.household_identifier survey=result.survey %}"><i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
-                              <a title="members" role="button" class="btn btn-sm btn-default{% if not result.members %} disabled{% endif %}" href="{% url 'member:list_url' plot_identifier=result.plot_identifier %}"><i class="fa fa-group fa-md"></i></a>
+                              <a title="enumeration" role="button" class="btn btn-sm btn-success" href="{% url 'enumeration:list_url' household_identifier=result.household_identifier survey=result.survey.field_value %}">
+                                <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
+                              <a title="members" role="button" class="btn btn-sm btn-default{% if not result.members %} disabled{% endif %}" href="{% url 'member:list_url' plot_identifier=result.plot_identifier %}">
+                                <i class="fa fa-group fa-md"></i></a>
                             {% endif %}
                           </td>  
                           <td>{{ result.survey.short_name }}</td>

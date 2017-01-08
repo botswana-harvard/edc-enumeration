@@ -1,12 +1,13 @@
 
 <!-- start member panel heading -->
 
-   <a title="add household member"  class="btn btn-sm btn-default {% if not can_add_members %} disabled{% endif %}" role="button" href="{% url 'member_admin:member_householdmember_add' %}?household_structure={{household_structure.id}}&next=enumeration:dashboard_url,household_identifier,survey&survey={{ survey }}&household_identifier={{ household_identifier }}">
+   <a title="add household member"  class="btn btn-sm btn-default {% if not can_add_members %} disabled{% endif %}" role="button" href="{% url 'member_admin:member_householdmember_add' %}?household_structure={{household_structure.id}}&next=enumeration:dashboard_url,household_identifier,survey&survey={{ survey.field_value }}&household_identifier={{ household_identifier }}">
       <i class="fa fa-plus fa-sm"></i> <i class="fa fa-user fa-lg"></i></a>
  
  {% for obj in eligibility_buttons %}
-   <a title="{% if obj.add %}add{% else %}change{% endif %} {{ obj.verbose_name }}" class="btn btn-sm btn-{% if obj.id %}default{% else %}warning{% endif %} {% if obj.disabled %}disabled{% endif %}" role="button" href="{% if obj.add %}{% url obj.url_name %}{% else %}{% url obj.url_name obj.id %}{% endif %}?next=enumeration:dashboard_url,household_identifier,survey&household_structure={{ obj.household_structure.id }}&household_member={{ obj.household_member.id }}&survey={{ survey }}&household_identifier={{ household_identifier }}">
-      <i class="fa {% if obj.add %}fa-plus{% else %}fa-pencil{% endif %} fa-sm"></i> <i class="fa fa-user fa-lg"></i> {{ obj.verbose_name }}</a>
+   <a title="{% if obj.add %}add{% else %}change{% endif %} {{ obj.verbose_name }}" class="btn btn-sm btn-{% if obj.id %}default{% else %}warning{% endif %} {% if obj.disabled %}disabled{% endif %}" role="button"
+	   	href="{% if obj.add %}{% url obj.url_name %}{% else %}{% url obj.url_name obj.id %}{% endif %}?next=enumeration:dashboard_url,household_identifier,survey&household_structure={{ obj.household_structure.id }}&household_member={{ obj.household_member.id }}&survey={{ survey.field_value }}&household_identifier={{ household_identifier }}">
+    	  	<i class="fa {% if obj.add %}fa-plus{% else %}fa-pencil{% endif %} fa-sm"></i> <i class="fa fa-user fa-lg"></i> {{ obj.verbose_name }}</a>
   {% endfor %}
 
 <!-- end member panel heading -->

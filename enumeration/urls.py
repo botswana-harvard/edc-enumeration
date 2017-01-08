@@ -23,7 +23,7 @@ from household.patterns import household_identifier
 from plot.patterns import plot_identifier
 from survey.patterns import survey
 
-from .views import EnumerationView, DashboardView
+from .views import ListView, DashboardView
 
 
 urlpatterns = [
@@ -31,19 +31,19 @@ urlpatterns = [
         DashboardView.as_view(), name='dashboard_url'),
     url(r'^dashboard/(?P<household_member>' + UUID_PATTERN.pattern + ')/',
         DashboardView.as_view(), name='dashboard_url'),
-    url(r'^list/(?P<page>[0-9]+)/', EnumerationView.as_view(), name='list_url'),
+    url(r'^list/(?P<page>[0-9]+)/', ListView.as_view(), name='list_url'),
     url(r'^list/(?P<household_identifier>' + household_identifier + ')/(?P<survey>' + survey + ')/',
-        EnumerationView.as_view(), name='list_url'),
+        ListView.as_view(), name='list_url'),
     url(r'^list/(?P<plot_identifier>' + plot_identifier + ')/(?P<survey>' + survey + ')',
-        EnumerationView.as_view(), name='list_url'),
-    url(r'^list/(?P<plot_identifier>' + plot_identifier + ')/', EnumerationView.as_view(), name='list_url'),
+        ListView.as_view(), name='list_url'),
+    url(r'^list/(?P<plot_identifier>' + plot_identifier + ')/', ListView.as_view(), name='list_url'),
     url(r'^list/(?P<household_identifier>' + household_identifier + ')/',
-        EnumerationView.as_view(), name='list_url'),
+        ListView.as_view(), name='list_url'),
     url(r'^list/(?P<household_structure>' + UUID_PATTERN.pattern + ')/',
-        EnumerationView.as_view(), name='list_url'),
-    url(r'^list/(?P<id>' + UUID_PATTERN.pattern + ')/', EnumerationView.as_view(), name='list_url'),
-    url(r'^list/', EnumerationView.as_view(), name='list_url'),
-    url(r'', EnumerationView.as_view(), name='home_url'),
+        ListView.as_view(), name='list_url'),
+    url(r'^list/(?P<id>' + UUID_PATTERN.pattern + ')/', ListView.as_view(), name='list_url'),
+    url(r'^list/', ListView.as_view(), name='list_url'),
+    url(r'', ListView.as_view(), name='home_url'),
 ]
 
 if 'test' in sys.argv:

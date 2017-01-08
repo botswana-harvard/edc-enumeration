@@ -1,5 +1,3 @@
-import arrow
-
 from django.apps import apps as django_apps
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
@@ -12,11 +10,11 @@ from edc_constants.constants import ALIVE, YES, MALE
 from household.models.household_log import HouseholdLog
 from household.models.household_log_entry import HouseholdLogEntry
 from household.models.household_structure.household_structure import HouseholdStructure
-from household.utils import survey_from_label
 from member.constants import HEAD_OF_HOUSEHOLD, AVAILABLE
 from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility, HouseholdInfo
 from member.participation_status import ParticipationStatus
 from survey.site_surveys import site_surveys
+from survey.survey import DummySurvey
 from edc_base.utils import get_utcnow
 
 
@@ -73,24 +71,27 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         if context.get('household_member'):
             self.household_identifier = context.get(
                 'household_member').household_structure.household.household_identifier
-            survey = survey_from_label(context.get('household_member').household_structure.survey)
+            survey = context.get('household_member').household_structure.survey_object
         else:
             self.household_identifier = context.get('household_identifier')
-            survey = survey_from_label(context.get('survey'))
-        survey_objects = site_surveys.surveys
+            survey = site_surveys.get_survey_from_field_value(
+                context.get('survey')) or DummySurvey()
+        survey_objects = site_surveys.current_surveys
         try:
             self.household_structure = HouseholdStructure.objects.get(
                 household__household_identifier=self.household_identifier,
-                survey=survey.label)
+                survey=survey.field_value)
         except HouseholdStructure.DoesNotExist:
             self.household_structure = None
             self.household_log = None
             self.household_log_entries = None
             self.household_members = None
         else:
-            self.household_log = HouseholdLog.objects.get(household_structure=self.household_structure)
+            self.household_log = HouseholdLog.objects.get(
+                household_structure=self.household_structure)
             self.household_log_entries = HouseholdLogEntry.objects.filter(
-                household_log__household_structure=self.household_structure).order_by('-report_datetime')
+                household_log__household_structure=self.household_structure).order_by(
+                    '-report_datetime')
             self.household_members = HouseholdMember.objects.filter(
                 household_structure=self.household_structure).order_by('first_name')
             self.household_members = [self.member_wrapper(obj) for obj in self.household_members]
@@ -101,8 +102,8 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
             MALE=MALE,
             enumeration_dashboard_base_html=app_config.enumeration_dashboard_base_html,
             navbar_selected='enumeration',
-            survey_breadcrumbs=survey.survey_breadcrumbs,
             survey_objects=survey_objects,
+            survey=survey,
             map_area=survey.map_area_display,
             household_log=self.household_log,
             household_log_entries=self.household_log_entries,
@@ -167,7 +168,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         """Return current household log entry model instance, or none."""
         current_household_log_entry = None
         today = self.today or get_utcnow()
-        obj = self.household_log_entries.order_by('report_datetime').last()
+        obj = self.household_log_entries.all().order_by('report_datetime').last()
         try:
             if obj.report_datetime.date() == today.date():
                 current_household_log_entry = obj
