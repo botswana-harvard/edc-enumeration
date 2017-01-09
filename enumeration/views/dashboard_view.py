@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
+from edc_base.utils import get_utcnow
 from edc_constants.constants import ALIVE, YES, MALE
 
 from household.models.household_log import HouseholdLog
@@ -12,11 +13,10 @@ from household.models.household_log_entry import HouseholdLogEntry
 from household.models.household_structure.household_structure import HouseholdStructure
 from member.constants import HEAD_OF_HOUSEHOLD, AVAILABLE
 from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility, HouseholdInfo
+from member.models.household_member.utils import is_minor, is_adult
 from member.participation_status import ParticipationStatus
 from survey.site_surveys import site_surveys
 from survey.survey import DummySurvey
-from edc_base.utils import get_utcnow
-from member.models.household_member.utils import is_minor, is_adult
 
 
 class Button:
@@ -171,12 +171,13 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         """Return current household log entry model instance, or none."""
         current_household_log_entry = None
         today = self.today or get_utcnow()
-        obj = self.household_log_entries.all().order_by('report_datetime').last()
-        try:
-            if obj.report_datetime.date() == today.date():
-                current_household_log_entry = obj
-        except AttributeError:
-            pass
+        if self.household_log_entries:
+            obj = self.household_log_entries.all().order_by('report_datetime').last()
+            try:
+                if obj.report_datetime.date() == today.date():
+                    current_household_log_entry = obj
+            except AttributeError:
+                pass
         return current_household_log_entry
 
     @property
