@@ -138,6 +138,8 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         # head_of_household_eligibility
         btn = Button(self.head_of_household_eligibility or HouseholdHeadEligibility(),
                      household_structure=household_structure)
+        btn = Button(self.head_of_household_eligibility or HouseholdHeadEligibility(),
+                     household_structure=household_structure)
         if not btn.household_member:
             btn.household_member = self.head_of_household
         # only enable if hoh exists
@@ -158,7 +160,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         if not self.current_household_log_entry and btn.add:
             btn.disabled = True
         btn = Button(household_info, household_structure=household_structure)
-
+        eligibility_buttons.append(btn)
         return eligibility_buttons
 
     @property
