@@ -8,7 +8,9 @@ style = color_style()
 
 class AppConfig(DjangoAppConfig):
     name = 'enumeration'
-    list_template_name = None
+    listboard_template_name = 'enumeration/listboard.html'
+    listboard_url_name = 'enumeration:listboard_url'
+    dashboard_url_name = 'enumeration:dashboard_url'
     enumeration_dashboard_base_html = 'edc_base/base.html'
 
     def ready(self):

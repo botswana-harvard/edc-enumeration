@@ -1,7 +1,5 @@
 from django.apps import apps as django_apps
 from django.contrib import admin
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
@@ -114,13 +112,10 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
             household_structure=self.household_structure,
             current_household_log_entry=self.current_household_log_entry,
             can_add_members=self.can_add_members,
-            eligibility_buttons=self.eligibility_buttons(self.household_structure)
+            eligibility_buttons=self.eligibility_buttons(self.household_structure),
+            enumeration_listboard_url_name=django_apps.get_app_config('enumeration').listboard_url_name,
         )
         return context
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
     @property
     def can_add_members(self):

@@ -26,8 +26,9 @@ $(document).ready(function(){
           <i class="fa fa-sitemap fa-lg"></i> 
             &nbsp;&nbsp;<span class="text text-muted small" style="font-size:14px;">{{ household_identifier }}  &rsaquo; {{ survey.breadcrumbs|join:" &rsaquo; " }}</span>
           <span class="pull-right">
-            <a title="close" role="button" class="btn btn-primary btn-sm" href="{% url 'enumeration:list_url' household_identifier=household_identifier survey=survey.field_value %}">
-              <i class="fa fa-reply" aria-hidden="true"></i> Close
+            <a title="close" role="button" class="btn btn-primary btn-sm"
+                href="{% url enumeration_listboard_url_name household_identifier=household_identifier survey=survey.field_value %}">
+                    <i class="fa fa-reply" aria-hidden="true"></i> Close
             </a></span>
         </div>
       </div>

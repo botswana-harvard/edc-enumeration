@@ -1,5 +1,5 @@
 
-<!-- start history button -->
+<!-- start members button -->
 
 <div class="btn-group">
 
@@ -10,10 +10,25 @@
 	      <span class="caret"></span></button>
 	      <ul class="dropdown-menu" role="menu">
 	        <li class="dropdown-header">{{ result.survey.short_name }}</li>
+
 	        {% for obj in result.members %}
-	          <li><a href="#">{% if obj.gender == MALE %}<i class="fa fa-male fa-sm"></i>{% else %}<i class="fa fa-female fa-sm"></i>{% endif %}&nbsp;{{ obj.first_name }} {{ obj.age_in_years }}</a></li>
+
+	          <li>
+	          <a href="#">
+	
+		          {% if obj.gender == MALE %}
+		               <i class="fa fa-male fa-sm"></i>
+		          {% else %}
+		               <i class="fa fa-female fa-sm"></i>
+		          {% endif %}
+	
+		          &nbsp;{{ obj.first_name }} {{ obj.age_in_years }}
+	          </a>
+	          </li>
+
 	        {% endfor %}
+
 	      </ul>
 	</div>
 </div>
-<!-- end history button -->
+<!-- end members button -->
