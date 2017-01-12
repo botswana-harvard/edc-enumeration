@@ -1,5 +1,7 @@
 from django.apps import apps as django_apps
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
@@ -51,6 +53,10 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         self.household_identifier = None
         self.survey_schedule = None
         super().__init__(**kwargs)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def member_wrapper(self, member):
         member.participation_status = ParticipationStatus(member).participation_status
