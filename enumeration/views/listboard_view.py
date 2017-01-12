@@ -7,7 +7,7 @@ from edc_dashboard.view_mixins import ListboardMixin, FilteredListViewMixin
 from edc_search.view_mixins import SearchViewMixin
 
 from household.models import HouseholdStructure
-from survey.site_surveys import site_surveys
+from survey import site_surveys
 from survey.survey import DummySurvey
 
 from .wrappers import HouseholdStructureWithLogEntryWrapper
@@ -28,7 +28,7 @@ class ListBoardView(EdcBaseViewMixin, ListboardMixin, FilteredListViewMixin, Sea
     filtered_queryset_ordering = '-modified'
     url_lookup_parameters = [
         'id',
-        'survey',
+        'survey_schedule',
         ('household_structure', 'id'),
         ('household_identifier', 'household__household_identifier'),
         ('plot_identifier', 'household__plot__plot_identifier')]
@@ -44,12 +44,13 @@ class ListBoardView(EdcBaseViewMixin, ListboardMixin, FilteredListViewMixin, Sea
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        survey = site_surveys.get_survey_from_field_value(context.get('survey')) or DummySurvey()
+        survey_schedule = site_surveys.get_survey_schedule_from_field_value(
+            context.get('survey_schedule')) or DummySurvey()
         context.update(
             navbar_selected='enumeration',
             MALE=MALE,
-            survey=survey,
-            map_area=survey.map_area_display,
+            survey_schedule=survey_schedule,
+            map_area=survey_schedule.map_area_display,
             plot_listboard_url_name=django_apps.get_app_config('plot').listboard_url_name,
             household_listboard_url_name=django_apps.get_app_config('household').listboard_url_name,
             member_listboard_url_name=django_apps.get_app_config('member').listboard_url_name,

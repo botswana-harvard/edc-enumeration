@@ -13,7 +13,7 @@ from member.constants import HEAD_OF_HOUSEHOLD, AVAILABLE
 from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility, HouseholdInfo
 from member.models.household_member.utils import is_minor, is_adult
 from member.participation_status import ParticipationStatus
-from survey.site_surveys import site_surveys
+from survey import site_surveys
 from survey.survey import DummySurvey
 
 
@@ -49,7 +49,7 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
 
     def __init__(self, **kwargs):
         self.household_identifier = None
-        self.survey = None
+        self.survey_schedule = None
         super().__init__(**kwargs)
 
     def member_wrapper(self, member):
@@ -72,16 +72,16 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
         if context.get('household_member'):
             self.household_identifier = context.get(
                 'household_member').household_structure.household.household_identifier
-            survey = context.get('household_member').household_structure.survey_object
+            survey_schedule = context.get('household_member').household_structure.survey_schedule_object
         else:
             self.household_identifier = context.get('household_identifier')
-            survey = site_surveys.get_survey_from_field_value(
-                context.get('survey')) or DummySurvey()
-        survey_objects = site_surveys.current_surveys
+            survey_schedule = site_surveys.get_survey_schedule_from_field_value(
+                context.get('survey_schedule')) or DummySurvey()
+        survey_schedule_objects = site_surveys.get_survey_schedules(current=True)
         try:
             self.household_structure = HouseholdStructure.objects.get(
                 household__household_identifier=self.household_identifier,
-                survey=survey.field_value)
+                survey_schedule=survey_schedule.field_value)
         except HouseholdStructure.DoesNotExist:
             self.household_structure = None
             self.household_log = None
@@ -103,9 +103,9 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
             MALE=MALE,
             enumeration_dashboard_base_html=app_config.enumeration_dashboard_base_html,
             navbar_selected='enumeration',
-            survey_objects=survey_objects,
-            survey=survey,
-            map_area=survey.map_area_display,
+            survey_schedule_objects=survey_schedule_objects,
+            survey_schedule=survey_schedule,
+            map_area=survey_schedule.map_area_display,
             household_log=self.household_log,
             household_log_entries=self.household_log_entries,
             household_members=self.household_members,

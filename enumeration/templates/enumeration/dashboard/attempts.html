@@ -14,13 +14,13 @@
 
    <li class="dropdown-header">Absent</li>
     {% for obj in household_member.absentmember_set.all %}
-      <li><a href="{% url 'member:member_admin:member_absentmember_change' obj.id %}?next=enumeration:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_member={{ household_member.id }}">
+      <li><a href="{% url 'member:member_admin:member_absentmember_change' obj.id %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule }}&household_member={{ household_member.id }}">
         <i class="fa fa-check-square-o"></i> {{ obj.report_date|date:"Y-m-d" }}</a></li>
     {% endfor %}
 
    <li class="dropdown-header">Undecided</li>
     {% for obj in household_member.undecidedmember_set.all %}
-      <li><a href="{% url 'member:member_admin:member_undecidedmember_change' obj.id %}?next=enumeration:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey={{ survey }}&household_member={{ household_member.id }}">
+      <li><a href="{% url 'member:member_admin:member_undecidedmember_change' obj.id %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule }}&household_member={{ household_member.id }}">
         <i class="fa fa-check-square-o"></i> {{ obj.report_date|date:"Y-m-d" }}</a></li>
     {% endfor %}
 
