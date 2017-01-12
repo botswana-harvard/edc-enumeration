@@ -2,7 +2,8 @@
 <!-- begin screening options -->
   <div class="btn-group">
     {% if household_member.enrollmentchecklist.is_eligible %}
-      <a class="btn btn-default btn-sm" type="button" href="{% url 'bcpp-subject:dashboard_url' subject_identifier=household_member.subject_identifier survey_schedule=survey_schedule.field_value %}"><i class="fa fa-user-circle-o fa-sm"></i></i> Dashboard</a>
+      <a class="btn btn-default btn-sm" type="button" href="{% url 'bcpp-subject:dashboard_url' subject_identifier=household_member.subject_identifier survey_schedule=survey_schedule.field_value %}">
+        <i class="fa fa-user-circle-o fa-sm"></i></i> Dashboard</a>
     {% endif %}
     {% if not household_member.final_status_pending %}
     <button class="btn btn-default btn-sm" type="button">
