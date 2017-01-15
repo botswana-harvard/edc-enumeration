@@ -1,22 +1,24 @@
-from django.apps import apps as django_apps
-from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_base.utils import get_utcnow
 from edc_constants.constants import ALIVE, YES, MALE
+from edc_dashboard.view_mixins import DashboardViewMixin, SubjectIdentifierViewMixin
 
-from household.models.household_log import HouseholdLog
-from household.models.household_log_entry import HouseholdLogEntry
-from household.models.household_structure.household_structure import HouseholdStructure
-from member.constants import HEAD_OF_HOUSEHOLD, AVAILABLE
-from member.models import HouseholdHeadEligibility, HouseholdMember, RepresentativeEligibility, HouseholdInfo
-from member.models.household_member.utils import is_minor, is_adult
-from member.participation_status import ParticipationStatus
-from survey import site_surveys
-from survey.survey import DummySurvey
+from household.models import HouseholdLogEntry
+from household.views import (
+    HouseholdViewMixin, HouseholdStructureViewMixin,
+    HouseholdLogEntryViewMixin)
+from member.constants import HEAD_OF_HOUSEHOLD
+from member.models import (
+    HouseholdHeadEligibility, RepresentativeEligibility, HouseholdInfo)
+from member.views import HouseholdMemberViewMixin
+from survey.view_mixins import SurveyViewMixin
+
+from .mixins import EnumerationAppConfigViewMixin
+from .wrappers import HouseholdMemberModelWrapper
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Button:
@@ -43,85 +45,47 @@ class Button:
             self.household_structure = household_structure
 
 
-class DashboardView(EdcBaseViewMixin, TemplateView):
+class DashboardView(EdcBaseViewMixin, DashboardViewMixin, SubjectIdentifierViewMixin,
+                    SurveyViewMixin, HouseholdViewMixin,
+                    HouseholdStructureViewMixin, HouseholdLogEntryViewMixin,
+                    HouseholdMemberViewMixin, EnumerationAppConfigViewMixin, TemplateView):
 
-    template_name = 'enumeration/dashboard.html'
-    paginate_by = 4
-    base_html = 'bcpp/base.html'
-
-    def __init__(self, **kwargs):
-        self.household_identifier = None
-        self.survey_schedule = None
-        super().__init__(**kwargs)
+    app_config_name = 'enumeration'
+    household_member_wrapper_class = HouseholdMemberModelWrapper
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-    def member_wrapper(self, member):
-        member.participation_status = ParticipationStatus(member).participation_status
-        member.get_participation_status_display = ParticipationStatus(
-            member).get_participation_status_display()
-        if member.participation_status == AVAILABLE:
-            member.get_participation_status_display = None
-        member.final_status_pending = ParticipationStatus(member).final_status_pending
-        member.is_minor = is_minor(member.age_in_years)
-        member.is_adult = is_adult(member.age_in_years)
-        if member.refused:
-            member.done = True
-        return member
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        app_config = django_apps.get_app_config('enumeration')
         self.today = context.get('today')  # for tests
-        if context.get('household_member'):
-            self.household_identifier = context.get(
-                'household_member').household_structure.household.household_identifier
-            survey_schedule = context.get('household_member').household_structure.survey_schedule_object
-        else:
-            self.household_identifier = context.get('household_identifier')
-            survey_schedule = site_surveys.get_survey_schedule_from_field_value(
-                context.get('survey_schedule')) or DummySurvey()
-        survey_schedule_objects = site_surveys.get_survey_schedules(current=True)
-        try:
-            self.household_structure = HouseholdStructure.objects.get(
-                household__household_identifier=self.household_identifier,
-                survey_schedule=survey_schedule.field_value)
-        except HouseholdStructure.DoesNotExist:
-            self.household_structure = None
-            self.household_log = None
-            self.household_log_entries = None
-            self.household_members = None
-        else:
-            self.household_log = HouseholdLog.objects.get(
-                household_structure=self.household_structure)
-            self.household_log_entries = HouseholdLogEntry.objects.filter(
-                household_log__household_structure=self.household_structure).order_by(
-                    '-report_datetime')
-            self.household_members = HouseholdMember.objects.filter(
-                household_structure=self.household_structure).order_by('first_name')
-            self.household_members = [self.member_wrapper(obj) for obj in self.household_members]
         context.update(
-            site_header=admin.site.site_header,
             ALIVE=ALIVE,
             YES=YES,
             MALE=MALE,
-            enumeration_dashboard_base_html=app_config.enumeration_dashboard_base_html,
-            navbar_selected='enumeration',
-            survey_schedule_objects=survey_schedule_objects,
-            survey_schedule=survey_schedule,
-            map_area=survey_schedule.map_area_display,
-            household_log=self.household_log,
-            household_log_entries=self.household_log_entries,
-            household_members=self.household_members,
-            household_structure=self.household_structure,
-            current_household_log_entry=self.current_household_log_entry,
             can_add_members=self.can_add_members,
             eligibility_buttons=self.eligibility_buttons(self.household_structure),
-            enumeration_listboard_url_name=django_apps.get_app_config('enumeration').listboard_url_name,
+            alert=self.alert,
         )
         return context
+
+    @property
+    def alert(self):
+        if not self.current_household_log_entry:
+            return 'Please complete a {} for today.'.format(
+                HouseholdLogEntry._meta.verbose_name)
+        elif not self.representative_eligibility:
+            return 'Please complete the {} form.'.format(
+                RepresentativeEligibility._meta.verbose_name)
+        elif not self.household_info:
+            return 'Please complete the {} form.'.format(
+                HouseholdInfo._meta.verbose_name)
+        elif not self.head_of_household_eligibility and self.head_of_household:
+            return 'Please complete the {} form.'.format(
+                HouseholdHeadEligibility._meta.verbose_name)
+        else:
+            return None
 
     @property
     def can_add_members(self):
@@ -158,41 +122,17 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
 
         # household_info
         try:
-            household_info = HouseholdInfo.objects.get(household_structure=self.household_structure)
+            household_info = HouseholdInfo.objects.get(
+                household_structure__id=self.household_structure.id)
         except HouseholdInfo.DoesNotExist:
             household_info = HouseholdInfo()
         if not self.representative_eligibility:
             btn.disabled = True
         if not self.current_household_log_entry and btn.add:
             btn.disabled = True
-        btn = Button(household_info, household_structure=household_structure)
+        btn = Button(household_info, household_structure=household_structure.wrapped_object)
         eligibility_buttons.append(btn)
         return eligibility_buttons
-
-    @property
-    def current_household_log_entry(self):
-        """Return current household log entry model instance, or none."""
-        current_household_log_entry = None
-        today = self.today or get_utcnow()
-        if self.household_log_entries:
-            obj = self.household_log_entries.all().order_by('report_datetime').last()
-            try:
-                if obj.report_datetime.date() == today.date():
-                    current_household_log_entry = obj
-            except AttributeError:
-                pass
-        return current_household_log_entry
-
-    @property
-    def head_of_household(self):
-        """Returns the household member model instance that is the Head of Household or None."""
-        try:
-            obj = HouseholdMember.objects.get(
-                household_structure=self.household_structure,
-                relation=HEAD_OF_HOUSEHOLD)
-        except HouseholdMember.DoesNotExist:
-            obj = None
-        return obj
 
     @property
     def head_of_household_eligibility(self):
@@ -208,8 +148,16 @@ class DashboardView(EdcBaseViewMixin, TemplateView):
     def representative_eligibility(self):
         """Return the representative eligibility model instance."""
         try:
-            obj = RepresentativeEligibility.objects.get(
-                household_structure=self.household_structure)
-        except RepresentativeEligibility.DoesNotExist:
+            obj = self.household_structure.wrapped_object.representativeeligibility
+        except ObjectDoesNotExist:
+            obj = None
+        return obj
+
+    @property
+    def household_info(self):
+        """Return the household_info model instance."""
+        try:
+            obj = self.household_structure.wrapped_object.householdinfo
+        except ObjectDoesNotExist:
             obj = None
         return obj

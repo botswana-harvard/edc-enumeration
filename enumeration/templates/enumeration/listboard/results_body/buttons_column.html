@@ -10,10 +10,11 @@
 
    <a title="household" role="button" class="btn btn-sm btn-default"
         href="{% url household_listboard_url_name result.household_identifier %}">
-            <i class="fa fa-home fa-lg"></i>
+            <i class="fa fa-home fa-lg"></i> {{ result.household_identifier }}
+            
    </a>
 
-   {% with history_objects=result.log_entry_set title="Household logs" add_button=survey_schedule history_object=result.log_entry %}
+   {% with history_objects=result.log_entry_set title="Household logs" add_button=result.survey_schedule_object history_object=result.log_entry %}
      {% include 'edc_dashboard/controls/history_button.html' %}
    {% endwith %}
 
@@ -21,27 +22,32 @@
      {% include 'enumeration/members_button.html' %}
    {% endwith %}
 
-   {% if survey_schedule %}
+   {% if survey_schedule_object.field_value %}
 
      <a title="enumeration" role="button" class="btn btn-sm btn-default"
-        href="{% url listboard_url_name household_identifier=result.household_identifier %}">
-            <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
+        href="{% url enumeration_listboard_url_name plot_identifier=result.plot_identifier %}">
+          <i class="fa fa-sitemap fa-md"></i>
+     </a>
 
      <a title="enumeration dashboard" role="button" class="btn btn-sm {% if result.log_entry_set.count == 0 %} btn-default disabled{% else %}btn-success{% endif %}"
-        href="{% url enumeration_dashboard_url_name household_identifier=result.household_identifier survey_schedule=result.survey_schedule.field_value %}">
-            <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard</a>
+        href="{% url enumeration_dashboard_url_name household_identifier=result.household_identifier survey_schedule=survey_schedule_object.field_value %}">
+            <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard
+     </a>
 
    {% else %}
 
      <a title="enumeration" role="button" class="btn btn-sm btn-success"
-        href="{% url listboard_url_name household_identifier=result.household_identifier survey_schedule=result.survey_schedule.field_value %}">
-            <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i></a>
+        href="{% url member_listboard_url_name household_identifier=result.household_identifier survey_schedule=result.survey_schedule_object.field_value %}">
+            <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i>
+     </a>
 
      <a title="members" role="button" class="btn btn-sm btn-default{% if not result.members %} disabled{% endif %}"
-        href="{% url member_listboard_url_name plot_identifier=result.plot_identifier %}">
-          <i class="fa fa-group fa-md"></i></a>
+        href="{% url member_listboard_url_name plot_identifier=result.plot_identifier survey_schedule=result.survey_schedule_object.field_value %}">
+          <i class="fa fa-group fa-md"></i>
+     </a>
 
    {% endif %}
+
 </td>  
 
 <!-- begin buttons column -->

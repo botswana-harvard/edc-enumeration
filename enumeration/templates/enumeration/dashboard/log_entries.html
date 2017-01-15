@@ -2,34 +2,17 @@
 <!-- start log entries -->
 
 <div class="table-responsive small">
-    <table class="table table-hover table-condensed">
-      <thead>
-        <th>
-          <a title="add log entry" role="button" class="btn btn-sm btn-{% if current_household_log_entry %}default{% else %}warning{% endif %} " href="{% url 'household_admin:household_householdlogentry_add' %}?household_log={{ household_log.id }}&next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule.field_value }}">
-            <i class="fa fa-plus fa-sm"></i> <i class="fa fa-file-o fa-sm"></i>
-          </a>
-        </th>
-    		<th>Log entries</th>
-      </thead>
+    <table class="table table-condensed">
+      <thead></thead>
       <tbody>
-      {% if not household_log_entries or not current_household_log_entry%}
-        <tr>
-          <td colspan="4">
-            <span class="label label-danger">
-              <i class="fa fa-hand-stop-o fa-lg"></i>
-            </span>&nbsp;
-            <span class="text text-warning">Add a log entry first</span>
-          </td>
-        </tr>
-      {% endif %}
+
       {% for obj in household_log_entries %}
         <tr>
           <td>
-            <a title="change log entry" role="button" class="btn btn-sm btn-success" href="{% url 'household_admin:household_householdlogentry_change' obj.id %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule.field_value }}">
-              <i class="fa fa-pencil fa-sm"></i>&nbsp;
-              <i class="fa fa-file-o fa-sm"></i>
+            <a title="change log entry" role="button" class="btn btn-default" href="{% url 'household_admin:household_householdlogentry_change' obj.id %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_log={{ obj.household_log.id }}">
+              <i class="fa fa-pencil fa-sm"></i>
             </a>
-          {% if current_household_log_entry.pk ==  obj.pk %}<span class="label label-info">Today</span>{% endif %}
+          {% if current_household_log_entry.id ==  obj.id %}<span class="label label-info">Today</span>{% endif %}
           </td>
           <td>
             {{ obj.report_datetime|date:"Y-m-d H:i" }}&nbsp;

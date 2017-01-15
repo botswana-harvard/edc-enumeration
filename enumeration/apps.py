@@ -11,7 +11,9 @@ class AppConfig(DjangoAppConfig):
     listboard_template_name = 'enumeration/listboard.html'
     listboard_url_name = 'enumeration:listboard_url'
     dashboard_url_name = 'enumeration:dashboard_url'
-    enumeration_dashboard_base_html = 'edc_base/base.html'
+    subject_dashboard_url_name = None
+    dashboard_template_name = 'enumeration/dashboard.html'
+    base_template_name = 'edc_base/base.html'
 
     def ready(self):
         sys.stdout.write('Loading {} ...\n'.format(self.verbose_name))

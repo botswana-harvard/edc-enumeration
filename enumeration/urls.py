@@ -28,17 +28,25 @@ from .views import ListBoardView, DashboardView
 
 urlpatterns = [
     url(r'^dashboard/'
+        '(?P<subject_identifier>' + '[0-9]{3}\-[0-9\-]+' + ')/'
         '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
         DashboardView.as_view(), name='dashboard_url'),
     url(r'^dashboard/'
-        '(?P<household_member>' + UUID_PATTERN.pattern + ')',
+        '(?P<subject_identifier>' + UUID_PATTERN.pattern + ')/'
+        '(?P<household_identifier>' + household_identifier + ')/'
+        '(?P<survey_schedule>' + survey_schedule + ')/',
         DashboardView.as_view(), name='dashboard_url'),
-    url(r'^listboard/(?P<page>[0-9]+)/',
-        ListBoardView.as_view(), name='listboard_url'),
+    url(r'^dashboard/'
+        '(?P<household_identifier>' + household_identifier + ')/'
+        '(?P<survey_schedule>' + survey_schedule + ')/',
+        DashboardView.as_view(), name='dashboard_url'),
     url(r'^listboard/'
         '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
+        ListBoardView.as_view(), name='listboard_url'),
+    url(r'^listboard/'
+        '(?P<household_identifier>' + household_identifier + ')/',
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'
         '(?P<plot_identifier>' + plot_identifier + ')/'
@@ -48,14 +56,13 @@ urlpatterns = [
         '(?P<plot_identifier>' + plot_identifier + ')/',
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'
-        '(?P<household_identifier>' + household_identifier + ')/',
-        ListBoardView.as_view(), name='listboard_url'),
-    url(r'^listboard/'
         '(?P<household_structure>' + UUID_PATTERN.pattern + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'
         '(?P<household_structure>' + UUID_PATTERN.pattern + ')/',
+        ListBoardView.as_view(), name='listboard_url'),
+    url(r'^listboard/(?P<page>[0-9]+)/',
         ListBoardView.as_view(), name='listboard_url'),
     url(r'^listboard/'
         '(?P<id>' + UUID_PATTERN.pattern + ')/',

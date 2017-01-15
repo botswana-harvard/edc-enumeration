@@ -2,6 +2,7 @@
 <!-- begin results body -->
 
 {% for result in results %}
+
   <tr> 
       <td>{{ forloop.counter }}</td>
 
@@ -10,6 +11,7 @@
       {% include 'enumeration/listboard/results_body/columns.html' %}
 
   </tr>
+  
  {% endfor %}
 
 <!-- end results body -->

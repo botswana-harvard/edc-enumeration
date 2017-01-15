@@ -1,68 +1,57 @@
-{% extends base_html %}
-{% load staticfiles %}
+{% extends 'enumeration/dashboard/base.html' %}
 
-{% block extra-styles %}
-{{ block.super }}
-  .panel-extended {
-    min-height: 200px;
-    overflow-y: scroll;
-  }
-{% endblock %}
-{% block extra-scripts %}
-{{ block.super }}
-<script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();
-});
-</script>
-{% endblock extra-scripts %} 
 
-{% block main %}
-<div class="container">
-    <div class="col-md-12">
-    <div class="panel-group">
-      <div class="panel panel-info">
-        <div class="panel-heading clearfix">
-          <i class="fa fa-sitemap fa-lg"></i> 
-            &nbsp;&nbsp;<span class="text text-muted small" style="font-size:14px;">{{ household_identifier }}  &rsaquo; {{ survey_schedule.breadcrumbs|join:" &rsaquo; " }}</span>
-          <span class="pull-right">
-            <a title="close" role="button" class="btn btn-primary btn-sm"
-                href="{% url enumeration_listboard_url_name household_identifier=household_identifier survey_schedule=survey_schedule.field_value %}">
-                    <i class="fa fa-reply" aria-hidden="true"></i> Close
-            </a></span>
-        </div>
-      </div>
-    </div>
-    </div>
 
-    <div class="panel-group">
-      <div class="col-md-9">
-        <div class="panel panel-info">
+{% block alert %}
 
-          <div class="panel-heading clearfix">
-            {% include 'enumeration/dashboard/members_panel_heading.html' %}
-          </div><!--end panel heading-->
+      {% if alert %}
+			<div class="alert alert-danger">
+			  <i class="fa fa-hand-stop-o fa-lg"></i> {{ alert }}
+			</div>
+      {% endif %}
 
-          <div class="panel-body">
-            {% include 'enumeration/dashboard/members.html' %}
-          </div>
-        </div>
-      </div>
+{% endblock alert %}
 
-      <div class="col-md-3">
-        <div class="panel-group">
-          <div class="panel panel-default">
-            {% include 'enumeration/dashboard/log_entries.html' %}
-          </div>
-  
-          <div class="panel panel-warning">
-              <div class="panel-heading">Stats</div>
-              {% include 'enumeration/dashboard/statistics.html' %}
-          </div>
-        </div>
-      </div>
 
-  </div>
-</div>
+{% block dashboard_topbar %}           
 
-{% endblock main %}
+    {% include 'enumeration/dashboard/topbar.html' %}
+
+{% endblock dashboard_topbar %}           
+
+
+{% block household_forms %}           
+
+    {% include 'enumeration/dashboard/household_forms.html' %}
+
+{% endblock household_forms %}           
+
+
+{% block log_entry_history %}           
+
+    {% include 'enumeration/dashboard/log_entries.html' %}
+
+{% endblock log_entry_history %}           
+
+
+{% block statistics %}           
+
+    {% include 'enumeration/dashboard/statistics.html' %}
+    
+{% endblock statistics %}           
+
+
+{% block members_panel_header %}
+
+  {% include 'enumeration/dashboard/members_panel_heading.html' %}
+
+{% endblock members_panel_header %}
+
+
+{% block member_rows %}           
+
+    {% include 'enumeration/dashboard/members/members.html' %}
+
+{% endblock member_rows %}           
+
+

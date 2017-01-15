@@ -1,0 +1,106 @@
+{% extends base_template_name %}
+{% load staticfiles %}
+
+
+{% block main %}
+<div class="container">
+
+    <div class="col-md-12">
+        <div class="panel-group">
+            <div class="panel panel-info">
+
+                {% block dashboard_topbar %}{% endblock dashboard_topbar %}
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+    {% block alert %}
+    {% endblock alert %}
+    </div>
+    <div class="panel-group">
+      <div class="col-md-9">
+
+        <div class="panel-group" id="accordion2">
+        {% for survey_schedule_object in survey_schedules reversed %} 
+	        <div class="panel panel-default">
+			  <div class="panel-heading">
+			      <h6 class="panel-title">
+			        {% if forloop.first %}
+			        <a title="add household member"  class="btn btn-sm btn-default {% if not can_add_members %} disabled{% endif %}" role="button" href="{% url 'member_admin:member_householdmember_add' %}?household_structure={{household_structure.id}}&next=enumeration:dashboard_url,household_identifier,survey_schedule&survey_schedule={{ survey_schedule_object.field_value }}&household_identifier={{ household_identifier }}">
+			            <i class="fa fa-plus fa-sm"></i> <i class="fa fa-user fa-lg"></i>
+			        </a>
+			        {% endif %}
+			        <a data-toggle="collapse" data-parent="#accordion2" href="#household_members{{ forloop.counter }}">
+			           {{ survey_schedule_object.name|title }} Household Members
+			        </a>
+			      </h6>
+			  </div>
+	
+	            <div id="household_members{{ forloop.counter }}" class="panel-collapse collapse{% if forloop.first %} in{% endif %}">
+		        {% block member_rows %}{% endblock member_rows %}    
+		        </div>       
+	        </div>
+        {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="panel-group">
+
+          <div class="panel-group" id="accordion">
+	      <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title"><i class="fa fa-list-alt fa-lg"></i>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#household_forms">Household Forms</a>
+                </h6>
+            </div>
+            <div id="household_forms" class="panel-collapse collapse in">
+    	        {% block household_forms %}{% endblock household_forms %}           
+            </div>           
+	      </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title"><i class="fa fa-history fa-lg"></i> 
+                    <a data-toggle="collapse" data-parent="#accordion" href="#survey_history">Survey History</a>
+                </h6>
+            </div>
+            <div id="survey_history" class="panel-collapse collapse">
+               {% block survey_history %}{% endblock survey_history %}
+            </div>           
+          </div>
+
+
+
+
+	      <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title"><i class="fa fa-files-o fa-lg"></i> 
+                    <a data-toggle="collapse" data-parent="#accordion" href="#household_logs">Household Logs</a>
+                </h6>
+            </div>
+            <div id="household_logs" class="panel-collapse collapse">
+	           {% block log_entry_history %}{% endblock log_entry_history %}
+	        </div>           
+	      </div>
+  
+	      <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title"><i class="fa fa-bar-chart fa-lg"></i>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#statistics">Statistics</a>
+                </h6>
+            </div>
+            <div id="statistics" class="panel-collapse collapse">
+    	        {% block statistics %}{% endblock statistics %}           
+            </div>           
+	      </div>
+        </div>
+      </div>
+
+  </div>
+
+  </div>
+</div>
+{% endblock main %}

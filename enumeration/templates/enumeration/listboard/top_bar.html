@@ -1,11 +1,19 @@
 
 <!-- begin top_bar -->
 
-<span class="text small">
+
   {% if household_identifier %}
+  
     &nbsp;&nbsp;<span class="text text-muted" style="font-size:14px;">{{ household_identifier }}</span>
-{% if survey_schedule %} <span class="text text-muted" style="font-size:14px;"> &rsaquo; {{ survey_schedule.breadcrumbs|join:" &rsaquo; " }}</span> {% endif %}
-{% endif %}
-{% include 'edc_search/search_form.html' %}</div>
+  
+    {% if survey_schedule_object %}
+        <span class="text text-muted" style="font-size:14px;">
+            &rsaquo; {{ survey_schedule_object.breadcrumbs|join:" &rsaquo; " }}
+        </span>
+    {% endif %}
+
+  {% endif %}
+
+{% include 'edc_search/search_form.html' %}
 
 <!-- end top_bar -->

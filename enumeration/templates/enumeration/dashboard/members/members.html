@@ -8,7 +8,7 @@
             <td><span class="text text-default small">{{ forloop.counter }}</span></td>
             <td>
                <a role="button" class="btn btn-sm btn-success" 
-                  href="{% url 'member_admin:member_householdmember_change' household_member.id %}?next=enumeration:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule.field_value }}&household_structure={{ household_structure.id }}">
+                  href="{% url 'member_admin:member_householdmember_change' household_member.id %}?next=enumeration:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_structure={{ household_structure.id }}">
                     <i class="fa fa-pencil fa-sm"></i>&nbsp;
                     <i class="fa fa-{% if household_member.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
                </a>
@@ -44,19 +44,19 @@
               {% else %}
                 <div class="btn-group">
                   {% if household_member.eligible_member %}
-                    {% include 'enumeration/dashboard/attempts.html' %}
+                    {% include 'enumeration/dashboard/members/attempts.html' %}
                   {% endif %}
                   {% if household_member.eligible_member %}
-                    {% include 'enumeration/dashboard/screening_options.html' %}
+                    {% include 'enumeration/dashboard/members/screening_options.html' %}
                   {% endif %}
                   {% if household_member.eligible_member %}
-                    {% include 'enumeration/dashboard/eligible_options.html' %}
+                    {% include 'enumeration/dashboard/members/eligible_options.html' %}
                   {% endif %}
                 </div>
               {% endif %}
             </td>
            </tr>
-           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You still have more to do!</td></tr>
+           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You doing great! <fi class="fa fa-smile-o fa-lg"></i></td></tr>
           {% endfor %}
       </tbody>
     {% endif %}
