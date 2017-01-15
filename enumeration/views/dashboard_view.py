@@ -10,7 +10,6 @@ from household.models import HouseholdLogEntry
 from household.views import (
     HouseholdViewMixin, HouseholdStructureViewMixin,
     HouseholdLogEntryViewMixin)
-from member.constants import HEAD_OF_HOUSEHOLD
 from member.models import (
     HouseholdHeadEligibility, RepresentativeEligibility, HouseholdInfo)
 from member.views import HouseholdMemberViewMixin
@@ -108,8 +107,6 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, SubjectIdentifierViewM
         # head_of_household_eligibility
         btn = Button(self.head_of_household_eligibility or HouseholdHeadEligibility(),
                      household_structure=household_structure)
-        btn = Button(self.head_of_household_eligibility or HouseholdHeadEligibility(),
-                     household_structure=household_structure)
         if not btn.household_member:
             btn.household_member = self.head_of_household
         # only enable if hoh exists
@@ -126,9 +123,14 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, SubjectIdentifierViewM
                 household_structure__id=self.household_structure.id)
         except HouseholdInfo.DoesNotExist:
             household_info = HouseholdInfo()
-        if not self.representative_eligibility:
+        btn = Button(household_info, household_structure=household_structure)
+        if not btn.household_member:
+            btn.household_member = self.head_of_household
+        # only enable if hoh exists
+        if not btn.household_member:
             btn.disabled = True
-        if not self.current_household_log_entry and btn.add:
+        # can edit anytime, but can only add if have todays log...
+        if (not self.current_household_log_entry and btn.add) or not self.household_members:
             btn.disabled = True
         btn = Button(household_info, household_structure=household_structure.wrapped_object)
         eligibility_buttons.append(btn)
