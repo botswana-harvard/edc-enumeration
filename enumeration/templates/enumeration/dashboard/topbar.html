@@ -1,8 +1,7 @@
 
 
   <div class="panel-heading clearfix">
-    <i class="fa fa-sitemap fa-lg"></i> 
-      &nbsp;&nbsp;<span class="text text-muted small" style="font-size:14px;">{{ household_identifier }}  &rsaquo; {{ survey_schedule_object.breadcrumbs|join:" &rsaquo; " }}</span>
+    <i class="fa fa-sitemap fa-lg fa-fw"></i> 
     <span class="pull-right">
       <a title="close" role="button" class="btn btn-primary btn-sm"
           href="{% url enumeration_listboard_url_name household_identifier=household_identifier survey_schedule=survey_schedule_object.field_value %}">

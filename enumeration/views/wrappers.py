@@ -1,3 +1,4 @@
+from django.apps import apps as django_apps
 from household.views.wrappers import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper)
 
@@ -17,8 +18,10 @@ class HouseholdStructureWithLogEntryWrapper(BaseHouseholdStructureWithLogEntryWr
 
 class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
 
-    def add_from_wrapped_model(self):
-        super().add_from_wrapped_model()
+    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
+
+    def add_extra_attributes_after(self):
+        super().add_extra_attributes_after()
         self.verbose_name = self.wrapped_object.verbose_name
         self.refused = self.wrapped_object.refused
         try:

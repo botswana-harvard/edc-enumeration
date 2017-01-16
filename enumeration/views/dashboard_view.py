@@ -18,6 +18,7 @@ from survey.view_mixins import SurveyViewMixin
 from .mixins import EnumerationAppConfigViewMixin
 from .wrappers import HouseholdMemberModelWrapper
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.safestring import mark_safe
 
 
 class Button:
@@ -65,24 +66,29 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, SubjectIdentifierViewM
             MALE=MALE,
             can_add_members=self.can_add_members,
             eligibility_buttons=self.eligibility_buttons(self.household_structure),
-            alert=self.alert,
+            alert_danger=None if not self.alert_danger else mark_safe(self.alert_danger),
+            # alert_success='Thanks',
         )
         return context
 
     @property
-    def alert(self):
+    def alert_danger(self):
         if not self.current_household_log_entry:
-            return 'Please complete a {} for today.'.format(
-                HouseholdLogEntry._meta.verbose_name)
+            return 'Please complete a <a href="{url}" class="alert-link">{form}</a> for today.'.format(
+                form=HouseholdLogEntry._meta.verbose_name,
+                url=HouseholdHeadEligibility().get_absolute_url())
         elif not self.representative_eligibility:
-            return 'Please complete the {} form.'.format(
-                RepresentativeEligibility._meta.verbose_name)
+            return 'Please complete the <a href="{url}" class="alert-link">{form}</a> form.'.format(
+                form=RepresentativeEligibility._meta.verbose_name,
+                url=HouseholdHeadEligibility().get_absolute_url())
         elif not self.household_info:
-            return 'Please complete the {} form.'.format(
-                HouseholdInfo._meta.verbose_name)
+            return 'Please complete the <a href="{url}" class="alert-link">{form}</a>  form.'.format(
+                form=HouseholdInfo._meta.verbose_name,
+                url=HouseholdHeadEligibility().get_absolute_url())
         elif not self.head_of_household_eligibility and self.head_of_household:
-            return 'Please complete the {} form.'.format(
-                HouseholdHeadEligibility._meta.verbose_name)
+            return 'Please complete the <a href="{url}" class="alert-link">{form}</a> form.'.format(
+                form=HouseholdHeadEligibility._meta.verbose_name,
+                url=HouseholdHeadEligibility().get_absolute_url())
         else:
             return None
 

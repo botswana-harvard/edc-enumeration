@@ -3,19 +3,19 @@
     <thead></thead>
     {% if household_members %}
       <tbody>
-          {% for household_member in household_members %}
+          {% for wrapped in household_members %}
           <tr>
             <td><span class="text text-default small">{{ forloop.counter }}</span></td>
             <td>
                <a role="button" class="btn btn-sm btn-success" 
-                  href="{% url 'member_admin:member_householdmember_change' household_member.id %}?next=enumeration:dashboard_url,household_identifier,survey&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_structure={{ household_structure.id }}">
+                  href="{{ wrapped.get_absolute_url }}?next={{ wrapped.next_url }}&{{ wrapped.extra_querystring }}">
                     <i class="fa fa-pencil fa-sm"></i>&nbsp;
-                    <i class="fa fa-{% if household_member.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
+                    <i class="fa fa-{% if wrapped.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
                </a>
-               {% if household_member.survival_status != ALIVE %}<span class="label label-info">{{ household_member.get_survival_status_display }}</span>{% endif %}
+               {% if wrapped.survival_status != ALIVE %}<span class="label label-info">{{ wrapped.get_survival_status_display }}</span>{% endif %}
             </td>
             <td>
-              {% if household_member.done %}
+              {% if wrapped.done %}
                 <i class="fa fa-check fa-lg"></i>
               {% else %}
                 <button data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}"><i class="fa fa-tasks fa-lg"></i></button>
@@ -24,33 +24,39 @@
             
             <td>
               <span class="text text-default">
-                {{ household_member.first_name|lower|capfirst }}&nbsp;{{ household_member.initials }}&nbsp;
-                {{ household_member.age_in_years }}</span></br>
-              <span class="label label-info">{{ household_member.get_relation_display|lower|capfirst }}</span>
-              {% if household_member.is_minor %}
+                {{ wrapped.first_name|lower|capfirst }}&nbsp;{{ wrapped.initials }}&nbsp;
+                {{ wrapped.age_in_years }}</span></br>
+              <span class="label label-info">{{ wrapped.get_relation_display|lower|capfirst }}</span>
+              {% if wrapped.is_minor %}
                 <span class="label label-warning">Minor</span>
-              {% elif household_member.is_adult %}
+              {% elif wrapped.is_adult %}
                 <span class="label label-info">Adult</span>
               {% else %}
                 <span class="label label-info">Child</span>
               {% endif %}
-              <span class="label label-info">{% if household_member.study_resident == YES %}Resident{% else %}Non-resident{% endif %}</span>
+              <span class="label label-info">{% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}</span>
             </td>
             <td>
-              {% if not household_member.eligible_member %}
+              {% if not wrapped.eligible_member %}
                 <span title="not eligible">
                   <i class="fa fa-ban fa-lg text-danger"></i> <span class="text text-muted">Not eligible</span>
                 </span>
               {% else %}
                 <div class="btn-group">
-                  {% if household_member.eligible_member %}
-                    {% include 'enumeration/dashboard/members/attempts.html' %}
+                  {% if wrapped.eligible_member %}
+                    {% with household_member=wrapped %}
+                        {% include 'enumeration/dashboard/members/attempts.html' %}
+                    {% endwith %}
                   {% endif %}
-                  {% if household_member.eligible_member %}
-                    {% include 'enumeration/dashboard/members/screening_options.html' %}
+                  {% if wrapped.eligible_member %}
+                    {% with household_member=wrapped %}
+                        {% include 'enumeration/dashboard/members/screening_options.html' %}
+                    {% endwith %}
                   {% endif %}
-                  {% if household_member.eligible_member %}
-                    {% include 'enumeration/dashboard/members/eligible_options.html' %}
+                  {% if wrapped.eligible_member %}
+                    {% with household_member=wrapped %}
+                        {% include 'enumeration/dashboard/members/eligible_options.html' %}
+                    {% endwith %}
                   {% endif %}
                 </div>
               {% endif %}

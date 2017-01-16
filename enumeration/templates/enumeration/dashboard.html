@@ -4,10 +4,16 @@
 
 {% block alert %}
 
-      {% if alert %}
-			<div class="alert alert-danger">
-			  <i class="fa fa-hand-stop-o fa-lg"></i> {{ alert }}
+      {% if alert_danger %}
+			<div class="alert alert-danger fade in">
+			  <i class="fa fa-hand-stop-o fa-lg"></i> {{ alert_danger }}
 			</div>
+      {% elif alert_success %}
+
+            <div class="alert alert-success alert-dismissable fade in" id="success-alert">
+              <i class="fa fa-hand-stop-o fa-lg"></i> {{ alert_success }}
+            </div>
+
       {% endif %}
 
 {% endblock alert %}

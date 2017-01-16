@@ -6,16 +6,6 @@
 <div class="container">
 
     <div class="col-md-12">
-        <div class="panel-group">
-            <div class="panel panel-info">
-
-                {% block dashboard_topbar %}{% endblock dashboard_topbar %}
-
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-12">
     {% block alert %}
     {% endblock alert %}
     </div>
@@ -47,12 +37,29 @@
       </div>
 
       <div class="col-md-3">
+
         <div class="panel-group">
+            <div class="panel panel-info">
+
+                {% block dashboard_topbar %}{% endblock dashboard_topbar %}
+
+            </div>
+        </div>
+
+        <div class="panel-group">
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title"><i class="fa fa-home fa-lg fa-fw"></i>
+                    {{ household_identifier }}
+                </h6>
+            </div>
+          </div>         
 
           <div class="panel-group" id="accordion">
 	      <div class="panel panel-default">
             <div class="panel-heading">
-                <h6 class="panel-title"><i class="fa fa-list-alt fa-lg"></i>
+                <h6 class="panel-title"><i class="fa fa-list-alt fa-lg fa-fw"></i>
                     <a data-toggle="collapse" data-parent="#accordion" href="#household_forms">Household Forms</a>
                 </h6>
             </div>
@@ -63,7 +70,7 @@
 
           <div class="panel panel-default">
             <div class="panel-heading">
-                <h6 class="panel-title"><i class="fa fa-history fa-lg"></i> 
+                <h6 class="panel-title"><i class="fa fa-history fa-lg fa-fw"></i> 
                     <a data-toggle="collapse" data-parent="#accordion" href="#survey_history">Survey History</a>
                 </h6>
             </div>
@@ -72,12 +79,9 @@
             </div>           
           </div>
 
-
-
-
 	      <div class="panel panel-default">
             <div class="panel-heading">
-                <h6 class="panel-title"><i class="fa fa-files-o fa-lg"></i> 
+                <h6 class="panel-title"><i class="fa fa-files-o fa-lg fa-fw"></i> 
                     <a data-toggle="collapse" data-parent="#accordion" href="#household_logs">Household Logs</a>
                 </h6>
             </div>
@@ -88,7 +92,7 @@
   
 	      <div class="panel panel-default">
             <div class="panel-heading">
-                <h6 class="panel-title"><i class="fa fa-bar-chart fa-lg"></i>
+                <h6 class="panel-title"><i class="fa fa-bar-chart fa-lg fa-fw"></i>
                     <a data-toggle="collapse" data-parent="#accordion" href="#statistics">Statistics</a>
                 </h6>
             </div>
@@ -104,3 +108,14 @@
   </div>
 </div>
 {% endblock main %}
+
+{% block extra-scripts %}
+    {{ block.super }}
+
+<script>
+	$("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+	    $("#success-alert").slideUp(500);
+
+	});
+</script>
+{% endblock extra-scripts %}
