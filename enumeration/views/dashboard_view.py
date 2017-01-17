@@ -52,18 +52,18 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
 
     @property
     def alert_danger(self):
-        if not self.current_household_log_entry:
+        if not self.current_household_log_entry.id:
             return 'Please complete a <a href="{url}" class="alert-link">{form}</a> for today.'.format(
                 form=HouseholdLogEntry._meta.verbose_name,
-                url=HouseholdHeadEligibility().get_absolute_url())
+                url=HouseholdLogEntry().get_absolute_url())
         elif not self.representative_eligibility:
             return 'Please complete the <a href="{url}" class="alert-link">{form}</a> form.'.format(
                 form=RepresentativeEligibility._meta.verbose_name,
-                url=HouseholdHeadEligibility().get_absolute_url())
+                url=RepresentativeEligibility().get_absolute_url())
         elif not self.household_info:
             return 'Please complete the <a href="{url}" class="alert-link">{form}</a>  form.'.format(
                 form=HouseholdInfo._meta.verbose_name,
-                url=HouseholdHeadEligibility().get_absolute_url())
+                url=HouseholdInfo().get_absolute_url())
         elif not self.head_of_household_eligibility and self.head_of_household:
             return 'Please complete the <a href="{url}" class="alert-link">{form}</a> form.'.format(
                 form=HouseholdHeadEligibility._meta.verbose_name,
@@ -83,7 +83,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
 
         eligibility_wrapped_models = []
 
-        # representative_eligibility
+        # representative_eligibility  # FIXME: not wrapped!!
         if self.representative_eligibility:
             wrapped = RepresentativeEligibilityModelWrapper(
                 self.representative_eligibility,
@@ -101,7 +101,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
         eligibility_wrapped_models.append(wrapped)
 
         # head_of_household_eligibility
-        if self.head_of_household:
+        if self.head_of_household.id:
             if self.head_of_household_eligibility:
                 wrapped = HeadOfHouseholdEligibilityModelWrapper(
                     self.head_of_household_eligibility,
@@ -118,7 +118,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
                     wrapped.disabled = True
         eligibility_wrapped_models.append(wrapped)
 
-        # household_info
+        # household_info  # FIXME: not wrapped!!
         if self.household_info:
             wrapped = HouseholdInfoModelWrapper(
                 self.household_info,
@@ -137,7 +137,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
         return eligibility_wrapped_models
 
     @property
-    def head_of_household_eligibility(self):
+    def head_of_household_eligibility(self):  # FIXME: should be wrapped!!
         """Return the head of household eligibility model instance or None."""
         try:
             obj = HouseholdHeadEligibility.objects.get(
@@ -147,7 +147,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
         return obj
 
     @property
-    def representative_eligibility(self):
+    def representative_eligibility(self):   # FIXME: should be wrapped!!
         """Return the representative eligibility model instance."""
         try:
             obj = self.household_structure.wrapped_object.representativeeligibility
