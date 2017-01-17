@@ -101,7 +101,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
         eligibility_wrapped_models.append(wrapped)
 
         # head_of_household_eligibility
-        if self.head_of_household.id:
+        if self.head_of_household:
             if self.head_of_household_eligibility:
                 wrapped = HeadOfHouseholdEligibilityModelWrapper(
                     self.head_of_household_eligibility,
