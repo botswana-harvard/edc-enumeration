@@ -9,31 +9,31 @@
         <tr>
         {% with log_entry=current_household_log_entry %}
 
-	        <td class="{% if log_entry.id %}success{% else %}warning{% endif %}">
+	        <td class="{% if log_entry %}success{% else %}warning{% endif %}">
 	
-	          <a title="add log entry" role="button" class="btn btn-{% if log_entry.id %}success{% else %}warning{% endif %} "
+	          <a title="add log entry" role="button" class="btn btn-{% if log_entry %}success{% else %}warning{% endif %} "
 	            href="{{ log_entry.get_absolute_url }}?next={{ log_entry.next_url }}&{{ log_entry.extra_querystring }}">
-	            <i class="fa {% if not log_entry.id %} fa-plus {% else %} fa-pencil {% endif %}  fa-sm fa-fw"></i>
+	            <i class="fa {% if not log_entry %} fa-plus {% else %} fa-pencil {% endif %}  fa-sm fa-fw"></i>
 	          </a>
 	
 	        </td>
 	
-	        <td class="{% if not log_entry.id %}warning{% else %}success{% endif %}"><h6>Household Log</h6></td>
+	        <td class="{% if not log_entry %}warning{% else %}success{% endif %}"><h6>Household Log</h6></td>
 
         {% endwith %}
         </tr>
 
         {% for wrapped in eligibility_wrapped_models %}
 	        <tr>
-	        <td class="{% if wrapped.id %}success{% else %}warning{% endif %}">
-			    <a role="button" title="{% if wrapped.id %}change{% else %}add{% endif %} {{ wrapped.verbose_name }}"
-			        class="btn btn-{% if wrapped.id %}success{% else %}warning{% endif %}"
+	        <td class="{% if wrapped %}success{% else %}warning{% endif %}">
+			    <a role="button" title="{% if wrapped %}change{% else %}add{% endif %} {{ wrapped.verbose_name }}"
+			        class="btn btn-{% if wrapped %}success{% else %}warning{% endif %}"
 			            href="{{ wrapped.get_absolute_url }}?next={{ wrapped.next_url }}&{{ wrapped.extra_querystring }}">
-			            <i class="fa {% if wrapped.id %}fa-pencil{% else %}fa-plus{% endif %} fa-fw"></i>
+			            <i class="fa {% if wrapped %}fa-pencil{% else %}fa-plus{% endif %} fa-fw"></i>
 			         
 			    </a>
 	        </td>
-	        <td class="{% if wrapped.id %}success{% else %}warning{% endif %}"><h6>{{ wrapped.verbose_name }}</h6></td>
+	        <td class="{% if wrapped %}success{% else %}warning{% endif %}"><h6>{{ wrapped.verbose_name }}</h6></td>
 	        </tr>
         {% endfor %}
 

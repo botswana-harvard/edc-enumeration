@@ -52,7 +52,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
 
     @property
     def alert_danger(self):
-        if not self.current_household_log_entry.id:
+        if not self.current_household_log_entry:
             return 'Please complete a <a href="{url}" class="alert-link">{form}</a> for today.'.format(
                 form=HouseholdLogEntry._meta.verbose_name,
                 url=HouseholdLogEntry().get_absolute_url())

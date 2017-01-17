@@ -10,17 +10,17 @@
 
     <li class="dropdown-header">Enrollment Checklist</li>
 
-    {% with may_add=current_household_log_entry.id %}
+    {% with may_add=current_household_log_entry %}
 
       <li class="dropdown-item {% if not may_add and not may_edit %}disabled{% endif %}">
         <a class="dropdown-item "
             href="{% if not may_add %}#{% else %}{{ wrapped.enrollment_checklist.get_absolute_url }}?next={{ wrapped.enrollment_checklist.next_url }}&{{ wrapped.enrollment_checklist.extra_querystring }}{% endif %}">
-                {% if wrapped.enrollment_checklist.id %}
+                {% if wrapped.enrollment_checklist %}
                     <i class="fa fa-pencil fa-fw"></i>
                 {% else %}
                     <i class="fa fa-plus fa-fw"></i>
                 {% endif %}&nbsp;
-                {% if wrapped.enrollment_checklist.id %}
+                {% if wrapped.enrollment_checklist %}
                     {{ wrapped.enrollment_checklist.report_datetime|date:"Y-m-d" }}
                 {% else %}
                     Check eligibility
@@ -48,11 +48,11 @@
      <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
        <a class="dropdown-item "
            href="{% if not may_add %}#{% else %}{{ wrapped.refused_member.get_absolute_url }}?next={{ wrapped.refused_member.next_url }}&{{ wrapped.refused_member.extra_querystring }}{% endif %}">
-           {% if wrapped.refused_member.id %}
+           {% if wrapped.refused_member %}
                <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
            {% endif %}&nbsp;
            Refused 
-           {% if wrapped.refused_member.id %}
+           {% if wrapped.refused_member %}
                <span class="text text-muted">{{ wrapped.refused_member.report_date|date:"Y-m-d" }}</span>
            {% endif %}
        </a>
@@ -61,11 +61,11 @@
      <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
        <a class="dropdown-item"
            href="{% if not may_add %}#{% else %}{{ wrapped.deceased_member.get_absolute_url }}?next={{ wrapped.deceased_member.next_url }}&{{ wrapped.deceased_member.extra_querystring }}{% endif %}">
-           {% if wrapped.deceased_member.id %}
+           {% if wrapped.deceased_member %}
                <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
            {% endif %}&nbsp;
            Deceased
-           {% if wrapped.deceased_member.id %}
+           {% if wrapped.deceased_member %}
                <span class="text text-muted">{{ wrapped.deceased_member.report_date|date:"Y-m-d" }}</span>
            {% endif %}
        </a>
