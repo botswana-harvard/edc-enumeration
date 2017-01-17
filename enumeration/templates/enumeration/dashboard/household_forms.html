@@ -7,29 +7,34 @@
         <tbody>
 
         <tr>
-        {% with log=current_household_log_entry%}
-        <td class="{% if log %}success{% else %}warning{% endif %}">
-          <a title="add log entry" role="button" class="btn btn-{% if log %}success{% else %}warning{% endif %} "
-            href="{% if not log %}{% url 'household_admin:household_householdlogentry_add' %}{% else %}{% url 'household_admin:household_householdlogentry_change' log.id %}{% endif %}?household_log={{ household_log.id }}&next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}">
-            <i class="fa {% if not log %} fa-plus {% else %} fa-pencil {% endif %}  fa-sm"></i>
-          </a>
-        </td>
-        <td class="{% if not log %}warning{% else %}success{% endif %}"><h6>Household Log</h6></td>
+        {% with log_entry=current_household_log_entry %}
+
+	        <td class="{% if log_entry.id %}success{% else %}warning{% endif %}">
+	
+	          <a title="add log entry" role="button" class="btn btn-{% if log_entry.id %}success{% else %}warning{% endif %} "
+	            href="{{ log_entry.get_absolute_url }}?next={{ log_entry.next_url }}&{{ log_entry.extra_querystring }}">
+	            <i class="fa {% if not log_entry.id %} fa-plus {% else %} fa-pencil {% endif %}  fa-sm fa-fw"></i>
+	          </a>
+	
+	        </td>
+	
+	        <td class="{% if not log_entry.id %}warning{% else %}success{% endif %}"><h6>Household Log</h6></td>
+
         {% endwith %}
         </tr>
 
-        {% for obj in eligibility_buttons %}
-        <tr>
-        <td class="{% if obj.add %}warning{% else %}success{% endif %}">
-		    <a role="button" title="{% if obj.add %}add{% else %}change{% endif %} {{ obj.verbose_name }}"
-		        class="btn {% if obj.add %}btn-warning{% else %}btn-success{% endif %}"
-		            href="{% if obj.add %}{% url obj.url_name %}{% else %}{% url obj.url_name obj.id %}{% endif %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_structure={{ obj.household_structure.id }}&household_member={{ obj.household_member.id }}&survey_schedule={{ survey_schedule_object.field_value }}&household_identifier={{ household_identifier }}">
-		            <i class="fa {% if obj.add %}fa-plus{% else %}fa-pencil{% endif %} fa-sm"></i>
-		         
-		    </a>
-        </td>
-        <td class="{% if obj.add %}warning{% else %}success{% endif %}"><h6>{{ obj.verbose_name }}</h6></td>
-        </tr>
+        {% for wrapped in eligibility_wrapped_models %}
+	        <tr>
+	        <td class="{% if wrapped.id %}success{% else %}warning{% endif %}">
+			    <a role="button" title="{% if wrapped.id %}change{% else %}add{% endif %} {{ wrapped.verbose_name }}"
+			        class="btn btn-{% if wrapped.id %}success{% else %}warning{% endif %}"
+			            href="{{ wrapped.get_absolute_url }}?next={{ wrapped.next_url }}&{{ wrapped.extra_querystring }}">
+			            <i class="fa {% if wrapped.id %}fa-pencil{% else %}fa-plus{% endif %} fa-fw"></i>
+			         
+			    </a>
+	        </td>
+	        <td class="{% if wrapped.id %}success{% else %}warning{% endif %}"><h6>{{ wrapped.verbose_name }}</h6></td>
+	        </tr>
         {% endfor %}
 
         </tbody>

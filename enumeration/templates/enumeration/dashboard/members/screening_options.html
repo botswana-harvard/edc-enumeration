@@ -1,48 +1,76 @@
 
 <!-- begin screening options -->
  <div class="btn-group">
-  <button class="btn btn-{% if household_member.final_status_pending %}warning{% else %}default{% endif%} dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
-    {{ household_member.get_participation_status_display|default:"Screening Options" }}
+  <button class="btn btn-{% if wrapped.final_status_pending %}warning{% else %}default{% endif%} dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
+    {{ wrapped.get_participation_status_display|default:"Screening Options" }}
   </button>
-  <button type="button" class="btn btn-{% if household_member.final_status_pending %}warning{% else %}default{% endif%} dropdown-toggle btn-sm dropdown-toggle" data-toggle="dropdown">
+  <button type="button" class="btn btn-{% if wrapped.final_status_pending %}warning{% else %}default{% endif%} dropdown-toggle btn-sm dropdown-toggle" data-toggle="dropdown">
     <span class="caret"></span></button>
   <ul class="dropdown-menu" role="menu">
 
     <li class="dropdown-header">Enrollment Checklist</li>
-    {% with may_add=current_household_log_entry may_edit=household_member.wrapped_object.enrollmentchecklist enrollment_checklist=household_member.wrapped_object.enrollmentchecklist %}
+
+    {% with may_add=current_household_log_entry.id %}
+
       <li class="dropdown-item {% if not may_add and not may_edit %}disabled{% endif %}">
-        <a class="dropdown-item " href="{% if not may_add %}#{% else %}{% if enrollment_checklist %}{% url 'member:member_admin:member_enrollmentchecklist_change' enrollment_checklist.id %}{% else %}{% url 'member:member_admin:member_enrollmentchecklist_add' %}{% endif %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_member={{ household_member.id }}{% endif %}">
-            {% if enrollment_checklist %}<i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>{% endif %}&nbsp;
-            {% if enrollment_checklist %}Complete ({{ household_member.get_participation_status_display }}){% else %}Check eligibility{% endif %}</a>
+        <a class="dropdown-item "
+            href="{% if not may_add %}#{% else %}{{ wrapped.enrollment_checklist.get_absolute_url }}?next={{ wrapped.enrollment_checklist.next_url }}&{{ wrapped.enrollment_checklist.extra_querystring }}{% endif %}">
+                {% if wrapped.enrollment_checklist.id %}
+                    <i class="fa fa-pencil fa-fw"></i>
+                {% else %}
+                    <i class="fa fa-plus fa-fw"></i>
+                {% endif %}&nbsp;
+                {% if wrapped.enrollment_checklist.id %}
+                    {{ wrapped.enrollment_checklist.report_datetime|date:"Y-m-d" }}
+                {% else %}
+                    Check eligibility
+                {% endif %}
+        </a>
       </li>
-    {% endwith %}
 
     <li class="dropdown-header">Reports</li>
-    {% with may_add=current_household_log_entry %}
+    
+       <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
+         <a class="dropdown-item" href="{% if not may_add %}#{% else %}{{ wrapped.new_absent_member.get_absolute_url }}?next={{ wrapped.new_absent_member.next_url }}&{{ wrapped.new_absent_member.extra_querystring }}{% endif %}">
+             <i class="fa fa-plus fa-fw"></i>&nbsp;
+             Absent
+         </a>
+       </li>
 
-        <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
-          <a class="dropdown-item" href="{% if not may_add %}#{% else %}{% url 'member:member_admin:member_absentmember_add' %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_member={{ household_member.id }}{% endif %}">
-              <i class="fa fa-plus fa-fw"></i>  Absent </a>
-        </li>
+       <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
+         <a class="dropdown-item"
+           href="{% if not may_add %}#{% else %}{{ wrapped.new_undecided_member.get_absolute_url }}?next={{ wrapped.new_undecided_member.next_url }}&{{ wrapped.new_undecided_member.extra_querystring }}{% endif %}">
+             <i class="fa fa-plus fa-fw"></i>&nbsp;
+             Undecided
+        </a>
+       </li>
 
-        <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
-          <a class="dropdown-item" href="{% if not may_add %}#{% else %}{% url 'member:member_admin:member_undecidedmember_add' %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_member={{ household_member.id }}{% endif %}">
-              <i class="fa fa-plus fa-fw"></i> Undecided</a>
-        </li>
+     <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
+       <a class="dropdown-item "
+           href="{% if not may_add %}#{% else %}{{ wrapped.refused_member.get_absolute_url }}?next={{ wrapped.refused_member.next_url }}&{{ wrapped.refused_member.extra_querystring }}{% endif %}">
+           {% if wrapped.refused_member.id %}
+               <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
+           {% endif %}&nbsp;
+           Refused 
+           {% if wrapped.refused_member.id %}
+               <span class="text text-muted">{{ wrapped.refused_member.report_date|date:"Y-m-d" }}</span>
+           {% endif %}
+       </a>
+     </li>
 
-      <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
-        <a class="dropdown-item " href="{% if not may_add %}#{% else %}{% if household_member.refusedmember %}{% url 'member:member_admin:member_refusedmember_change' household_member.wrapped_object.refusedmember.id %}{% else %}{% url 'member:member_admin:member_refusedmember_add' %}{% endif %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_member={{ household_member.id }}{% endif %}">
-            {% if household_member.wrapped_object.refusedmember %}<i class="fa fa-check-square-o fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>{% endif %}&nbsp;
-            Refused {% if household_member.wrapped_object.refusedmember %}<span class="text text-muted">{{ household_member.wrapped_object.refusedmember.report_date|date:"Y-m-d" }}</span>{% endif %}</a>
-      </li>
-
-      <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
-        <a class="dropdown-item" href="{% if not may_add %}#{% else %}{% if household_member.deceasedmember %}{% url 'member:member_admin:member_deceasedmember_change' household_member.wrapped_object.deceasedmember.id %}{% else %}{% url 'member:member_admin:member_deceasedmember_add' %}{% endif %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_member={{ household_member.id }}{% endif %}">
-            {% if household_member.deceasedmember %}<i class="fa fa-check-square-o fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>{% endif %}&nbsp;
-            Deceased {% if household_member.deceasedmember %}<span class="text text-muted">{{ household_member.deceasedmember.report_date|date:"Y-m-d" }}</span>{% endif %}</a>
-      </li>
-
-    {% endwith %}
+     <li class="dropdown-item {% if not may_add %}disabled{% endif %}">
+       <a class="dropdown-item"
+           href="{% if not may_add %}#{% else %}{{ wrapped.deceased_member.get_absolute_url }}?next={{ wrapped.deceased_member.next_url }}&{{ wrapped.deceased_member.extra_querystring }}{% endif %}">
+           {% if wrapped.deceased_member.id %}
+               <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
+           {% endif %}&nbsp;
+           Deceased
+           {% if wrapped.deceased_member.id %}
+               <span class="text text-muted">{{ wrapped.deceased_member.report_date|date:"Y-m-d" }}</span>
+           {% endif %}
+       </a>
+     </li>
+     {% endwith %}
 
   </ul>
 </div> 

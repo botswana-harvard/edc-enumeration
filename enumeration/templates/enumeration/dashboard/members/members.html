@@ -48,16 +48,17 @@
                         {% include 'enumeration/dashboard/members/attempts.html' %}
                     {% endwith %}
                   {% endif %}
+
                   {% if wrapped.eligible_member %}
-                    {% with household_member=wrapped %}
-                        {% include 'enumeration/dashboard/members/screening_options.html' %}
-                    {% endwith %}
+                      {% include 'enumeration/dashboard/members/screening_options.html' %}
                   {% endif %}
+
                   {% if wrapped.eligible_member %}
                     {% with household_member=wrapped %}
                         {% include 'enumeration/dashboard/members/eligible_options.html' %}
                     {% endwith %}
                   {% endif %}
+
                 </div>
               {% endif %}
             </td>

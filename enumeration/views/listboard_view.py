@@ -4,15 +4,14 @@ from django.views.generic import TemplateView, FormView
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import MALE
-from edc_dashboard.view_mixins import ListboardViewMixin
+from edc_dashboard.view_mixins import ListboardViewMixin, AppConfigViewMixin
 
 from survey import SurveyViewMixin
 
 from .listboard_mixins import EnumerationFilteredListViewMixin, EnumerationSearchViewMixin
-from .mixins import EnumerationAppConfigViewMixin
 
 
-class ListBoardView(EdcBaseViewMixin, ListboardViewMixin, EnumerationAppConfigViewMixin,
+class ListBoardView(EdcBaseViewMixin, ListboardViewMixin, AppConfigViewMixin,
                     EnumerationFilteredListViewMixin, EnumerationSearchViewMixin,
                     SurveyViewMixin, TemplateView, FormView):
 

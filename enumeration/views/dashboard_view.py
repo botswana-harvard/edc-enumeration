@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.views.generic import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import ALIVE, YES, MALE
-from edc_dashboard.view_mixins import DashboardViewMixin, SubjectIdentifierViewMixin
+from edc_dashboard.view_mixins import DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin
 
 from household.models import HouseholdLogEntry
 from household.views import (
@@ -12,46 +14,23 @@ from household.views import (
     HouseholdLogEntryViewMixin)
 from member.models import (
     HouseholdHeadEligibility, RepresentativeEligibility, HouseholdInfo)
-from member.views import HouseholdMemberViewMixin
+from member.views import (
+    HouseholdMemberViewMixin, RepresentativeEligibilityModelWrapper,
+    HeadOfHouseholdEligibilityModelWrapper, HouseholdInfoModelWrapper)
 from survey.view_mixins import SurveyViewMixin
 
-from .mixins import EnumerationAppConfigViewMixin
-from .wrappers import HouseholdMemberModelWrapper
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.safestring import mark_safe
+from .wrappers import HouseholdMemberModelWrapper, HouseholdLogEntryModelWrapper
 
 
-class Button:
-    def __init__(self, obj, household_structure=None):
-        self.name = obj._meta.label_lower
-        self.verbose_name = obj._meta.verbose_name
-        self.url_name = 'member:member_admin:{}'.format('_'.join(obj._meta.label_lower.split('.')))
-        if obj.id:
-            self.id = str(obj.id)
-            self.url_name = self.url_name + '_change'
-            self.add = False
-        else:
-            self.id = None
-            self.url_name = self.url_name + '_add'
-            self.add = True
-        self.disabled = False
-        try:
-            self.household_member = obj.household_member
-        except AttributeError:
-            self.household_member = None
-        try:
-            self.household_structure = obj.household_structure
-        except AttributeError:
-            self.household_structure = household_structure
-
-
-class DashboardView(EdcBaseViewMixin, DashboardViewMixin, SubjectIdentifierViewMixin,
+class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
+                    SubjectIdentifierViewMixin,
                     SurveyViewMixin, HouseholdViewMixin,
                     HouseholdStructureViewMixin, HouseholdLogEntryViewMixin,
-                    HouseholdMemberViewMixin, EnumerationAppConfigViewMixin, TemplateView):
+                    HouseholdMemberViewMixin, TemplateView):
 
     app_config_name = 'enumeration'
     household_member_wrapper_class = HouseholdMemberModelWrapper
+    household_log_entry_wrapper_class = HouseholdLogEntryModelWrapper
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -65,7 +44,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, SubjectIdentifierViewM
             YES=YES,
             MALE=MALE,
             can_add_members=self.can_add_members,
-            eligibility_buttons=self.eligibility_buttons(self.household_structure),
+            eligibility_wrapped_models=self.eligibility_wrapped_models,
             alert_danger=None if not self.alert_danger else mark_safe(self.alert_danger),
             # alert_success='Thanks',
         )
@@ -99,55 +78,70 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, SubjectIdentifierViewM
             return False
         return True
 
-    def eligibility_buttons(self, household_structure):
+    @property
+    def eligibility_wrapped_models(self):
+
+        eligibility_wrapped_models = []
 
         # representative_eligibility
-        eligibility_buttons = []
-        btn = Button(self.representative_eligibility or RepresentativeEligibility(),
-                     household_structure=household_structure)
-        # can edit anytime, but can only add if have todays log...
-        if not self.current_household_log_entry and btn.add:
-            btn.disabled = True
-        eligibility_buttons.append(btn)
+        if self.representative_eligibility:
+            wrapped = RepresentativeEligibilityModelWrapper(
+                self.representative_eligibility,
+                model_name=RepresentativeEligibility._meta.label_lower,
+                next_url_name=self.dashboard_url_name)
+        else:
+            wrapped = RepresentativeEligibilityModelWrapper(
+                RepresentativeEligibility(
+                    household_structure=self.household_structure._original_object),
+                model_name=RepresentativeEligibility._meta.label_lower,
+                next_url_name=self.dashboard_url_name)
+            # can edit anytime, but can only add if have todays log...
+            if not self.current_household_log_entry:
+                wrapped.disabled = True
+        eligibility_wrapped_models.append(wrapped)
 
         # head_of_household_eligibility
-        btn = Button(self.head_of_household_eligibility or HouseholdHeadEligibility(),
-                     household_structure=household_structure)
-        if not btn.household_member:
-            btn.household_member = self.head_of_household
-        # only enable if hoh exists
-        if not btn.household_member:
-            btn.disabled = True
-        # can edit anytime, but can only add if have todays log...
-        if (not self.current_household_log_entry and btn.add) or not self.household_members:
-            btn.disabled = True
-        eligibility_buttons.append(btn)
+        if self.head_of_household:
+            if self.head_of_household_eligibility:
+                wrapped = HeadOfHouseholdEligibilityModelWrapper(
+                    self.head_of_household_eligibility,
+                    model_name=HouseholdHeadEligibility._meta.label_lower,
+                    next_url_name=self.dashboard_url_name)
+            else:
+                wrapped = HeadOfHouseholdEligibilityModelWrapper(
+                    HouseholdHeadEligibility(
+                        household_member=self.head_of_household._original_object),
+                    model_name=HouseholdHeadEligibility._meta.label_lower,
+                    next_url_name=self.dashboard_url_name)
+                # can edit anytime, but can only add if have todays log...
+                if not self.current_household_log_entry:
+                    wrapped.disabled = True
+        eligibility_wrapped_models.append(wrapped)
 
         # household_info
-        try:
-            household_info = HouseholdInfo.objects.get(
-                household_structure__id=self.household_structure.id)
-        except HouseholdInfo.DoesNotExist:
-            household_info = HouseholdInfo()
-        btn = Button(household_info, household_structure=household_structure)
-        if not btn.household_member:
-            btn.household_member = self.head_of_household
-        # only enable if hoh exists
-        if not btn.household_member:
-            btn.disabled = True
-        # can edit anytime, but can only add if have todays log...
-        if (not self.current_household_log_entry and btn.add) or not self.household_members:
-            btn.disabled = True
-        btn = Button(household_info, household_structure=household_structure.wrapped_object)
-        eligibility_buttons.append(btn)
-        return eligibility_buttons
+        if self.household_info:
+            wrapped = HouseholdInfoModelWrapper(
+                self.household_info,
+                model_name=HouseholdInfo._meta.label_lower,
+                next_url_name=self.dashboard_url_name)
+        else:
+            wrapped = HouseholdInfoModelWrapper(
+                HouseholdInfo(
+                    household_structure=self.household_structure._original_object),
+                model_name=HouseholdInfo._meta.label_lower,
+                next_url_name=self.dashboard_url_name)
+            # can edit anytime, but can only add if have todays log...
+            if not self.current_household_log_entry:
+                wrapped.disabled = True
+        eligibility_wrapped_models.append(wrapped)
+        return eligibility_wrapped_models
 
     @property
     def head_of_household_eligibility(self):
         """Return the head of household eligibility model instance or None."""
         try:
             obj = HouseholdHeadEligibility.objects.get(
-                household_member=self.head_of_household)
+                household_member=self.head_of_household._original_object)
         except HouseholdHeadEligibility.DoesNotExist:
             obj = None
         return obj
