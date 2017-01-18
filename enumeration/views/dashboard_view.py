@@ -53,21 +53,22 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
     @property
     def alert_danger(self):
         if not self.current_household_log_entry:
-            return 'Please complete a <a href="{url}" class="alert-link">{form}</a> for today.'.format(
-                form=HouseholdLogEntry._meta.verbose_name,
-                url=HouseholdLogEntry().get_absolute_url())
+            return ('Please complete a <a href="{href}" class="alert-link">{form}</a> '
+                    'for today before adding any new data.').format(
+                        form=HouseholdLogEntry._meta.verbose_name,
+                        href=self.current_household_log_entry.href)
         elif not self.representative_eligibility:
-            return 'Please complete the <a href="{url}" class="alert-link">{form}</a> form.'.format(
+            return 'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
                 form=RepresentativeEligibility._meta.verbose_name,
-                url=RepresentativeEligibility().get_absolute_url())
+                href=self.representative_eligibility)
         elif not self.household_info:
-            return 'Please complete the <a href="{url}" class="alert-link">{form}</a>  form.'.format(
+            return 'Please complete the <a href="{href}" class="alert-link">{form}</a>  form.'.format(
                 form=HouseholdInfo._meta.verbose_name,
-                url=HouseholdInfo().get_absolute_url())
+                href=self.household_info)
         elif not self.head_of_household_eligibility and self.head_of_household:
-            return 'Please complete the <a href="{url}" class="alert-link">{form}</a> form.'.format(
+            return 'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
                 form=HouseholdHeadEligibility._meta.verbose_name,
-                url=HouseholdHeadEligibility().get_absolute_url())
+                href=self.head_of_household_eligibility)
         else:
             return None
 

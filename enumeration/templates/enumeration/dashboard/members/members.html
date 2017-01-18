@@ -8,17 +8,20 @@
             <td><span class="text text-default small">{{ forloop.counter }}</span></td>
             <td>
                <a role="button" class="btn btn-sm btn-success" 
-                  href="{{ wrapped.get_absolute_url }}?next={{ wrapped.next_url }}&{{ wrapped.extra_querystring }}">
+                  href="{{ wrapped.href }}">
                     <i class="fa fa-pencil fa-sm"></i>&nbsp;
                     <i class="fa fa-{% if wrapped.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
                </a>
-               {% if wrapped.survival_status != ALIVE %}<span class="label label-info">{{ wrapped.get_survival_status_display }}</span>{% endif %}
+               {% if wrapped.survival_status != ALIVE %}
+                    <span class="label label-info">{{ wrapped.get_survival_status_display }}</span>
+               {% endif %}
             </td>
             <td>
               {% if wrapped.done %}
                 <i class="fa fa-check fa-lg"></i>
               {% else %}
-                <button data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}"><i class="fa fa-tasks fa-lg"></i></button>
+                <button data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}">
+                    <i class="fa fa-tasks fa-lg"></i></button>
               {% endif %}
             </td>
             
@@ -63,7 +66,7 @@
               {% endif %}
             </td>
            </tr>
-           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You doing great! <fi class="fa fa-smile-o fa-lg"></i></td></tr>
+           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You doing great! <fi class="fa fa-smile-o fa-lg fa-fw"></i></td></tr>
           {% endfor %}
       </tbody>
     {% endif %}
