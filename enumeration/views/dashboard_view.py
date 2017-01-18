@@ -44,7 +44,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
             YES=YES,
             MALE=MALE,
             can_add_members=self.can_add_members,
-            eligibility_wrapped_models=self.eligibility_wrapped_models,
+            household_forms=self.household_forms_as_wrapped_models,
             alert_danger=None if not self.alert_danger else mark_safe(self.alert_danger),
             # alert_success='Thanks',
         )
@@ -80,87 +80,56 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
         return True
 
     @property
-    def eligibility_wrapped_models(self):
-
-        eligibility_wrapped_models = []
-
-        # representative_eligibility  # FIXME: not wrapped!!
-        if self.representative_eligibility:
-            wrapped = RepresentativeEligibilityModelWrapper(
-                self.representative_eligibility,
-                model_name=RepresentativeEligibility._meta.label_lower,
-                next_url_name=self.dashboard_url_name)
-        else:
-            wrapped = RepresentativeEligibilityModelWrapper(
-                RepresentativeEligibility(
-                    household_structure=self.household_structure._original_object),
-                model_name=RepresentativeEligibility._meta.label_lower,
-                next_url_name=self.dashboard_url_name)
-            # can edit anytime, but can only add if have todays log...
-            if not self.current_household_log_entry:
-                wrapped.disabled = True
-        eligibility_wrapped_models.append(wrapped)
-
-        # head_of_household_eligibility
-        if self.head_of_household:
-            if self.head_of_household_eligibility:
-                wrapped = HeadOfHouseholdEligibilityModelWrapper(
-                    self.head_of_household_eligibility,
-                    model_name=HouseholdHeadEligibility._meta.label_lower,
-                    next_url_name=self.dashboard_url_name)
-            else:
-                wrapped = HeadOfHouseholdEligibilityModelWrapper(
-                    HouseholdHeadEligibility(
-                        household_member=self.head_of_household._original_object),
-                    model_name=HouseholdHeadEligibility._meta.label_lower,
-                    next_url_name=self.dashboard_url_name)
-                # can edit anytime, but can only add if have todays log...
+    def household_forms_as_wrapped_models(self):
+        """Returns a generator of "Household forms" to be completed
+        prior to enumeration."""
+        wrapped_models = (
+            self.representative_eligibility,
+            self.household_info,
+            self.head_of_household_eligibility)
+        for wrapped_model in wrapped_models:
+            if wrapped_model is not None:
                 if not self.current_household_log_entry:
-                    wrapped.disabled = True
-        eligibility_wrapped_models.append(wrapped)
-
-        # household_info  # FIXME: not wrapped!!
-        if self.household_info:
-            wrapped = HouseholdInfoModelWrapper(
-                self.household_info,
-                model_name=HouseholdInfo._meta.label_lower,
-                next_url_name=self.dashboard_url_name)
-        else:
-            wrapped = HouseholdInfoModelWrapper(
-                HouseholdInfo(
-                    household_structure=self.household_structure._original_object),
-                model_name=HouseholdInfo._meta.label_lower,
-                next_url_name=self.dashboard_url_name)
-            # can edit anytime, but can only add if have todays log...
-            if not self.current_household_log_entry:
-                wrapped.disabled = True
-        eligibility_wrapped_models.append(wrapped)
-        return eligibility_wrapped_models
+                    wrapped_model.disabled = True
+                yield wrapped_model
+            else:
+                continue
 
     @property
-    def head_of_household_eligibility(self):  # FIXME: should be wrapped!!
-        """Return the head of household eligibility model instance or None."""
-        try:
-            obj = HouseholdHeadEligibility.objects.get(
-                household_member=self.head_of_household._original_object)
-        except HouseholdHeadEligibility.DoesNotExist:
-            obj = None
-        return obj
+    def head_of_household_eligibility(self):
+        """Return a wrapped model saved/unsaved if HoH exists, otherwise None."""
+        if self.head_of_household:
+            try:
+                obj = HouseholdHeadEligibility.objects.get(
+                    household_member=self.head_of_household._original_object)
+            except ObjectDoesNotExist:
+                obj = HouseholdHeadEligibility(
+                    household_member=self.head_of_household._original_object)
+            return HeadOfHouseholdEligibilityModelWrapper(
+                obj, model_name=HouseholdHeadEligibility._meta.label_lower,
+                next_url_name=self.dashboard_url_name)
+        return None
 
     @property
-    def representative_eligibility(self):   # FIXME: should be wrapped!!
-        """Return the representative eligibility model instance."""
+    def representative_eligibility(self):
+        """Return a wrapped model of either saved or unsaved."""
         try:
-            obj = self.household_structure.wrapped_object.representativeeligibility
+            obj = self.household_structure._original_object.representativeeligibility
         except ObjectDoesNotExist:
-            obj = None
-        return obj
+            obj = RepresentativeEligibility(
+                household_structure=self.household_structure._original_object)
+        return RepresentativeEligibilityModelWrapper(
+            obj, model_name=RepresentativeEligibility._meta.label_lower,
+            next_url_name=self.dashboard_url_name)
 
     @property
     def household_info(self):
-        """Return the household_info model instance."""
+        """Return a wrapped model of either saved or unsaved."""
         try:
-            obj = self.household_structure.wrapped_object.householdinfo
+            obj = self.household_structure._original_object.householdinfo
         except ObjectDoesNotExist:
-            obj = None
-        return obj
+            obj = HouseholdInfo(
+                household_structure=self.household_structure._original_object)
+        return HouseholdInfoModelWrapper(
+            obj, model_name=HouseholdInfo._meta.label_lower,
+            next_url_name=self.dashboard_url_name)
