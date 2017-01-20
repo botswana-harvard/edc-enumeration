@@ -41,9 +41,9 @@
             </td>
             <td>
               {% if not wrapped.eligible_member %}
-                <span title="not eligible">
-                  <i class="fa fa-ban fa-lg text-danger"></i> <span class="text text-muted">Not eligible</span>
-                </span>
+              
+                 {% include 'enumeration/dashboard/members/ineligible_options.html' %}
+              
               {% else %}
                 <div class="btn-group">
                   {% if wrapped.eligible_member %}
@@ -66,7 +66,7 @@
               {% endif %}
             </td>
            </tr>
-           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You doing great! <fi class="fa fa-smile-o fa-lg fa-fw"></i></td></tr>
+           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You're doing great! <fi class="fa fa-smile-o fa-lg fa-fw"></i></td></tr>
           {% endfor %}
       </tbody>
     {% endif %}

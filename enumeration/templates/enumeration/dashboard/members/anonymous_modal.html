@@ -1,0 +1,59 @@
+<!-- Modal -->
+<div id="anonymousModal2" class="modal fade" role="dialog">
+  
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header ">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">
+            <span class="text text-danger">
+                <i class="fa fa-user-secret fa-2x fa-fw"></i> Anonymous Participation
+            </span>
+        </h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="panel-group">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a role="button" href="#">
+                </a>
+              </h4>
+            </div>
+          <div class="panel panel-default">
+             <div class="list-group">
+                <a class="list-group-item" href="#">
+                    <i class="fa fa-hand-stop-o fa-2x fa-fw"></i> Please read.
+                </a>
+                <a class="list-group-item" href="#">
+                    Anonymous participation is for non-citizens.
+                </a>
+                <a class="list-group-item" href="#">
+                    The information collected will NOT be linked in any way to this household member, household, plot or community.
+                </a>
+                <a class="list-group-item" href="#">
+                When you return to enumeration for household {{ household_identifier }}, there will be no indication that this household member participated.
+                </a>
+                <a class="list-group-item" href="#">
+                You are about to leave enumeration for household {{ household_identifier }}.
+                </a>
+                </div>                
+            </div>
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <a data-toggle="modal" data-target="#anonymousModal" href="#" data-dismiss="modal" class="btn btn-danger btn">
+            <i class="fa fa-user-secret fa-2x fa-fw"></i> Continue
+        </a>
+
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+
+      </div>
+
+    </div>
+  </div>
+</div>

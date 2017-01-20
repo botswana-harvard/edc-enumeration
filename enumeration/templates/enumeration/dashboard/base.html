@@ -50,8 +50,10 @@
 
           <div class="panel panel-default">
             <div class="panel-heading">
-                <h6 class="panel-title"><i class="fa fa-home fa-lg fa-fw"></i>
-                    {{ household_identifier }}
+                <h6 class="panel-title">
+                    <a href="{% url household_listboard_url_name household_identifier=household_identifier %}">
+                    <i class="fa fa-home fa-lg fa-fw"></i>
+                        {{ household_identifier }}</a>
                 </h6>
             </div>
           </div>         

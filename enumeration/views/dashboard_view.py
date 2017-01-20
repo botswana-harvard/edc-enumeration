@@ -29,6 +29,7 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
                     HouseholdMemberViewMixin, TemplateView):
 
     app_config_name = 'enumeration'
+    navbar_item_selected = 'enumeration'
     household_member_wrapper_class = HouseholdMemberModelWrapper
     household_log_entry_wrapper_class = HouseholdLogEntryModelWrapper
 

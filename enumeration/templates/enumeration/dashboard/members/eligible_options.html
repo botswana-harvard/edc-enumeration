@@ -1,28 +1,13 @@
 
 <!-- begin screening options -->
+
   <div class="btn-group">
 
     {% if household_member.wrapped_object.enrollmentchecklist.is_eligible %}
 
-      <a class="btn btn-default btn-sm" type="button"   
+      <a class="btn {% if household_member.wrapped_object.is_consented %}btn-success{% else %}btn-warning{% endif %} btn-sm" type="button"   
         href="{% url bcpp_subject_dashboard_url_name household_identifier=household_member.household_identifier subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value %}">
-        <i class="fa fa-user-circle-o fa-sm"></i></i> Dashboard</a>
-
-    {% endif %}
-
-
-    {% if not household_member.final_status_pending %}
-
-	    <button class="btn btn-default btn-sm" type="button">
-	      HTC
-	    </button>
-	    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-	       <span class="caret"></span>
-	    </button>
-	    <ul class="dropdown-menu" role="menu">
-	      <li><a href="#"><i class="fa fa-plus"></i> HTC Enrollment</a></li>
-	      <li><a href="#"><i class="fa fa-plus"></i> HTC Refusal</a></li>
-	    </ul>    
+        <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
 
     {% endif %}
 

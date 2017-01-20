@@ -8,14 +8,15 @@ from edc_dashboard.view_mixins import ListboardViewMixin, AppConfigViewMixin
 
 from survey import SurveyViewMixin
 
-from .listboard_mixins import EnumerationFilteredListViewMixin, EnumerationSearchViewMixin
+from .listboard_mixins import FilteredListViewMixin, SearchViewMixin
 
 
 class ListBoardView(EdcBaseViewMixin, ListboardViewMixin, AppConfigViewMixin,
-                    EnumerationFilteredListViewMixin, EnumerationSearchViewMixin,
+                    FilteredListViewMixin, SearchViewMixin,
                     SurveyViewMixin, TemplateView, FormView):
 
     app_config_name = 'enumeration'
+    navbar_item_selected = 'enumeration'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

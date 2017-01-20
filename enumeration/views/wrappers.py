@@ -28,7 +28,7 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
         if self.wrapped_object.id:
             self.refused = self.wrapped_object.refused
             try:
-                self.dob = self.wrapped_object.enrollmentchecklist.dob
+                self.dob = self.wrapped_object.enrollmentchecklist.dob  # FIXME: ANONYMOUS
             except ObjectDoesNotExist:
                 self.dob = None
             self.survival_status = self.wrapped_object.survival_status
