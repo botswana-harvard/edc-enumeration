@@ -11,7 +11,26 @@ from member.constants import AVAILABLE
 from member.models.household_member.utils import is_minor, is_adult, todays_log_entry_or_raise
 from member.participation_status import ParticipationStatus
 from member.views.wrappers import (
-    HouseholdMemberModelWrapper as BaseHouseholdMemberModelWrapper)
+    HouseholdMemberModelWrapper as BaseHouseholdMemberModelWrapper,
+    RepresentativeEligibilityModelWrapper as BaseRepresentativeEligibilityModelWrapper,
+    HouseholdInfoModelWrapper as BaseHouseholdInfoModelWrapper,
+    HeadOfHouseholdEligibilityModelWrapper as BaseHeadOfHouseholdEligibilityModelWrapper,
+)
+
+
+class HeadOfHouseholdEligibilityModelWrapper(BaseHeadOfHouseholdEligibilityModelWrapper):
+
+    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
+
+
+class HouseholdInfoModelWrapper(BaseHouseholdInfoModelWrapper):
+
+    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
+
+
+class RepresentativeEligibilityModelWrapper(BaseRepresentativeEligibilityModelWrapper):
+
+    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
 
 
 class HouseholdLogEntryModelWrapper(BaseHouseholdLogEntryModelWrapper):

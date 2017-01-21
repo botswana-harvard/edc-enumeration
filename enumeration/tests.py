@@ -6,12 +6,16 @@ from django.test.client import RequestFactory
 from django.urls.base import reverse
 
 from household.models.household_log_entry import HouseholdLogEntry
-from member.tests.test_mixins import MemberMixin
+from member.tests import MemberTestMixin
 
-from .views import DashboardView, ListBoardView
+from .views import DashboardView
+from household.tests.household_test_mixin import HouseholdTestMixin
+from edc_base_test.mixins.dates_test_mixin import DatesTestMixin
+from survey.tests.dates_test_mixin import DatesTestMixin as SurveyDatesTestMixin
+from plot.tests.plot_test_mixin import PlotTestMixin
 
 
-class TestEnumeration(MemberMixin, TestCase):
+class TestEnumeration(MemberTestMixin, TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -34,7 +38,8 @@ class TestEnumeration(MemberMixin, TestCase):
 #         self.assertGreater(results[0].members.count(), 0)
 
 
-class TestDashboard(MemberMixin, TestCase):
+class TestDashboard(MemberTestMixin, HouseholdTestMixin, PlotTestMixin,
+                    SurveyDatesTestMixin, DatesTestMixin, TestCase):
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -88,4 +93,3 @@ class TestDashboard(MemberMixin, TestCase):
             survey_schedule=self.household_structure.survey_schedule,
             today=household_log_entry.report_datetime + relativedelta(days=3))
         self.assertFalse(view.can_add_members)
-

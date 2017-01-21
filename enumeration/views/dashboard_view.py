@@ -6,7 +6,8 @@ from django.views.generic import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import ALIVE, YES, MALE
-from edc_dashboard.view_mixins import DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin
+from edc_dashboard.view_mixins import (
+    DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin)
 
 from household.models import HouseholdLogEntry
 from household.views import (
@@ -14,12 +15,13 @@ from household.views import (
     HouseholdLogEntryViewMixin)
 from member.models import (
     HouseholdHeadEligibility, RepresentativeEligibility, HouseholdInfo)
-from member.views import (
-    HouseholdMemberViewMixin, RepresentativeEligibilityModelWrapper,
-    HeadOfHouseholdEligibilityModelWrapper, HouseholdInfoModelWrapper)
+from member.views import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
-from .wrappers import HouseholdMemberModelWrapper, HouseholdLogEntryModelWrapper
+from .wrappers import (
+    HouseholdMemberModelWrapper, HouseholdLogEntryModelWrapper,
+    RepresentativeEligibilityModelWrapper, HouseholdInfoModelWrapper,
+    HeadOfHouseholdEligibilityModelWrapper)
 
 
 class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,

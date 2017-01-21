@@ -104,7 +104,6 @@ if 'test' in sys.argv:  # and 'mysql' not in DATABASES.get('default').get('ENGIN
         "edc_export": None,
         "edc_identifier": None,
         "edc_metadata": None,
-        "edc_rule_groups": None,
         "edc_registration": None,
         "edc_sync": None,
         "bcpp": None,
