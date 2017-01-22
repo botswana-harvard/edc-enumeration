@@ -3,11 +3,26 @@
 
   <div class="btn-group">
 
-    {% if household_member.wrapped_object.enrollmentchecklist.is_eligible %}
+    {% if household_member.wrapped_object.is_consented %}
 
       <a class="btn {% if household_member.wrapped_object.is_consented %}btn-success{% else %}btn-warning{% endif %} btn-sm" type="button"   
         href="{% url bcpp_subject_dashboard_url_name household_identifier=household_member.household_identifier subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value %}">
         <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
+
+    {% elif  household_member.wrapped_object.eligible_subject %}
+
+         <a title="Consent to participate" class="btn btn-warning btn-sm" href="{{ household_member.consent.href }}">
+             Consent (v{{ household_member.consent.version }})
+         </a>
+
+         <a title="Refuse to participate" class="btn btn-default btn-sm" href="{{ wrapped.refused_member.href }}">
+             Refuse
+         </a>
+    {% else %}
+
+         <a title="Refuse to participate" class="btn btn-default btn-sm" href="{{ wrapped.refused_member.href }}">
+             Refuse
+         </a>
 
     {% endif %}
 

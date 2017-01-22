@@ -1,8 +1,15 @@
+from uuid import uuid4
+
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_base.utils import get_utcnow
+from edc_consent.site_consents import site_consents
+from edc_consent.exceptions import ConsentDoesNotExist
 
+from bcpp_subject.views.dashboard.default.wrappers import (
+    SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
+from bcpp_subject.models import SubjectConsent
 from household.exceptions import HouseholdLogRequired
 from household.views import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper,
@@ -20,34 +27,78 @@ from member.views.wrappers import (
 
 class HeadOfHouseholdEligibilityModelWrapper(BaseHeadOfHouseholdEligibilityModelWrapper):
 
-    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'enumeration').dashboard_url_name
 
 
 class HouseholdInfoModelWrapper(BaseHouseholdInfoModelWrapper):
 
-    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'enumeration').dashboard_url_name
 
 
 class RepresentativeEligibilityModelWrapper(BaseRepresentativeEligibilityModelWrapper):
 
-    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'enumeration').dashboard_url_name
 
 
 class HouseholdLogEntryModelWrapper(BaseHouseholdLogEntryModelWrapper):
 
-    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'enumeration').dashboard_url_name
+
+
+class SubjectConsentModelWrapper(BaseSubjectConsentModelWrapper):
+
+    next_url_name = django_apps.get_app_config(
+        'enumeration').dashboard_url_name
 
 
 class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
 
-    next_url_name = django_apps.get_app_config('enumeration').dashboard_url_name
+    next_url_name = django_apps.get_app_config(
+        'enumeration').dashboard_url_name
+    consent_model_wrapper_class = SubjectConsentModelWrapper
+    consent_model = SubjectConsent
+
+    @property
+    def consent_object(self):
+        """Returns a consent object or None from site_consents
+        for the current period."""
+        try:
+            return site_consents.get_consent(
+                report_datetime=self._original_object.report_datetime)
+        except ConsentDoesNotExist:
+            return None
+
+    @property
+    def consent(self):
+        """Returns a wrapped saved or unsaved consent or None."""
+        try:
+            consent = self._original_object.subjectconsent_set.get(
+                version=self.consent_object.version)
+        except ObjectDoesNotExist:
+            if self.consent_object:
+                consent = self.consent_model(
+                    subject_identifier=self._original_object.subject_identifier,
+                    consent_identifier=uuid4(),
+                    household_member=self._original_object,
+                    survey_schedule=self._original_object.survey_schedule_object.field_value,
+                    version=self.consent_object.version)
+            else:
+                consent = None
+        if consent:
+            consent = self.consent_model_wrapper_class(consent)
+        return consent
 
     def add_extra_attributes_after(self):
         super().add_extra_attributes_after()
         if self.wrapped_object.id:
             self.refused = self.wrapped_object.refused
             try:
-                self.dob = self.wrapped_object.enrollmentchecklist.dob  # FIXME: ANONYMOUS
+                # FIXME: ANONYMOUS
+                self.dob = self.wrapped_object.enrollmentchecklist.dob
             except ObjectDoesNotExist:
                 self.dob = None
             self.survival_status = self.wrapped_object.survival_status

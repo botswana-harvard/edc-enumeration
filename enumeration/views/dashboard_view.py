@@ -63,15 +63,15 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
         elif not self.representative_eligibility:
             return 'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
                 form=RepresentativeEligibility._meta.verbose_name,
-                href=self.representative_eligibility)
+                href=self.representative_eligibility.href)
         elif not self.household_info:
             return 'Please complete the <a href="{href}" class="alert-link">{form}</a>  form.'.format(
                 form=HouseholdInfo._meta.verbose_name,
-                href=self.household_info)
+                href=self.household_info.href)
         elif not self.head_of_household_eligibility and self.head_of_household:
             return 'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
                 form=HouseholdHeadEligibility._meta.verbose_name,
-                href=self.head_of_household_eligibility)
+                href=self.head_of_household_eligibility.href)
         else:
             return None
 

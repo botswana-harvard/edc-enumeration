@@ -16,6 +16,7 @@
                     <span class="label label-info">{{ wrapped.get_survival_status_display }}</span>
                {% endif %}
             </td>
+
             <td>
               {% if wrapped.done %}
                 <i class="fa fa-check fa-lg"></i>
@@ -40,7 +41,7 @@
               <span class="label label-info">{% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}</span>
             </td>
             <td>
-              {% if not wrapped.eligible_member %}
+              {% if not wrapped.eligible_member or wrapped.refused %}
               
                  {% include 'enumeration/dashboard/members/ineligible_options.html' %}
               

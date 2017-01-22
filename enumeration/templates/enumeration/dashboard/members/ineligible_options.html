@@ -1,15 +1,35 @@
 
 <!-- begin ineligible options -->
 
-<span title="not eligible">
-  <i class="fa fa-ban fa-lg text-danger"></i> <span class="text text-muted">Not eligible</span>
-</span>
+    {% if not wrapped.eligible_member %}
+	<span title="not eligible">
+	  <i class="fa fa-ban fa-lg text-danger"></i> <span class="text text-muted">Not eligible</span>
+	</span>
+    {% endif %}
+     <div class="btn-group">
 
+    {% if wrapped.refused %}
 
-<div class="btn-group">
+     <div class="btn-group">
+	    <button class="btn btn-default btn-sm" type="button">
+	     Refused
+	    </button>
+	    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+	       <span class="caret"></span>
+	    </button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+	         <a title="Subject has refused to participate" href="{{ wrapped.refused_member.href }}">
+	             <i class="fa fa-pencil fa-fw"></i> {{ wrapped.refused_member.report_datetime|date:"Y-m-d" }}
+	         </a>
+          </li>
+        </ul>    
+    </div>
+    {% endif %}
 
+     <div class="btn-group">
     <button class="btn btn-default btn-sm" type="button">
-      Ineligible Options
+      Other options
     </button>
     <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
        <span class="caret"></span>
@@ -24,6 +44,7 @@
         </a>
       </li>
     </ul>    
+</div> 
 
 </div> 
 <!-- begin ineligible options -->
