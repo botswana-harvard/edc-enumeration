@@ -11,6 +11,7 @@ class AppConfig(DjangoAppConfig):
     listboard_template_name = 'enumeration/listboard.html'
     listboard_url_name = 'enumeration:listboard_url'
     dashboard_url_name = 'enumeration:dashboard_url'
+    anonymous_dashboard_url_name = 'enumeration:anonymous_dashboard_url'
     subject_dashboard_url_name = None
     dashboard_template_name = 'enumeration/dashboard.html'
     base_template_name = 'edc_base/base.html'
