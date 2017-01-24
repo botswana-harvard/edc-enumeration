@@ -13,26 +13,49 @@
       <div class="col-md-9">
 
         <div class="panel-group" id="accordion2">
-        {% for survey_schedule_object in survey_schedules reversed %} 
-	        <div class="panel panel-default">
-			  <div class="panel-heading">
-			      <h6 class="panel-title">
-			        {% if forloop.first %}
-			        <a title="add household member"  class="btn btn-sm btn-default {% if not can_add_members %} disabled{% endif %}" role="button" href="{% url 'member_admin:member_householdmember_add' %}?household_structure={{household_structure.id}}&next=enumeration:dashboard_url,household_identifier,survey_schedule&survey_schedule={{ survey_schedule_object.field_value }}&household_identifier={{ household_identifier }}">
-			            <i class="fa fa-plus fa-sm"></i> <i class="fa fa-user fa-lg"></i>
-			        </a>
-			        {% endif %}
-			        <a data-toggle="collapse" data-parent="#accordion2" href="#household_members{{ forloop.counter }}">
-			           {{ survey_schedule_object.name|title }} Household Members
-			        </a>
-			      </h6>
-			  </div>
+        {% with current_survey_schedule_object=survey_schedule_object %}
+	        {% for survey_schedule_object in survey_schedules reversed %} 
+		        <div class="panel panel-default">
+				  <div class="panel-heading">
+				      <h6 class="panel-title">
+				        {% if current_survey_schedule_object.field_value == survey_schedule_object.field_value %}
+				        <a title="add household member"  class="btn btn-sm btn-default {% if not can_add_members %} disabled{% endif %}" role="button" href="{% url 'member_admin:member_householdmember_add' %}?household_structure={{household_structure.id}}&next=enumeration:dashboard_url,household_identifier,survey_schedule&survey_schedule={{ survey_schedule_object.field_value }}&household_identifier={{ household_identifier }}">
+				            <i class="fa fa-plus fa-sm"></i> <i class="fa fa-user fa-lg"></i>
+				        </a>
+				        {% endif %}
+				        <a data-toggle="collapse" data-parent="#accordion2" href="#household_members{{ forloop.counter }}">
+				           {{ survey_schedule_object.name|title }} Household Members
+				        </a>
+				      </h6>
+				  </div>
+		
+		            <div id="household_members{{ forloop.counter }}" class="panel-collapse collapse{% if current_survey_schedule_object.field_value == survey_schedule_object.field_value %} in{% endif %}">
 	
-	            <div id="household_members{{ forloop.counter }}" class="panel-collapse collapse{% if forloop.first %} in{% endif %}">
-		        {% block member_rows %}{% endblock member_rows %}    
-		        </div>       
-	        </div>
-        {% endfor %}
+						<div class="table table-responsive">
+						  <table class="table table-striped table-condensed table-hover small">
+						    <thead></thead>
+					        {% block member_rows %}{% endblock member_rows %}    
+						  </table>
+						  {% if household_members %}
+						  {% comment %}add additional space to extend the panel so the dropdown always fits for the last member{% endcomment %}
+						  <table>
+						     <tr><td>&nbsp;</td></tr>
+						     <tr><td>&nbsp;</td></tr>
+						     <tr><td>&nbsp;</td></tr>
+						     <tr><td>&nbsp;</td></tr>
+						     <tr><td>&nbsp;</td></tr>
+						     <tr><td>&nbsp;</td></tr>
+						     <tr><td>&nbsp;</td></tr>
+						     <tr><td>&nbsp;</td></tr>
+						     <tr><td>&nbsp;</td></tr>
+						  </table>
+						  {% endif %}
+						</div>
+	
+			        </div>       
+		        </div>
+	        {% endfor %}
+        {% endwith %}
         </div>
       </div>
 

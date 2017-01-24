@@ -6,19 +6,19 @@
       <thead></thead>
       <tbody>
 
-      {% for obj in household_log_entries %}
+      {% for wrapped in household_log_entries %}
         <tr>
           <td>
-            <a title="change log entry" role="button" class="btn btn-default" href="{% url 'household_admin:household_householdlogentry_change' obj.id %}?next=enumeration:dashboard_url,household_identifier,survey_schedule&household_identifier={{ household_identifier }}&survey_schedule={{ survey_schedule_object.field_value }}&household_log={{ obj.household_log.id }}">
+            <a title="change log entry" role="button" class="btn btn-default" href="{{ wrapped.href }}">
               <i class="fa fa-pencil fa-sm"></i>
             </a>
-          {% if current_household_log_entry.id ==  obj.id %}<span class="label label-info">Today</span>{% endif %}
+          {% if current_household_log_entry.id ==  wrapped.id %}<span class="label label-info">Today</span>{% endif %}
           </td>
           <td>
-            {{ obj.report_datetime|date:"Y-m-d H:i" }}&nbsp;
-            {{ obj.get_household_status_display }}</br>
-            {{ obj.next_appt_datetime|default:"" }}&nbsp;{{ obj.next_appt_datetime_source|default:"" }}&nbsp;
-            {% if obj.user_created %}({{ obj.user_created }}/{{ obj.user_modified }}){% endif %}
+            {{ wrapped.report_datetime|date:"Y-m-d H:i" }}&nbsp;
+            {{ wrapped.get_household_status_display }}</br>
+            {{ wrapped.next_appt_datetime|default:"" }}&nbsp;{{ wrapped.next_appt_datetime_source|default:"" }}&nbsp;
+            {% if wrapped.user_created %}({{ wrapped.user_created }}/{{ wrapped.user_modified }}){% endif %}
           </td>
         </tr>
       {% endfor %}

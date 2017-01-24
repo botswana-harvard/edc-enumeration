@@ -30,7 +30,7 @@
      </a>
 
      <a title="enumeration dashboard" role="button" class="btn btn-sm {% if wrapped.log_entries.count == 0 %} btn-default disabled{% else %}btn-success{% endif %}"
-        href="{% url enumeration_dashboard_url_name household_identifier=wrapped.household_identifier survey_schedule=survey_schedule_object.field_value %}">
+        href="{% url enumeration_dashboard_url_name household_identifier=wrapped.household_identifier survey_schedule=wrapped.survey_schedule_object.field_value %}">
             <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard
      </a>
 

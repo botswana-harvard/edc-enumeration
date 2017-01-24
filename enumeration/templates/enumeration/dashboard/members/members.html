@@ -1,87 +1,152 @@
-<div class="table table-responsive">
-  <table class="table table-striped table-condensed table-hover small">
-    <thead></thead>
+
     {% if household_members %}
       <tbody>
-          {% for wrapped in household_members %}
-          <tr>
-            <td><span class="text text-default small">{{ forloop.counter }}</span></td>
-            <td>
-               <a role="button" class="btn btn-sm btn-success" 
-                  href="{{ wrapped.href }}">
-                    <i class="fa fa-pencil fa-sm"></i>&nbsp;
-                    <i class="fa fa-{% if wrapped.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
-               </a>
-               {% if wrapped.survival_status != ALIVE %}
-                    <span class="label label-info">{{ wrapped.get_survival_status_display }}</span>
-               {% endif %}
-            </td>
-
-            <td>
-              {% if wrapped.done %}
-                <i class="fa fa-check fa-lg"></i>
-              {% else %}
-                <button data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}">
-                    <i class="fa fa-tasks fa-lg"></i></button>
+          {% if current_survey_schedule_object.field_value == survey_schedule_object.field_value %}
+              {% for wrapped in household_members %}
+              {% if wrapped.survey_schedule_object.field_value == current_survey_schedule_object.field_value %}
+	          <tr>
+	            <td><span class="text text-default small">{{ forloop.counter }}</span></td>
+	            <td>
+	               <a role="button" class="btn btn-sm btn-success" 
+	                  href="{{ wrapped.href }}">
+	                    <i class="fa fa-pencil fa-sm"></i>&nbsp;
+	                    <i class="fa fa-{% if wrapped.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
+	               </a>
+	               {% if wrapped.survival_status != ALIVE %}
+	                    <span class="label label-info">{{ wrapped.get_survival_status_display }}</span>
+	               {% endif %}
+	            </td>
+	
+	            <td>
+	              {% if wrapped.done %}
+	                <i class="fa fa-check fa-lg"></i>
+	              {% else %}
+	                <button data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}">
+	                    <i class="fa fa-tasks fa-lg"></i></button>
+	              {% endif %}
+	            </td>
+	            
+	            <td>
+	              <span class="text text-default">
+	                {{ wrapped.first_name|lower|capfirst }}&nbsp;{{ wrapped.initials }}&nbsp;
+	                {{ wrapped.age_in_years }}</span></br>
+	              <span class="label label-info">{{ wrapped.get_relation_display|lower|capfirst }}</span>
+	              {% if wrapped.is_minor %}
+	                <span class="label label-warning">Minor</span>
+	              {% elif wrapped.is_adult %}
+	                <span class="label label-info">Adult</span>
+	              {% else %}
+	                <span class="label label-info">Child</span>
+	              {% endif %}
+	              <span class="label label-info">{% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}</span>
+	            </td>
+	            <td>
+	              {% if not wrapped.eligible_member or wrapped.refused %}
+	              
+	                 {% include 'enumeration/dashboard/members/ineligible_options.html' %}
+	              
+	              {% else %}
+	                <div class="btn-group">
+	                  {% if wrapped.eligible_member %}
+	                    {% with household_member=wrapped %}
+	                        {% include 'enumeration/dashboard/members/attempts.html' %}
+	                    {% endwith %}
+	                  {% endif %}
+	
+	                  {% if wrapped.eligible_member %}
+	                      {% include 'enumeration/dashboard/members/screening_options.html' %}
+	                  {% endif %}
+	
+	                  {% if wrapped.eligible_member %}
+	                    {% with household_member=wrapped %}
+	                        {% include 'enumeration/dashboard/members/eligible_options.html' %}
+	                    {% endwith %}
+	                  {% endif %}
+	
+	                </div>
+	              {% endif %}
+	            </td>
+	           </tr>
+	           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You're doing great! <fi class="fa fa-smile-o fa-lg fa-fw"></i></td></tr>
               {% endif %}
-            </td>
+              {% endfor %}
+
+          {% else %}
+
+            {% for wrapped in household_members %}
+              {% if wrapped.survey_schedule_object.field_value == survey_schedule_object.field_value %}
             
-            <td>
-              <span class="text text-default">
-                {{ wrapped.first_name|lower|capfirst }}&nbsp;{{ wrapped.initials }}&nbsp;
-                {{ wrapped.age_in_years }}</span></br>
-              <span class="label label-info">{{ wrapped.get_relation_display|lower|capfirst }}</span>
-              {% if wrapped.is_minor %}
-                <span class="label label-warning">Minor</span>
-              {% elif wrapped.is_adult %}
-                <span class="label label-info">Adult</span>
-              {% else %}
-                <span class="label label-info">Child</span>
-              {% endif %}
-              <span class="label label-info">{% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}</span>
-            </td>
-            <td>
-              {% if not wrapped.eligible_member or wrapped.refused %}
-              
-                 {% include 'enumeration/dashboard/members/ineligible_options.html' %}
-              
-              {% else %}
-                <div class="btn-group">
-                  {% if wrapped.eligible_member %}
-                    {% with household_member=wrapped %}
-                        {% include 'enumeration/dashboard/members/attempts.html' %}
-                    {% endwith %}
+              <tr>
+                <td><span class="text text-default small">{{ forloop.counter }}</span></td>
+                <td>
+                   <a role="button" class="btn btn-sm btn-success disabled" 
+                      href="{{ wrapped.href }}">
+                        <i class="fa fa-pencil fa-sm"></i>&nbsp;
+                        <i class="fa fa-{% if wrapped.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
+                   </a>
+                   {% if wrapped.survival_status != ALIVE %}
+                        <span class="label label-info">{{ wrapped.get_survival_status_display }}</span>
+                   {% endif %}
+                </td>
+    
+                <td>
+                  {% if wrapped.done %}
+                    <i class="fa fa-check fa-lg"></i>
+                  {% else %}
+                    <button data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}">
+                        <i class="fa fa-tasks fa-lg"></i></button>
+                  {% endif %}
+                </td>
+                
+                <td>
+                  <span class="text text-default">
+                    {{ wrapped.first_name|lower|capfirst }}&nbsp;{{ wrapped.initials }}&nbsp;
+                    {{ wrapped.age_in_years }}</span></br>
+                  <span class="label label-info">{{ wrapped.get_relation_display|lower|capfirst }}</span>
+                  {% if wrapped.is_minor %}
+                    <span class="label label-warning">Minor</span>
+                  {% elif wrapped.is_adult %}
+                    <span class="label label-info">Adult</span>
+                  {% else %}
+                    <span class="label label-info">Child</span>
+                  {% endif %}
+                  <span class="label label-info">{% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}</span>
+                </td>
+                <td>
+                  {% if not wrapped.eligible_member or wrapped.refused %}
+                  
+                     {% include 'enumeration/dashboard/members/ineligible_options.html' %}
+                  
+                  {% else %}
+                    <div class="btn-group">
+                      {% if wrapped.eligible_member %}
+                        {% with household_member=wrapped %}
+                            {% include 'enumeration/dashboard/members/attempts.html' %}
+                        {% endwith %}
+                      {% endif %}
+    
+                      {% if wrapped.eligible_member %}
+                          {% include 'enumeration/dashboard/members/screening_options.html' %}
+                      {% endif %}
+    
+                      {% if wrapped.eligible_member %}
+                        {% with household_member=wrapped %}
+                            {% include 'enumeration/dashboard/members/eligible_options.html' %}
+                        {% endwith %}
+                      {% endif %}
+    
+                    </div>
+                  {% endif %}
+                </td>
+               </tr>
+
+
                   {% endif %}
 
-                  {% if wrapped.eligible_member %}
-                      {% include 'enumeration/dashboard/members/screening_options.html' %}
-                  {% endif %}
+              {% endfor %}
 
-                  {% if wrapped.eligible_member %}
-                    {% with household_member=wrapped %}
-                        {% include 'enumeration/dashboard/members/eligible_options.html' %}
-                    {% endwith %}
-                  {% endif %}
 
-                </div>
-              {% endif %}
-            </td>
-           </tr>
-           <tr id="tasks-{{ forloop.counter }}" class="collapse"><td></td><td colspan="4">You're doing great! <fi class="fa fa-smile-o fa-lg fa-fw"></i></td></tr>
-          {% endfor %}
+          {% endif %}
       </tbody>
     {% endif %}
-  </table>
-  {% comment %}add additional space to extend the panel so the dropdown always fits for the last member{% endcomment %}
-  <table>
-     <tr><td>&nbsp;</td></tr>
-     <tr><td>&nbsp;</td></tr>
-     <tr><td>&nbsp;</td></tr>
-     <tr><td>&nbsp;</td></tr>
-     <tr><td>&nbsp;</td></tr>
-     <tr><td>&nbsp;</td></tr>
-     <tr><td>&nbsp;</td></tr>
-     <tr><td>&nbsp;</td></tr>
-     <tr><td>&nbsp;</td></tr>
-  </table>
-</div>
+
