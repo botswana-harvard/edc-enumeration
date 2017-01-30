@@ -13,28 +13,42 @@
       <div class="col-md-9">
 
         <div class="panel-group" id="accordion2">
-        {% with current_survey_schedule_object=survey_schedule_object %}
-	        {% for survey_schedule_object in survey_schedules reversed %} 
+	        {% for household_structure in household_structures reversed %} 
 		        <div class="panel panel-default">
 				  <div class="panel-heading">
 				      <h6 class="panel-title">
-				        {% if current_survey_schedule_object.field_value == survey_schedule_object.field_value %}
-				        <a title="add household member"  class="btn btn-sm btn-default {% if not can_add_members %} disabled{% endif %}" role="button" href="{% url 'member_admin:member_householdmember_add' %}?household_structure={{household_structure.id}}&next=enumeration:dashboard_url,household_identifier,survey_schedule&survey_schedule={{ survey_schedule_object.field_value }}&household_identifier={{ household_identifier }}">
+				        {% if survey_schedule_object.field_value == household_structure.survey_schedule_object.field_value %}
+				        <a title="add household member" 
+				            class="btn btn-sm btn-default {% if not can_add_members %} disabled{% endif %}" 
+				                role="button"
+				                    href="{{ household_member.href }}">
 				            <i class="fa fa-plus fa-sm"></i> <i class="fa fa-user fa-lg"></i>
 				        </a>
 				        {% endif %}
 				        <a data-toggle="collapse" data-parent="#accordion2" href="#household_members{{ forloop.counter }}">
-				           {{ survey_schedule_object.name|title }} Household Members
+				           {{ household_structure.survey_schedule_object.name|title }} Household Members
 				        </a>
+                        {% if survey_schedule_object.field_value == household_structure.survey_schedule_object.field_value %}
+                        <span class="pull-right">
+                            <a title="Import household members tool" data-toggle="modal" data-target="#importMembersModal"
+                                href="#" class="btn btn-default btn-sm{% if not can_add_members %} disabled{% endif %}">
+                                <i class="fa fa-download fa-fw"></i> <i class="fa fa-group fa-fw"></i>
+                            </a>
+                        </span>
+                        {% endif %}
+				        
+				        
 				      </h6>
 				  </div>
 		
-		            <div id="household_members{{ forloop.counter }}" class="panel-collapse collapse{% if current_survey_schedule_object.field_value == survey_schedule_object.field_value %} in{% endif %}">
+		            <div id="household_members{{ forloop.counter }}" class="panel-collapse collapse{% if survey_schedule_object.field_value == household_structure.survey_schedule_object.field_value %} in{% endif %}">
 	
 						<div class="table table-responsive">
 						  <table class="table table-striped table-condensed table-hover small">
 						    <thead></thead>
-					        {% block member_rows %}{% endblock member_rows %}    
+						    <tbody>
+					           {% block member_rows %}{% endblock member_rows %}
+					        </tbody>
 						  </table>
 						  {% if household_members %}
 						  {% comment %}add additional space to extend the panel so the dropdown always fits for the last member{% endcomment %}
@@ -55,7 +69,6 @@
 			        </div>       
 		        </div>
 	        {% endfor %}
-        {% endwith %}
         </div>
       </div>
 
@@ -82,6 +95,18 @@
           </div>         
 
           <div class="panel-group" id="accordion">
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h6 class="panel-title"><i class="fa fa-sitemap fa-lg fa-fw"></i> 
+                    <a data-toggle="collapse" data-parent="#accordion" href="#survey_history">Enumeration</a>
+                </h6>
+            </div>
+            <div id="survey_history" class="panel-collapse collapse">
+               {% block enumeration %}{% endblock enumeration %}
+            </div>           
+          </div>
+
 	      <div class="panel panel-default">
             <div class="panel-heading">
                 <h6 class="panel-title"><i class="fa fa-list-alt fa-lg fa-fw"></i>
@@ -92,17 +117,6 @@
     	        {% block household_forms %}{% endblock household_forms %}           
             </div>           
 	      </div>
-
-          <div class="panel panel-default">
-            <div class="panel-heading">
-                <h6 class="panel-title"><i class="fa fa-history fa-lg fa-fw"></i> 
-                    <a data-toggle="collapse" data-parent="#accordion" href="#survey_history">Survey History</a>
-                </h6>
-            </div>
-            <div id="survey_history" class="panel-collapse collapse">
-               {% block survey_history %}{% endblock survey_history %}
-            </div>           
-          </div>
 
 	      <div class="panel panel-default">
             <div class="panel-heading">

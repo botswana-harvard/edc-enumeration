@@ -1,0 +1,115 @@
+
+<!-- begin member row -->
+
+<tr>
+
+  <td>
+    <span class="text text-default small">
+        {{ forloop.counter }}
+    </span>
+  </td>
+
+  <td>
+    <div class="btn-group">
+     <a role="button"
+        class="btn btn-sm {% if wrapped.is_clone_not_updated %}btn-warning{% else %}btn-success{% endif %} {{ disabled }}" 
+            href="{{ wrapped.href }}">
+        <i class="fa fa-pencil fa-sm"></i>&nbsp;
+        <i class="fa fa-{% if wrapped.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
+     </a>
+     <a role="button" class="btn btn-sm btn-default"
+        data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}">
+     <i class="fa fa-caret-down fa-fw"></i></a>
+     </div>
+     {% if wrapped.survival_status != ALIVE %}
+        <span class="label label-info">
+          {{ wrapped.get_survival_status_display }
+        </span>
+     {% endif %}
+  </td>
+
+  <td>
+    {% if wrapped.done %}
+      <i class="fa fa-check fa-lg"></i>
+    {% endif %}
+  </td>
+  
+  <td>
+    <span class="text text-default">
+      {{ wrapped.first_name|lower|capfirst }}&nbsp;{{ wrapped.initials }}&nbsp;
+      {{ wrapped.age_in_years }}
+    </span>
+    </br>
+    <span class="label label-info">
+        {{ wrapped.get_relation_display|lower|capfirst }}
+    </span>
+    {% if wrapped.is_minor %}
+      <span class="label label-warning">Minor</span>
+    {% elif wrapped.is_adult %}
+      <span class="label label-info">Adult</span>
+    {% else %}
+      <span class="label label-info">Child</span>
+    {% endif %}
+    <span class="label label-info">
+        {% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}
+    </span>
+  </td>
+
+  <td>
+    {% if wrapped.cloned and not wrapped.wrapped_object.clone_updated %}
+
+    {% elif not wrapped.eligible_member or wrapped.refused %}
+    
+       {% include 'enumeration/dashboard/members/ineligible_options.html' %}
+    
+    {% else %}
+      <div class="btn-group">
+        {% if wrapped.eligible_member %}
+            {% include 'enumeration/dashboard/members/attempts.html' %}
+        {% endif %}
+
+        {% if wrapped.eligible_member %}
+            {% include 'enumeration/dashboard/members/screening_options.html' %}
+        {% endif %}
+
+        {% if wrapped.eligible_subject %}
+          {% with household_member=wrapped %}
+              {% include 'enumeration/dashboard/members/eligible_options.html' %}
+          {% endwith %}
+        {% endif %}
+        
+         <a title="Refuse to participate" 
+            class="btn btn-default btn-sm{% if not wrapped.editable_in_view %} disabled{% endif %}"
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.refused_member.href }}{% endif %}">
+             Refuse
+         </a>
+
+      </div>
+    {% endif %}
+  </td>
+
+</tr>
+
+
+<tr id="tasks-{{ forloop.counter }}" class="collapse">
+
+    <td></td>
+
+    <td colspan="4">
+        <div class="table table-responsive">
+        <table class="table table-stripped table-condensed table-hover">
+        <tr><td>Subject identifier</td><td> {{ wrapped.subject_identifier }}</td></tr>
+        <tr><td>Date enumerated</td><td> {{ wrapped.report_datetime|date:"Y-m-d" }}</td></tr>
+        <tr><td>Checklist date</td><td> {{ wrapped.wrapped_object.enrollmentchecklist.report_datetime|date:"Y-m-d" }}</td></tr>
+        <tr><td>Consented</td><td> {{ wrapped.wrapped_object.is_consented }}</td></tr>
+        <tr><td>Consent date</td><td> {{ wrapped.wrapped_object.consent.consent_datetime|date:"Y-m-d" }}</td></tr>
+        <tr><td>Consent version</td><td> {{ wrapped.wrapped_object.consent.version }}</td></tr>
+        <tr><td>Non-citizen</td><td> {{ wrapped.wrapped_object.non_citizen }}</td></tr>
+        <tr><td>Internal UUID</td><td> {{ wrapped.wrapped_object.internal_identifier }}</td></tr>
+        </table>
+        </div>
+    </td>
+
+</tr>
+
+<!-- end member row -->

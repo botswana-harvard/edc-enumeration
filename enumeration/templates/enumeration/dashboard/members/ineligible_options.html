@@ -1,7 +1,7 @@
 
 <!-- begin ineligible options -->
 
-    {% if not wrapped.eligible_member %}
+    {% if not wrapped.eligible_member or wrapped.eligible_member.non_citizen %}
 	<span title="not eligible">
 	  <i class="fa fa-ban fa-lg text-danger"></i> <span class="text text-muted">Not eligible</span>
 	</span>
@@ -19,7 +19,8 @@
 	    </button>
         <ul class="dropdown-menu" role="menu">
             <li>
-	         <a title="Subject has refused to participate" href="{{ wrapped.refused_member.href }}">
+	         <a title="Subject has refused to participate" class="{% if not wrapped.editable_in_view %}disabled{% endif %}"
+	           href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.refused_member.href }}{% endif %}">
 	             <i class="fa fa-pencil fa-fw"></i> {{ wrapped.refused_member.report_datetime|date:"Y-m-d" }}
 	         </a>
           </li>
@@ -40,9 +41,10 @@
       <li>
         <a data-toggle="modal" data-target="#anonymousModal2" href="#">
         <span class="text text-danger"><i class="fa fa-user-secret"></i>
-            Anonymous Participation</span>
+            Anonymous Enrollment</span>
         </a>
       </li>
+      <li><a href="#"><i class="fa fa-plus"></i> Anonymous Refusal</a></li>
     </ul>    
 </div> 
 

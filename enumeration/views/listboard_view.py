@@ -8,7 +8,7 @@ from edc_dashboard.view_mixins import ListboardViewMixin, AppConfigViewMixin
 
 from survey import SurveyViewMixin
 
-from .listboard_mixins import FilteredListViewMixin, SearchViewMixin
+from .listboard.mixins import FilteredListViewMixin, SearchViewMixin
 
 
 class ListBoardView(EdcBaseViewMixin, ListboardViewMixin, AppConfigViewMixin,

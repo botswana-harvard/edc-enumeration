@@ -23,7 +23,7 @@ from household.patterns import household_identifier
 from plot.patterns import plot_identifier
 from survey.patterns import survey_schedule
 
-from .views import ListBoardView, DashboardView
+from .views import ListBoardView, DashboardView, ImportMembersView
 
 
 urlpatterns = [
@@ -41,6 +41,10 @@ urlpatterns = [
         '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
         DashboardView.as_view(), name='dashboard_url'),
+    url(r'^dashboard/import_members/'
+        '(?P<household_identifier>' + household_identifier + ')/'
+        '(?P<survey_schedule>' + survey_schedule + ')/',
+        ImportMembersView.as_view(), name='dashboard_import_members_url'),
     url(r'^listboard/'
         '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
@@ -81,5 +85,6 @@ if 'test' in sys.argv:
         url(r'^edc/', include('edc_base.urls', 'edc-base')),
         url(r'^tz_detect/', include('tz_detect.urls')),
         url(r'login', LoginView.as_view(), name='login_url'),
-        url(r'logout', LogoutView.as_view(pattern_name='login_url'), name='logout_url'),
+        url(r'logout', LogoutView.as_view(
+            pattern_name='login_url'), name='logout_url'),
     ]

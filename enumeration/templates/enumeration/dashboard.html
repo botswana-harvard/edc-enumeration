@@ -56,8 +56,43 @@
 
 {% block member_rows %}           
 
-    {% include 'enumeration/dashboard/members/members.html' %}
+    {% include 'enumeration/dashboard/members/member_rows.html' %}
 
 {% endblock member_rows %}           
 
 
+{% block enumeration %}
+	<!-- start survey_schedules -->
+	
+	<div class="list-group">
+	      
+        {% for obj in survey_schedules reversed %}
+            {% if obj == survey_schedule_object %}
+	                <a href="#" class="list-group-item">
+    	                <i class="fa fa-sitemap fa-fw"></i> 
+	                   {{ obj.name }} <i class="fa fa-check fa-fw"></i>
+	                </a>
+            {% else %}
+                   <a class="list-group-item {% if obj not in survey_schedules_enumerated %}disabled{% endif %}"
+                    href="{% if obj not in survey_schedules_enumerated and obj != survey_schedule_object.next %}#{% endif %}{% url enumeration_dashboard_url_name household_identifier=household_identifier survey_schedule=obj.field_value %}">
+                    <span class="text text-muted">
+                    <i class="fa fa-sitemap fa-fw"></i> 
+                    {{ obj.name }}
+                    {% if obj not in survey_schedules_enumerated and obj != survey_schedule_object.next %}
+                        <i class="fa fa-ban fa-fw"></i>
+                    {% endif %}
+                    </span>
+                   </a>
+            {% endif %}
+        {% endfor %}
+	</div>
+	
+	<!-- end survey_schedules -->
+{% endblock enumeration %}
+
+
+{% block modals %}
+
+{{ block.super }}
+{% include 'enumeration/dashboard/import_members_modal.html' %}
+{% endblock %}

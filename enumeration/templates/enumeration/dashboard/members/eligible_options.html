@@ -3,25 +3,17 @@
 
   <div class="btn-group">
 
-    {% if household_member.wrapped_object.is_consented %}
-
-      <a class="btn {% if household_member.wrapped_object.is_consented %}btn-success{% else %}btn-warning{% endif %} btn-sm" type="button"   
-        href="{% url bcpp_subject_dashboard_url_name household_identifier=household_member.household_identifier subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value %}">
+    {% if wrapped.is_consented %}
+      <a class="btn {% if wrapped.is_consented %}btn-success{% else %}btn-warning{% endif %} {% if not wrapped.editable_in_view %}disabled {% endif %}btn-sm" type="button"   
+        href="{% if not wrapped.editable_in_view %}#{% else %}{% url bcpp_subject_dashboard_url_name household_identifier=household_member.household_identifier subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value %}{% endif %}">
         <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
 
-    {% elif  household_member.wrapped_object.eligible_subject %}
-
-         <a title="Consent to participate" class="btn btn-warning btn-sm" href="{{ household_member.consent.href }}">
-             Consent (v{{ household_member.consent.version }})
-         </a>
-
-         <a title="Refuse to participate" class="btn btn-default btn-sm" href="{{ wrapped.refused_member.href }}">
-             Refuse
-         </a>
     {% else %}
 
-         <a title="Refuse to participate" class="btn btn-default btn-sm" href="{{ wrapped.refused_member.href }}">
-             Refuse
+         <a title="Consent to participate"
+            class="btn btn-warning btn-sm{% if not wrapped.editable_in_view %} disabled{% endif %}"
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ household_member.consent.href }}{% endif %}">
+             Consent (v{{ household_member.consent.version }})
          </a>
 
     {% endif %}

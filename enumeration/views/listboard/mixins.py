@@ -6,7 +6,7 @@ from edc_search.view_mixins import SearchViewMixin as BaseSearchViewMixin
 
 from household.models import HouseholdStructure
 
-from .wrappers import HouseholdStructureWithLogEntryWrapper
+from ..wrappers import HouseholdStructureWithLogEntryWrapper
 
 
 class SearchViewMixin(BaseSearchViewMixin):
@@ -39,8 +39,9 @@ class FilteredListViewMixin(BaseFilteredListViewMixin):
 
     @property
     def filtered_queryset(self):
+        qs = super().filtered_queryset
         plot_identifier = django_apps.get_app_config(
             'plot').anonymous_plot_identifier
-        return self.filter_model.objects.exclude(
+        return qs.exclude(
             household__plot__plot_identifier=plot_identifier).order_by(
                 self.filtered_queryset_ordering)

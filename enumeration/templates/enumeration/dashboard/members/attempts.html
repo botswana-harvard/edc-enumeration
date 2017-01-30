@@ -3,7 +3,7 @@
 <div class="btn-group">
 
   <button class="btn btn-default btn-sm dropdown-toggle " type="button" data-toggle="dropdown">
-    <span class="text text-default text-small"><i class="fa fa-history fa-lg"></i> {{ household_member.visit_attempts }}</span>
+    <span class="text text-default text-small"><i class="fa fa-history fa-lg"></i> {{ wrapped.visit_attempts }}</span>
   </button>
 
   <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
@@ -13,15 +13,19 @@
 	   <li class="dropdown-header">Report History</li>
 	
 	   <li class="dropdown-header">Absent</li>
-	    {% for wrapped in household_member.absent_members %}
-	      <li><a href="{{ wrapped.get_absolute_url }}?next={{ wrapped.next_url }}&{{ wrapped.extra_querystring }}">
-	        <i class="fa fa-pencil fa-fw"></i> {{ wrapped.report_date|date:"Y-m-d" }}</a></li>
+	    {% for absent_member in wrapped.absent_members %}
+	      <li class="dropdown-item {% if not wrapped.editable_in_view %}disabled{% endif %}">
+            <a class="dropdown-item"
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ obj.href }}{% endif %}">
+	        <i class="fa fa-pencil fa-fw"></i> {{ absent_member.report_date|date:"Y-m-d" }}</a></li>
 	    {% endfor %}
 	
 	   <li class="dropdown-header">Undecided</li>
-	    {% for wrapped in household_member.undecided_members %}
-	      <li><a href="{{ wrapped.get_absolute_url }}?next={{ wrapped.next_url }}&{{ wrapped.extra_querystring }}">
-	        <i class="fa fa-pencil fa-fw"></i> {{ wrapped.report_date|date:"Y-m-d" }}</a></li>
+	    {% for undecided_member in wrapped.undecided_members %}
+          <li class="dropdown-item {% if not wrapped.editable_in_view %}disabled{% endif %}">
+            <a class="dropdown-item"
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.href }}{% endif %}">
+	        <i class="fa fa-pencil fa-fw"></i> {{ undecided_member.report_date|date:"Y-m-d" }}</a></li>
 	    {% endfor %}
 
   </ul>
