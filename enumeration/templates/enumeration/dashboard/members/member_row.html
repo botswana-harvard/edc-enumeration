@@ -103,7 +103,8 @@
         <tr><td>Checklist date</td><td> {{ wrapped.wrapped_object.enrollmentchecklist.report_datetime|date:"Y-m-d" }}</td></tr>
         <tr><td>Consented</td><td> {{ wrapped.wrapped_object.is_consented }}</td></tr>
         <tr><td>Consent date</td><td> {{ wrapped.wrapped_object.consent.consent_datetime|date:"Y-m-d" }}</td></tr>
-        <tr><td>Consent version</td><td> {{ wrapped.wrapped_object.consent.version }}</td></tr>
+        <tr><td>Consent version</td><td>{{ wrapped.wrapped_object.consent.version }}</td></tr>
+        <tr><td>Consent expires on</td><td>{{ wrapped.wrapped_object.consent_object.end|date:"Y-m-d" }}</td></tr>
         <tr><td>Non-citizen</td><td> {{ wrapped.wrapped_object.non_citizen }}</td></tr>
         <tr><td>Internal UUID</td><td> {{ wrapped.wrapped_object.internal_identifier }}</td></tr>
         </table>

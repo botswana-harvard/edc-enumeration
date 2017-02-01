@@ -12,14 +12,18 @@
 
     <!-- begin consent -->
     {% if wrapped.is_consented %}
-    
 
 	    <li class="dropdown-header">Consent</li>
-	
-	      <li class="dropdown-item {% if not wrapped.editable_in_view %}disabled{% endif %}">
+	       {% comment %}
+	           Note: consent should only be editable in the survey
+	           that it was created in
+	       {%endcomment%}
+	      <li class="dropdown-item {% if not wrapped.editable_in_view or wrapped.consent.wrapped_object.survey_schedule_object !=  survey_schedule_object %}disabled{% endif %}">
 	        <a class="dropdown-item"
-	            href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.consent.href }}{% endif %}">
-	              <i class="fa fa-pencil fa-fw"></i>{{ wrapped.consent.consent_datetime|date:"Y-m-d" }} v{{ wrapped.consent.version }} {% if wrapped.consent.wrapped_object.survey_schedule_object.field_value != survey_schedule_object.field_value %}<br><span class="text small">completed in {{ wrapped.consent.wrapped_object.survey_schedule_object.name }}</span>{% endif %}
+	           data-toggle="tooltip" title="{% if wrapped.editable_in_view and wrapped.consent.wrapped_object.survey_schedule_object !=  survey_schedule_object %}This consent may only be edited in {{wrapped.consent.wrapped_object.survey_schedule_object.name}}{% endif %}"
+	            href="{% if not wrapped.editable_in_view or not wrapped.consent.wrapped_object.survey_schedule_object ==  survey_schedule_object %}#{% else %}{{ wrapped.consent.href }}{% endif %}">
+	              <i class="fa fa-pencil fa-fw"></i>
+	              {{ wrapped.consent.consent_datetime|date:"Y-m-d" }} v{{ wrapped.consent.version }}
 	        </a>
 
     {% endif %}
