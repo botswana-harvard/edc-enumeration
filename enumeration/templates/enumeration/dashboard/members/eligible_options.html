@@ -12,7 +12,7 @@
 
          <a title="Consent to participate"
             class="btn btn-warning btn-sm{% if not wrapped.editable_in_view %} disabled{% endif %}"
-                href="{% if not wrapped.editable_in_view %}#{% else %}{{ household_member.consent.href }}{% endif %}">
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.consent.href }}{% endif %}">
              Consent (v{{ household_member.consent.version }})
          </a>
 

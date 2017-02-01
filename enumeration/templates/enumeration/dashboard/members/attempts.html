@@ -16,7 +16,7 @@
 	    {% for absent_member in wrapped.absent_members %}
 	      <li class="dropdown-item {% if not wrapped.editable_in_view %}disabled{% endif %}">
             <a class="dropdown-item"
-                href="{% if not wrapped.editable_in_view %}#{% else %}{{ obj.href }}{% endif %}">
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ absent_member.href }}{% endif %}">
 	        <i class="fa fa-pencil fa-fw"></i> {{ absent_member.report_date|date:"Y-m-d" }}</a></li>
 	    {% endfor %}
 	
@@ -24,7 +24,7 @@
 	    {% for undecided_member in wrapped.undecided_members %}
           <li class="dropdown-item {% if not wrapped.editable_in_view %}disabled{% endif %}">
             <a class="dropdown-item"
-                href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.href }}{% endif %}">
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ undecided_member.href }}{% endif %}">
 	        <i class="fa fa-pencil fa-fw"></i> {{ undecided_member.report_date|date:"Y-m-d" }}</a></li>
 	    {% endfor %}
 
