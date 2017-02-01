@@ -43,16 +43,20 @@
     <span class="label label-info">
         {{ wrapped.get_relation_display|lower|capfirst }}
     </span>
-    {% if wrapped.is_minor %}
-      <span class="label label-warning">Minor</span>
-    {% elif wrapped.is_adult %}
-      <span class="label label-info">Adult</span>
+    {% if not wrapped.wrapped_object.clone_updated %}
+        <span class="label label-warning"><i class="fa fa-warning"></i> Update required</span>
     {% else %}
-      <span class="label label-info">Child</span>
+	    {% if wrapped.is_minor %}
+	      <span class="label label-warning">Minor</span>
+	    {% elif wrapped.is_adult %}
+	      <span class="label label-info">Adult</span>
+	    {% else %}
+	      <span class="label label-info">Child</span>
+	    {% endif %}
+	    <span class="label label-info">
+	        {% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}
+	    </span>
     {% endif %}
-    <span class="label label-info">
-        {% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}
-    </span>
   </td>
 
   <td>
