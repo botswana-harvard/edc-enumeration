@@ -23,7 +23,7 @@ from household.patterns import household_identifier
 from plot.patterns import plot_identifier
 from survey.patterns import survey_schedule
 
-from .views import ListBoardView, DashboardView, ImportMembersView
+from .views import ListBoardView, DashboardView, CloneMembersView
 
 
 urlpatterns = [
@@ -44,7 +44,7 @@ urlpatterns = [
     url(r'^dashboard/import_members/'
         '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
-        ImportMembersView.as_view(), name='dashboard_import_members_url'),
+        CloneMembersView.as_view(), name='dashboard_import_members_url'),
     url(r'^listboard/'
         '(?P<household_identifier>' + household_identifier + ')/'
         '(?P<survey_schedule>' + survey_schedule + ')/',
