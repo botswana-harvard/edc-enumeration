@@ -90,6 +90,8 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
     def consent(self):
         """Returns a wrapped saved or unsaved consent.
         """
+        # FIXME: self._original_object.consent_object should
+        # return a consent object
         if self._original_object.consent:
             consent = self._original_object.consent
         else:
