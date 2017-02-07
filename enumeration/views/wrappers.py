@@ -90,17 +90,22 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
     def consent(self):
         """Returns a wrapped saved or unsaved consent.
         """
-        consent = None
-        if self._original_object:
-            if self._original_object.consent:
-                consent = self._original_object.consent
+        if self._original_object.consent:
+            consent = self._original_object.consent
+        else:
+            try:
+                model = self._original_object.consent_object.model
+            except AttributeError:
+                consent = None
             else:
-                consent = self._original_object.consent_object.model(
+                consent = model(
                     subject_identifier=self._original_object.subject_identifier,
                     consent_identifier=uuid4(),
                     household_member=self._original_object,
                     survey_schedule=self._original_object.survey_schedule_object.field_value,
                     version=self._original_object.consent_object.version)
+                consent = self.consent_model_wrapper_class(consent)
+        if consent:
             consent = self.consent_model_wrapper_class(consent)
         return consent
 
