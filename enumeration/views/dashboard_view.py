@@ -48,7 +48,8 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
             MALE=MALE,
             can_add_members=self.can_add_members,
             household_forms=self.household_forms_as_wrapped_models,
-            alert_danger=None if not self.alert_danger else mark_safe(self.alert_danger),
+            alert_danger=None if not self.alert_danger else mark_safe(
+                self.alert_danger),
             # alert_success='Thanks',
         )
         return context
@@ -77,7 +78,9 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
 
     @property
     def can_add_members(self):
-        """Returns True if the user will be allowed to add new members."""
+        """Returns True if the user will be allowed to add new
+        members.
+        """
         if not self.representative_eligibility or not self.current_household_log_entry:
             return False
         return True
@@ -100,7 +103,9 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
 
     @property
     def head_of_household_eligibility(self):
-        """Return a wrapped model saved/unsaved if HoH exists, otherwise None."""
+        """Return a wrapped model saved/unsaved if HoH exists,
+        otherwise None.
+        """
         if self.head_of_household:
             try:
                 obj = HouseholdHeadEligibility.objects.get(
@@ -115,7 +120,8 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
 
     @property
     def representative_eligibility(self):
-        """Return a wrapped model of either saved or unsaved."""
+        """Return a wrapped model of either saved or unsaved.
+        """
         try:
             obj = self.household_structure._original_object.representativeeligibility
         except ObjectDoesNotExist:
@@ -127,7 +133,8 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
 
     @property
     def household_info(self):
-        """Return a wrapped model of either saved or unsaved."""
+        """Return a wrapped model of either saved or unsaved.
+        """
         try:
             obj = self.household_structure._original_object.householdinfo
         except ObjectDoesNotExist:

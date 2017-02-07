@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'edc_base.apps.AppConfig',
     'edc_consent.apps.AppConfig',
     'edc_identifier.apps.AppConfig',
-    'edc_subset_manager.apps.AppConfig',
     'edc_protocol.apps.AppConfig',
     'edc_registration.apps.AppConfig',
     'member.apps.AppConfig',
@@ -87,13 +86,14 @@ WSGI_APPLICATION = 'enumeration.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
 
-if 'test' in sys.argv:  # and 'mysql' not in DATABASES.get('default').get('ENGINE'):
+# and 'mysql' not in DATABASES.get('default').get('ENGINE'):
+if 'test' in sys.argv:
     MIGRATION_MODULES = {
         "django_crypto_fields": None,
         "edc_call_manager": None,

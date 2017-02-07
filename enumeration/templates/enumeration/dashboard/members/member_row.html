@@ -110,6 +110,11 @@
         <tr><td>Consent version</td><td>{{ wrapped.wrapped_object.consent.version }}</td></tr>
         <tr><td>Consent expires on</td><td>{{ wrapped.wrapped_object.consent_object.end|date:"Y-m-d" }}</td></tr>
         <tr><td>Non-citizen</td><td> {{ wrapped.wrapped_object.non_citizen }}</td></tr>
+        {% if wrapped.wrapped_object.cloned %}
+	        <tr><td>Cloned</td><td> {{ wrapped.wrapped_object.cloned }}</td></tr>
+	        <tr><td>Cloned date</td><td> {{ wrapped.wrapped_object.cloned_datetime }}</td></tr>
+	        <tr><td>Updated</td><td> {{ wrapped.wrapped_object.clone_updated }}</td></tr>
+        {% endif %}
         <tr><td>Internal UUID</td><td> {{ wrapped.wrapped_object.internal_identifier }}</td></tr>
         </table>
         </div>
