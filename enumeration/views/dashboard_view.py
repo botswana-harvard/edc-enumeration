@@ -3,11 +3,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
 from django.views.generic import TemplateView
+from django.contrib import messages
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import ALIVE, YES, MALE
 from edc_dashboard.view_mixins import (
-    DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin)
+    DashboardViewMixin as BaseDashboardViewMixin,
+    SubjectIdentifierViewMixin, AppConfigViewMixin)
 
 from household.models import HouseholdLogEntry
 from household.views import (
@@ -24,11 +26,19 @@ from .wrappers import (
     HeadOfHouseholdEligibilityModelWrapper)
 
 
-class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
-                    SubjectIdentifierViewMixin,
-                    SurveyViewMixin, HouseholdViewMixin,
-                    HouseholdStructureViewMixin, HouseholdLogEntryViewMixin,
-                    HouseholdMemberViewMixin, TemplateView):
+class DashboardViewMixin(EdcBaseViewMixin,
+                         BaseDashboardViewMixin,
+                         AppConfigViewMixin,
+                         SubjectIdentifierViewMixin,
+                         SurveyViewMixin,
+                         HouseholdViewMixin,
+                         HouseholdStructureViewMixin,
+                         HouseholdLogEntryViewMixin,
+                         HouseholdMemberViewMixin):
+    pass
+
+
+class DashboardView(DashboardViewMixin, TemplateView):
 
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
@@ -42,39 +52,44 @@ class DashboardView(EdcBaseViewMixin, DashboardViewMixin, AppConfigViewMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.today = context.get('today')  # for tests
+        self.update_messages()
         context.update(
             ALIVE=ALIVE,
             YES=YES,
             MALE=MALE,
             can_add_members=self.can_add_members,
             household_forms=self.household_forms_as_wrapped_models,
-            alert_danger=None if not self.alert_danger else mark_safe(
-                self.alert_danger),
-            # alert_success='Thanks',
         )
         return context
 
-    @property
-    def alert_danger(self):
+    def update_messages(self):
         if not self.current_household_log_entry:
-            return ('Please complete a <a href="{href}" class="alert-link">{form}</a> '
-                    'for today before adding any new data.').format(
-                        form=HouseholdLogEntry._meta.verbose_name,
-                        href=self.current_household_log_entry.href)
+            msg = mark_safe(
+                'Please complete a <a href="{href}" class="alert-link">'
+                '{form}</a> for today before adding any new data.'.format(
+                    form=HouseholdLogEntry._meta.verbose_name,
+                    href=self.current_household_log_entry.href))
+            messages.add_message(self.request, messages.WARNING, msg)
         elif not self.representative_eligibility:
-            return 'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
-                form=RepresentativeEligibility._meta.verbose_name,
-                href=self.representative_eligibility.href)
+            msg = mark_safe(
+                'Please complete the <a href="{href}" class="alert-link">'
+                '{form}</a> form.'.format(
+                    form=RepresentativeEligibility._meta.verbose_name,
+                    href=self.representative_eligibility.href))
+            messages.add_message(self.request, messages.WARNING, msg)
         elif not self.household_info:
-            return 'Please complete the <a href="{href}" class="alert-link">{form}</a>  form.'.format(
-                form=HouseholdInfo._meta.verbose_name,
-                href=self.household_info.href)
+            msg = mark_safe(
+                'Please complete the <a href="{href}" class="alert-link">'
+                '{form}</a>  form.'.format(
+                    form=HouseholdInfo._meta.verbose_name,
+                    href=self.household_info.href))
+            messages.add_message(self.request, messages.WARNING, msg)
         elif not self.head_of_household_eligibility and self.head_of_household:
-            return 'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
-                form=HouseholdHeadEligibility._meta.verbose_name,
-                href=self.head_of_household_eligibility.href)
-        else:
-            return None
+            msg = mark_safe(
+                'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
+                    form=HouseholdHeadEligibility._meta.verbose_name,
+                    href=self.head_of_household_eligibility.href))
+            messages.add_message(self.request, messages.WARNING, msg)
 
     @property
     def can_add_members(self):

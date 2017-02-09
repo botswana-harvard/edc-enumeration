@@ -1,16 +1,17 @@
 import sys
 
 from django import forms
+from django.contrib import messages
 from django.core.management.color import color_style
 from django.forms.forms import Form
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
-from django.views.generic.edit import FormView
+from django.utils.safestring import mark_safe
+from django.views.generic.base import TemplateView
 
 from edc_base.utils import get_utcnow
-from edc_dashboard.view_mixins import AppConfigViewMixin, DashboardViewMixin
 
-from enumeration.views.dashboard_view import DashboardView
+from enumeration.views.dashboard_view import DashboardViewMixin
 from household.models import HouseholdStructure
 from member.exceptions import CloneError, EnumerationRepresentativeError
 from member.models import HouseholdMember
@@ -23,7 +24,7 @@ class CloneForm(Form):
     members = forms.MultipleChoiceField()
 
 
-class CloneMembersView(DashboardView, FormView):
+class CloneMembersViewMixin:
 
     def get_success_url(self):
         return reverse(self.dashboard_url_name,
@@ -38,14 +39,17 @@ class CloneMembersView(DashboardView, FormView):
         household_structure = HouseholdStructure.objects.get(
             household__household_identifier=household_identifier,
             survey_schedule=survey_schedule)
+        imported_names = []
         for key in self.request.POST:
             if key.startswith('member'):
                 try:
                     household_member = HouseholdMember.objects.get(
                         pk=self.request.POST.get(key))
                 except HouseholdMember.DoesNotExist as e:
+                    msg = 'Failed to import member.<br>Got {}\n'.format(e)
+                    messages.add_message(request, messages.ERROR, msg)
                     sys.stdout.write(
-                        style.ERROR('Failed to clone member. Got {}'.format(e)))
+                        style.ERROR(msg))
                     sys.stdout.flush()
                 else:
                     try:
@@ -54,20 +58,28 @@ class CloneMembersView(DashboardView, FormView):
                             report_datetime=get_utcnow(),
                             user_created=request.user.username)
                     except CloneError as e:
+                        msg = mark_safe('Unable to import {}.<br>Got \'{}\'\n'.format(
+                            household_member.first_name, e))
+                        messages.add_message(request, messages.ERROR, msg)
                         sys.stdout.write(
-                            style.ERROR(
-                                'Failed to clone member. {}. Got {}'.format(
-                                    household_member.first_name, e)))
+                            style.ERROR(msg))
                         sys.stdout.flush()
                     else:
                         try:
                             clone.save()
                         except EnumerationRepresentativeError as e:
+                            msg = ('Unable to import {}.<br>Got \'{}\'\n'.format(
+                                household_member.first_name, e))
+                            messages.add_message(request, messages.ERROR, msg)
                             sys.stdout.write(
-                                style.ERROR(
-                                    'Failed to clone member. {}. Got {}'.format(
-                                        household_member.first_name, e)))
-                        sys.stdout.flush()
+                                style.ERROR(msg))
+                            sys.stdout.flush()
+                        else:
+                            imported_names.append(clone.first_name)
+        if imported_names:
+            msg = 'Successfully import {}.'.format(
+                ', '.join(imported_names))
+            messages.add_message(request, messages.SUCCESS, msg)
         url = reverse(
             self.dashboard_url_name,
             kwargs={
@@ -75,3 +87,7 @@ class CloneMembersView(DashboardView, FormView):
                 'survey_schedule': survey_schedule,
             })
         return HttpResponseRedirect(url)
+
+
+class CloneMembersView(DashboardViewMixin, CloneMembersViewMixin, TemplateView):
+    app_config_name = 'enumeration'
