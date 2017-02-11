@@ -1,28 +1,50 @@
+from django.apps import apps as django_apps
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, FormView
 
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_constants.constants import MALE
-from edc_dashboard.view_mixins import ListboardViewMixin, AppConfigViewMixin
+from edc_dashboard.forms import SearchForm as BaseSearchForm
+from edc_dashboard.views import ListboardView as BaseListboardView
+from edc_dashboard.view_mixins import AppConfigViewMixin
 
-from survey import SurveyViewMixin
+from household.models import HouseholdStructure
 
-from .listboard.mixins import FilteredListViewMixin, SearchViewMixin
+from .wrappers import HouseholdStructureWithLogEntryWrapper
 
 
-class ListBoardView(EdcBaseViewMixin, ListboardViewMixin, AppConfigViewMixin,
-                    FilteredListViewMixin, SearchViewMixin,
-                    SurveyViewMixin, TemplateView, FormView):
+class SearchForm(BaseSearchForm):
+    action_url_name = django_apps.get_app_config(
+        'enumeration').listboard_url_name
+
+
+class ListboardView(AppConfigViewMixin, EdcBaseViewMixin, BaseListboardView):
 
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
+    model = HouseholdStructure
+    model_wrapper_class = HouseholdStructureWithLogEntryWrapper
+    search_form_class = SearchForm
+    paginate_by = 10
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update(MALE=MALE)
-        return context
+    def get_queryset_filter_options(self, request, *args, **kwargs):
+        options = super().get_queryset_filter_options(request, *args, **kwargs)
+        if kwargs.get('household_identifier'):
+            options.update(
+                {'household__household_identifier': kwargs.get('household_identifier')})
+        if kwargs.get('survey_schedule'):
+            options.update(
+                {'survey_schedule': kwargs.get('survey_schedule')})
+        return options
+
+    def get_queryset_exclude_options(self, request, *args, **kwargs):
+        options = super().get_queryset_exclude_options(
+            request, *args, **kwargs)
+        plot_identifier = django_apps.get_app_config(
+            'plot').anonymous_plot_identifier
+        options.update(
+            {'household__plot__plot_identifier': plot_identifier})
+        return options

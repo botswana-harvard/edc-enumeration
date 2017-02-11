@@ -4,10 +4,7 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_base.utils import get_utcnow
-from edc_consent.exceptions import ConsentDoesNotExist
-from edc_consent.site_consents import site_consents
-
-from bcpp_subject.views.dashboard.default.wrappers import (
+from bcpp_subject.views.wrappers import (
     SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
 from bcpp_subject.models import SubjectConsent
 from household.exceptions import HouseholdLogRequired

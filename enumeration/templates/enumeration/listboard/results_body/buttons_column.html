@@ -18,35 +18,14 @@
      {% include 'edc_dashboard/controls/history_button.html' %}
    {% endwith %}
 
-   {% with members=wrapped.members %}
-     {% include 'enumeration/members_button.html' %}
-   {% endwith %}
-
-   {% if survey_schedule_object.field_value %}
-
-     <a title="enumeration" role="button" class="btn btn-sm btn-default"
-        href="{% url enumeration_listboard_url_name plot_identifier=wrapped.plot_identifier survey_schedule=wrapped.survey_schedule_object.field_value%}">
-          <i class="fa fa-sitemap fa-md"></i>
-     </a>
-
-     <a title="enumeration dashboard" role="button" class="btn btn-sm {% if wrapped.log_entries.count == 0 %} btn-default disabled{% else %}btn-success{% endif %}"
+     <a title="enumeration dashboard" role="button" class="btn btn-sm btn-default {% if wrapped.log_entries.count == 0 %}disabled{% endif %}"
         href="{% url enumeration_dashboard_url_name household_identifier=wrapped.household_identifier survey_schedule=wrapped.survey_schedule_object.field_value %}">
             <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard
      </a>
-
-   {% else %}
-
-     <a title="enumeration" role="button" class="btn btn-sm btn-success"
-        href="{% url member_listboard_url_name household_identifier=wrapped.household_identifier survey_schedule=wrapped.survey_schedule_object.field_value %}">
-            <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i>
-     </a>
-
      <a title="members" role="button" class="btn btn-sm btn-default{% if not wrapped.members %} disabled{% endif %}"
         href="{% url member_listboard_url_name plot_identifier=wrapped.plot_identifier survey_schedule=wrapped.survey_schedule_object.field_value %}">
           <i class="fa fa-group fa-md"></i>
      </a>
-
-   {% endif %}
 
 </td>  
 
