@@ -15,6 +15,8 @@ from enumeration.views.dashboard_view import DashboardViewMixin
 from household.models import HouseholdStructure
 from member.exceptions import CloneError, EnumerationRepresentativeError
 from member.models import HouseholdMember
+from edc_dashboard.view_mixins.app_config_view_mixin import AppConfigViewMixin
+from edc_base.view_mixins import EdcBaseViewMixin
 
 style = color_style()
 
@@ -89,5 +91,7 @@ class CloneMembersViewMixin:
         return HttpResponseRedirect(url)
 
 
-class CloneMembersView(DashboardViewMixin, CloneMembersViewMixin, TemplateView):
+class CloneMembersView(CloneMembersViewMixin,
+                       AppConfigViewMixin, DashboardViewMixin,
+                       EdcBaseViewMixin, TemplateView):
     app_config_name = 'enumeration'
