@@ -8,8 +8,7 @@ from django.contrib import messages
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import ALIVE, YES, MALE
 from edc_dashboard.view_mixins import (
-    DashboardViewMixin as BaseDashboardViewMixin,
-    SubjectIdentifierViewMixin, AppConfigViewMixin)
+    DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin)
 
 from household.models import HouseholdLogEntry
 from household.views import (
@@ -26,24 +25,20 @@ from .wrappers import (
     HeadOfHouseholdEligibilityModelWrapper)
 
 
-class DashboardViewMixin(EdcBaseViewMixin,
-                         BaseDashboardViewMixin,
-                         AppConfigViewMixin,
-                         SubjectIdentifierViewMixin,
-                         SurveyViewMixin,
-                         HouseholdViewMixin,
-                         HouseholdStructureViewMixin,
-                         HouseholdLogEntryViewMixin,
-                         HouseholdMemberViewMixin):
-    pass
-
-
-class DashboardView(DashboardViewMixin, TemplateView):
+class DashboardView(HouseholdMemberViewMixin,
+                    HouseholdLogEntryViewMixin,
+                    HouseholdStructureViewMixin,
+                    HouseholdViewMixin,
+                    SurveyViewMixin,
+                    SubjectIdentifierViewMixin,
+                    AppConfigViewMixin,
+                    DashboardViewMixin,
+                    EdcBaseViewMixin, TemplateView):
 
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
-    household_member_wrapper_class = HouseholdMemberModelWrapper
-    household_log_entry_wrapper_class = HouseholdLogEntryModelWrapper
+    household_member_model_wrapper_class = HouseholdMemberModelWrapper
+    household_log_entry_model_wrapper_class = HouseholdLogEntryModelWrapper
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -58,7 +53,7 @@ class DashboardView(DashboardViewMixin, TemplateView):
             YES=YES,
             MALE=MALE,
             can_add_members=self.can_add_members,
-            household_forms=self.household_forms_as_wrapped_models,
+            household_forms=self.household_forms_wrapped,
         )
         return context
 
@@ -68,27 +63,27 @@ class DashboardView(DashboardViewMixin, TemplateView):
                 'Please complete a <a href="{href}" class="alert-link">'
                 '{form}</a> for today before adding any new data.'.format(
                     form=HouseholdLogEntry._meta.verbose_name,
-                    href=self.current_household_log_entry.href))
+                    href=self.current_household_log_entry_wrapped.href))
             messages.add_message(self.request, messages.WARNING, msg)
         elif not self.representative_eligibility:
             msg = mark_safe(
                 'Please complete the <a href="{href}" class="alert-link">'
                 '{form}</a> form.'.format(
                     form=RepresentativeEligibility._meta.verbose_name,
-                    href=self.representative_eligibility.href))
+                    href=self.representative_eligibility_wrapped.href))
             messages.add_message(self.request, messages.WARNING, msg)
         elif not self.household_info:
             msg = mark_safe(
                 'Please complete the <a href="{href}" class="alert-link">'
                 '{form}</a>  form.'.format(
                     form=HouseholdInfo._meta.verbose_name,
-                    href=self.household_info.href))
+                    href=self.household_info_wrapped.href))
             messages.add_message(self.request, messages.WARNING, msg)
         elif not self.head_of_household_eligibility and self.head_of_household:
             msg = mark_safe(
                 'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
                     form=HouseholdHeadEligibility._meta.verbose_name,
-                    href=self.head_of_household_eligibility.href))
+                    href=self.head_of_household_eligibility_wrapped.href))
             messages.add_message(self.request, messages.WARNING, msg)
 
     @property
@@ -101,13 +96,13 @@ class DashboardView(DashboardViewMixin, TemplateView):
         return True
 
     @property
-    def household_forms_as_wrapped_models(self):
+    def household_forms_wrapped(self):
         """Returns a generator of "Household forms" to be completed
         prior to enumeration."""
         wrapped_models = (
-            self.representative_eligibility,
-            self.household_info,
-            self.head_of_household_eligibility)
+            self.representative_eligibility_wrapped,
+            self.household_info_wrapped,
+            self.head_of_household_eligibility_wrapped)
         for wrapped_model in wrapped_models:
             if wrapped_model is not None:
                 if not self.current_household_log_entry:
@@ -118,43 +113,70 @@ class DashboardView(DashboardViewMixin, TemplateView):
 
     @property
     def head_of_household_eligibility(self):
-        """Return a wrapped model saved/unsaved if HoH exists,
-        otherwise None.
+        """Return a model instance or None.
         """
+        try:
+            obj = HouseholdHeadEligibility.objects.get(
+                household_member=self.head_of_household)
+        except ObjectDoesNotExist:
+            obj = None
+        return obj
+
+    @property
+    def head_of_household_eligibility_wrapped(self):
+        """Return a wrapped model, either saved or unsaved, or None.
+
+        Returns None if HoH does not exist.
+        """
+        wrapped = None
         if self.head_of_household:
-            try:
-                obj = HouseholdHeadEligibility.objects.get(
-                    household_member=self.head_of_household._original_object)
-            except ObjectDoesNotExist:
-                obj = HouseholdHeadEligibility(
-                    household_member=self.head_of_household._original_object)
-            return HeadOfHouseholdEligibilityModelWrapper(
+            obj = self.head_of_household_eligibility or HouseholdHeadEligibility(
+                household_member=self.head_of_household)
+            wrapped = HeadOfHouseholdEligibilityModelWrapper(
                 obj, model_name=HouseholdHeadEligibility._meta.label_lower,
                 next_url_name=self.dashboard_url_name)
-        return None
+        return wrapped
 
     @property
     def representative_eligibility(self):
-        """Return a wrapped model of either saved or unsaved.
+        """Return a representative_eligibility model instance or None.
         """
         try:
-            obj = self.household_structure._original_object.representativeeligibility
+            obj = self.household_structure.representativeeligibility
         except ObjectDoesNotExist:
-            obj = RepresentativeEligibility(
-                household_structure=self.household_structure._original_object)
+            obj = None
+        except AttributeError:
+            obj = None
+        return obj
+
+    @property
+    def representative_eligibility_wrapped(self):
+        """Return a wrapped model either saved or unsaved.
+        """
+        obj = self.representative_eligibility or RepresentativeEligibility(
+            household_structure=self.household_structure)
         return RepresentativeEligibilityModelWrapper(
             obj, model_name=RepresentativeEligibility._meta.label_lower,
             next_url_name=self.dashboard_url_name)
 
     @property
     def household_info(self):
-        """Return a wrapped model of either saved or unsaved.
+        """Return a household info model instance or None.
         """
         try:
-            obj = self.household_structure._original_object.householdinfo
+            obj = self.household_structure.householdinfo
         except ObjectDoesNotExist:
-            obj = HouseholdInfo(
-                household_structure=self.household_structure._original_object)
+            obj = None
+        except AttributeError:
+            obj = None
+        return obj
+
+    @property
+    def household_info_wrapped(self):
+        """Return a wrapped model either saved or unsaved.
+        """
+        obj = self.household_info or HouseholdInfo(
+            household_structure=self.household_structure)
         return HouseholdInfoModelWrapper(
             obj, model_name=HouseholdInfo._meta.label_lower,
             next_url_name=self.dashboard_url_name)

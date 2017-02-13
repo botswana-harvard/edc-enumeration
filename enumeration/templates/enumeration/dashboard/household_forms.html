@@ -9,18 +9,22 @@
         <tbody>
 
         <tr>
-        {% with wrapped=current_household_log_entry %}
+        {% with wrapped=current_household_log_entry report_datetime=current_household_log_entry.report_datetime %}
 
             {% include 'edc_dashboard/controls/change_button_as_column.html' %}
 
         {% endwith %}
         </tr>
 
-        {% for wrapped in household_forms %}
+        {% for household_form in household_forms %}
         <tr>
 
+         {% with wrapped=household_form report_datetime=household_form.report_datetime %}
+            
             {% include 'edc_dashboard/controls/change_button_as_column.html' %}
 
+         {% endwith %}
+ 
 	    </tr>
         {% endfor %}
 
