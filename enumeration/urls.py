@@ -26,6 +26,8 @@ from survey.patterns import survey_schedule
 from .views import ListboardView, DashboardView, CloneMembersView
 
 
+app_name = 'enumeration'
+
 urlpatterns = [
     url(r'^dashboard/'
         '(?P<subject_identifier>' + '[0-9]{3}\-[0-9\-]+' + ')/'
