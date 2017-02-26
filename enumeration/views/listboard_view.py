@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_dashboard.forms import SearchForm as BaseSearchForm
 from edc_dashboard.views import ListboardView as BaseListboardView
 from edc_dashboard.view_mixins import AppConfigViewMixin
 
@@ -12,18 +11,12 @@ from household.models import HouseholdStructure
 from .wrappers import HouseholdStructureWithLogEntryWrapper
 
 
-class SearchForm(BaseSearchForm):
-    action_url_name = django_apps.get_app_config(
-        'enumeration').listboard_url_name
-
-
 class ListboardView(AppConfigViewMixin, EdcBaseViewMixin, BaseListboardView):
 
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
     model = HouseholdStructure
     model_wrapper_class = HouseholdStructureWithLogEntryWrapper
-    search_form_class = SearchForm
     paginate_by = 10
 
     @method_decorator(login_required)
