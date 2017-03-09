@@ -48,6 +48,8 @@
                 {% endif %}
         </a>
       </li>
+
+
 	{% if wrapped.enrollment_checklist %}
 		{% if wrapped.enrollment_checklist.citizen == 'No' %}
 			<li>
@@ -58,53 +60,52 @@
 	      </li>
 	      <li><a href="#"><i class="fa fa-plus"></i> Anonymous Refusal</a></li>
 	    {% endif %}
-	    {% if wrapped.enrollment_checklist.citizen == 'Yes' %}
-		    {% if not wrapped.is_consented %}
-			    <li class="dropdown-header">Status reports</li>
-			    
-			       <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
-			         <a class="dropdown-item"
-			           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_absent_member.href }}{% endif %}">
-			             <i class="fa fa-plus fa-fw"></i>&nbsp;
-			             Absent
-			         </a>
-			       </li>
-			
-			       <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
-			         <a class="dropdown-item"
-			           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_undecided_member.href }}{% endif %}">
-			             <i class="fa fa-plus fa-fw"></i>&nbsp;
-			             Undecided
-			        </a>
-			       </li>
-			
-			     <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
-			       <a class="dropdown-item "
-			           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.refused_member.href }}{% endif %}">
-			           {% if wrapped.refused_member %}
-			               <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
-			           {% endif %}&nbsp;
-			           Refused 
-			           {% if wrapped.refused_member %}
-			               <span class="text text-muted">{{ wrapped.refused_member.report_date|date:"Y-m-d" }}</span>
-			           {% endif %}
-			       </a>
-			     </li>
-			
-			     <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
-			       <a class="dropdown-item"
-			           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.deceased_member.href }}{% endif %}">
-			           {% if wrapped.deceased_member %}
-			               <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
-			           {% endif %}&nbsp;
-			           Deceased
-			           {% if wrapped.deceased_member %}
-			               <span class="text text-muted">{{ wrapped.deceased_member.report_date|date:"Y-m-d" }}</span>
-			           {% endif %}
-			       </a>
-			     </li>
-			  {% endif %}
-			{% endif %}
+	{% endif %}
+
+    {% if not wrapped.is_consented and not wrapped.enrollment_checklist.citizen == 'No' and not wrapped.enrollment_checklist.legal_marriage == 'No' %}
+	    <li class="dropdown-header">Status reports</li>
+	    
+	       <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	         <a class="dropdown-item"
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_absent_member.href }}{% endif %}">
+	             <i class="fa fa-plus fa-fw"></i>&nbsp;
+	             Absent
+	         </a>
+	       </li>
+	
+	       <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	         <a class="dropdown-item"
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_undecided_member.href }}{% endif %}">
+	             <i class="fa fa-plus fa-fw"></i>&nbsp;
+	             Undecided
+	        </a>
+	       </li>
+	
+	     <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	       <a class="dropdown-item "
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.refused_member.href }}{% endif %}">
+	           {% if wrapped.refused_member %}
+	               <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
+	           {% endif %}&nbsp;
+	           Refused 
+	           {% if wrapped.refused_member %}
+	               <span class="text text-muted">{{ wrapped.refused_member.report_date|date:"Y-m-d" }}</span>
+	           {% endif %}
+	       </a>
+	     </li>
+	
+	     <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	       <a class="dropdown-item"
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.deceased_member.href }}{% endif %}">
+	           {% if wrapped.deceased_member %}
+	               <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
+	           {% endif %}&nbsp;
+	           Deceased
+	           {% if wrapped.deceased_member %}
+	               <span class="text text-muted">{{ wrapped.deceased_member.report_date|date:"Y-m-d" }}</span>
+	           {% endif %}
+	       </a>
+	     </li>
 	  {% endif %}
      {% endwith %}
 
