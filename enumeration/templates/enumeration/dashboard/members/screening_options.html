@@ -3,7 +3,11 @@
  <div class="btn-group">
   <button class="btn btn-{% if not wrapped.participation_status.final %}warning{% else %}default{% endif%} dropdown-toggle btn-sm"
     type="button" data-toggle="dropdown">
-    {{ wrapped.participation_status.get_display|default:"Screening Options" }}
+    {% if wrapped.present_today == 'No' and not wrapped.today_absent_member %}
+    	Fill absentee log
+    {% else %}
+    	{{ wrapped.participation_status.get_display|default:"Screening Options" }}
+    {% endif %}
   </button>
   <button type="button" class="btn btn-{% if not wrapped.participation_status.final %}warning{% else %}default{% endif%} dropdown-toggle btn-sm dropdown-toggle" data-toggle="dropdown">
     <span class="caret"></span></button>
