@@ -15,18 +15,19 @@
 
         {% endwith %}
         </tr>
-
-        {% for household_form in household_forms %}
-        <tr>
-
-         {% with wrapped=household_form report_datetime=household_form.report_datetime %}
-            
-            {% include 'edc_dashboard/controls/change_button_as_column.html' %}
-
-         {% endwith %}
- 
-	    </tr>
-        {% endfor %}
+		{% if not current_household_log_entry.household_status == 'refused' %}
+	        {% for household_form in household_forms %}
+	        <tr>
+	
+	         {% with wrapped=household_form report_datetime=household_form.report_datetime %}
+	            
+	            {% include 'edc_dashboard/controls/change_button_as_column.html' %}
+	
+	         {% endwith %}
+	 
+		    </tr>
+	        {% endfor %}
+	      {% endif %}
 
         </tbody>
     </table>
