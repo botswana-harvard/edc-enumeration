@@ -1,0 +1,33 @@
+
+<!-- begin buttons column -->
+
+<td style="white-space: nowrap">
+
+   <a title="plot" role="button" class="btn btn-sm btn-default"
+        href="{% url plot_listboard_url_name plot_identifier=wrapped.plot_identifier %}">
+           <i class="fa fa-building-o fa-md"></i>
+   </a>
+
+   <a title="household" role="button" class="btn btn-sm btn-default"
+        href="{% url household_listboard_url_name wrapped.household_identifier %}">
+            <i class="fa fa-home fa-lg"></i> {{ wrapped.household_identifier }}
+            
+   </a>
+
+   {% with history_objects=wrapped.log_entries title="Household logs" add_button=wrapped.survey_schedule_object history_object=wrapped.log_entry %}
+     {% include 'edc_dashboard/controls/history_button.html' %}
+   {% endwith %}
+
+     <a title="enumeration dashboard" role="button" class="btn btn-sm btn-default {% if wrapped.log_entries.count == 0 %}disabled{% endif %}"
+        href="{% url enumeration_dashboard_url_name household_identifier=wrapped.household_identifier survey_schedule=wrapped.survey_schedule_object.field_value %}">
+            <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard
+     </a>
+     <a title="members" role="button" class="btn btn-sm btn-default{% if not wrapped.members %} disabled{% endif %}"
+        href="{% url member_listboard_url_name plot_identifier=wrapped.plot_identifier survey_schedule=wrapped.survey_schedule_object.field_value %}">
+          <i class="fa fa-group fa-md"></i>
+     </a>
+
+</td>  
+
+<!-- begin buttons column -->
+  

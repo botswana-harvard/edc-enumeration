@@ -1,0 +1,34 @@
+
+<!-- start members button -->
+
+<div class="btn-group">
+
+	<button title = "members" type="button" class="btn btn-default btn-sm">
+	  <i class="fa fa-group fa-lg"></i></button>
+	<div class="btn-group">
+	  <button title="Members" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+	      <span class="caret"></span></button>
+	      <ul class="dropdown-menu" role="menu">
+	        <li class="dropdown-header">{{ result.survey_schedule_object.short_name }}</li>
+
+	        {% for obj in result.members %}
+
+	          <li>
+	          <a href="#">
+	
+		          {% if obj.gender == MALE %}
+		               <i class="fa fa-male fa-sm"></i>
+		          {% else %}
+		               <i class="fa fa-female fa-sm"></i>
+		          {% endif %}
+	
+		          &nbsp;{{ obj.first_name }} {{ obj.age_in_years }}
+	          </a>
+	          </li>
+
+	        {% endfor %}
+
+	      </ul>
+	</div>
+</div>
+<!-- end members button -->

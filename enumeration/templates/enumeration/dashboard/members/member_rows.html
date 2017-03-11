@@ -1,0 +1,33 @@
+
+{% if household_members %}
+      {% if survey_schedule_object.field_value == household_structure.survey_schedule_object.field_value %}
+
+          {% for wrapped in household_members %}
+            {% if wrapped.survey_schedule_object.field_value == survey_schedule_object.field_value %}
+
+                {% with disabled='' %}
+                    {% include 'enumeration/dashboard/members/member_row.html' %}
+                {% endwith %}
+
+            {% endif %}
+          {% endfor %}
+
+      {% else %}
+
+        {% for wrapped in household_members %}
+
+          {% if wrapped.survey_schedule_object.field_value == household_structure.survey_schedule_object.field_value %}
+        
+                {% with disabled='disabled' %}
+                    {% include 'enumeration/dashboard/members/member_row.html' %}
+                {% endwith %}
+
+
+          {% endif %}
+
+        {% endfor %}
+
+
+      {% endif %}
+{% endif %}
+

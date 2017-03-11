@@ -1,0 +1,107 @@
+{% extends 'enumeration/dashboard/base_dashboard.html' %}
+
+
+{% block alert %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+		<div class="alert alert-danger alert-dismissable fade in">
+		<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+		  <i class="fa fa-hand-stop-o fa-lg"></i> {{ message }}
+		</div>
+		{% endif %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+        <div class="alert alert-warning alert-dismissable fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+          <i class="fa fa-hand-stop-o fa-lg"></i> {{ message }}
+        </div>
+        {% endif %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success alert-dismissable fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+          <i class="fa fa-hand-stop-o fa-lg"></i> {{ message }}
+        </div>
+        {% endif %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+        <div class="alert alert-info alert-dismissable fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+          <i class="fa fa-hand-stop-o fa-lg"></i> {{ message }}
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+      {% if danger_alerts %}
+        {% for danger_alert in danger_alerts %} 
+			<div class="alert alert-danger alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>			
+			  <i class="fa fa-hand-stop-o fa-lg"></i> {{ danger_alert }}
+			</div>
+		{% endfor %}
+      {% elif warning_alerts %}
+        {% for warning_alert in warning_alerts %} 
+            <div class="alert alert-warning alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+              <i class="fa fa-hand-pointer-o fa-lg"></i> {{ warning_alert }}
+            </div>
+        {% endfor %}
+      {% elif success_alerts %}
+        {% for success_alert in success_alerts %} 
+            <div class="alert alert-success alert-dismissable fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>           
+              <i class="fa fa-thumbs-o-up fa-lg"></i> {{ success_alert }}
+            </div>
+        {% endfor %}
+      {% endif %}
+
+{% endblock alert %}
+
+
+{% block dashboard_topbar %}           
+
+    {% include 'enumeration/dashboard/topbar.html' %}
+
+{% endblock dashboard_topbar %}           
+
+
+{% block household_forms %}           
+
+    {% include 'enumeration/dashboard/household_forms.html' %}
+
+{% endblock household_forms %}           
+
+
+{% block log_entry_history %}           
+
+    {% include 'enumeration/dashboard/log_entries.html' %}
+
+{% endblock log_entry_history %}           
+
+
+{% block statistics %}           
+
+    {% include 'enumeration/dashboard/statistics.html' %}
+    
+{% endblock statistics %}           
+
+
+{% block member_rows %}  
+
+    {% include 'enumeration/dashboard/members/member_rows.html' %}
+
+{% endblock member_rows %}
+
+
+{% block enumeration %}
+
+    {% include 'enumeration/dashboard/enumeration.html' %}
+
+{% endblock enumeration %}
+
+
+{% block modals %}
+
+{{ block.super }}
+{% include 'enumeration/dashboard/import_members_modal.html' %}
+{% endblock %}

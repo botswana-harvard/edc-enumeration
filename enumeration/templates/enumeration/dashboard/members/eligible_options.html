@@ -1,0 +1,23 @@
+
+<!-- begin screening options -->
+
+  <div class="btn-group">
+
+    {% if wrapped.is_consented %}
+      <a class="btn {% if wrapped.is_consented %}btn-success{% else %}btn-warning{% endif %} {% if not wrapped.editable_in_view %}disabled {% endif %}btn-sm" type="button"   
+        href="{% if not wrapped.editable_in_view %}#{% else %}{% url bcpp_subject_dashboard_url_name household_identifier=household_member.household_identifier subject_identifier=household_member.subject_identifier survey_schedule=household_member.survey_schedule_object.field_value %}{% endif %}">
+        <i class="fa fa-user-circle-o fa-sm"></i> Dashboard</a>
+
+    {% else %}
+
+         <a title="Consent to participate"
+            class="btn btn-warning btn-sm{% if not wrapped.editable_in_view %} disabled{% endif %}"
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.consent.href }}{% endif %}">
+             Consent (v{{ household_member.consent.version }})
+         </a>
+
+    {% endif %}
+
+
+</div> 
+<!-- begin screening options -->

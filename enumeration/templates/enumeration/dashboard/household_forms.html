@@ -1,0 +1,36 @@
+
+<!-- start sidebar buttons -->
+
+<div class="table-responsive small text-default">
+    <table class="table table-condensed">
+
+        <thead></thead>
+
+        <tbody>
+
+        <tr>
+        {% with wrapped=current_household_log_entry report_datetime=current_household_log_entry.report_datetime %}
+
+            {% include 'edc_dashboard/controls/change_button_as_column.html' %}
+
+        {% endwith %}
+        </tr>
+		{% if not current_household_log_entry.household_status == 'refused' %}
+	        {% for household_form in household_forms %}
+	        <tr>
+	
+	         {% with wrapped=household_form report_datetime=household_form.report_datetime %}
+	            
+	            {% include 'edc_dashboard/controls/change_button_as_column.html' %}
+	
+	         {% endwith %}
+	 
+		    </tr>
+	        {% endfor %}
+	      {% endif %}
+
+        </tbody>
+    </table>
+</div>
+
+<!-- ends sidebar buttons -->

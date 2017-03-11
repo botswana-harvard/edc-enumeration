@@ -1,0 +1,19 @@
+<!-- start survey_schedules -->
+
+<div class="list-group">
+      
+    {% for survey_schedule in survey_schedules reversed %}
+
+			<a class="list-group-item {% if survey_schedule == survey_schedule_object %}disabled{% endif %}"
+			 href="{% url enumeration_dashboard_url_name household_identifier=household_identifier survey_schedule=survey_schedule.field_value %}">
+			 {{ survey_schedule.name }}&nbsp;
+			 {% if survey_schedule == survey_schedule_object %}<i class="fa fa-check fa-lg fa-fw"></i> {% endif %} 
+             <span class="text text-muted">
+             <br><small>{{ survey_schedule.start|date:"Y-m-d" }} to  {{ survey_schedule.end|date:"Y-m-d" }}</small>
+             </span>
+			</a>
+
+    {% endfor %}
+</div>
+
+<!-- end survey_schedules -->

@@ -1,0 +1,55 @@
+
+<!-- begin ineligible options -->
+
+    {% if not wrapped.eligible_member or wrapped.eligible_member.non_citizen %}
+	<span title="not eligible">
+	  <i class="fa fa-ban fa-lg text-danger"></i> <span class="text text-muted">Not eligible</span>
+	</span>
+    {% endif %}
+     <div class="btn-group">
+
+    {% if wrapped.refused %}
+
+     <div class="btn-group">
+	    <button class="btn btn-default btn-sm" type="button">
+	     Refused
+	    </button>
+	    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+	       <span class="caret"></span>
+	    </button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+	         <a title="Subject has refused to participate" class="{% if not wrapped.editable_in_view %}disabled{% endif %}"
+	           href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.refused_member.href }}{% endif %}">
+	             <i class="fa fa-pencil fa-fw"></i> {{ wrapped.refused_member.report_datetime|date:"Y-m-d" }}
+	         </a>
+          </li>
+        </ul>    
+    </div>
+    {% endif %}
+
+     <div class="btn-group">
+    <button class="btn btn-default btn-sm" type="button">
+      Other options
+    </button>
+    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+       <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="{{ wrapped.htc_member.href }}">{% if wrapped.htc_member.tracking_identifier %}<i class="fa fa-pencil"></i>{% else %}<i class="fa fa-plus"></i>{% endif %} HTC {{ wrapped.htc_member.report_datetime|date:"Y-m-d" }}</a></li>
+      <li><a href="{{ wrapped.htc_refusal.href }}"><i class="fa fa-plus"></i> HTC Refusal</a></li>
+      <li>
+        <a data-toggle="modal" data-target="#anonymousModal2" href="#">
+        <span class="text text-danger"><i class="fa fa-user-secret"></i>
+            Anonymous Enrollment</span>
+        </a>
+      </li>
+      <li><a href="#"><i class="fa fa-plus"></i> Anonymous Refusal</a></li>
+    </ul> 
+      {% if  wrapped.htc_member.tracking_identifier %}
+        <button class="btn btn-info btn-sm" type="button">{{ wrapped.htc_member.tracking_identifier }}</button>
+      {% endif %}
+</div> 
+
+</div> 
+<!-- begin ineligible options -->

@@ -1,0 +1,29 @@
+
+<!-- start log entries -->
+
+<div class="table-responsive small">
+    <table class="table table-condensed">
+      <thead></thead>
+      <tbody>
+
+      {% for wrapped in household_log_entries %}
+        <tr>
+          <td>
+            <a title="change log entry" role="button" class="btn btn-default" href="{{ wrapped.href }}">
+              <i class="fa fa-pencil fa-sm"></i>
+            </a>
+          {% if current_household_log_entry.id ==  wrapped.id %}<span class="label label-info">Today</span>{% endif %}
+          </td>
+          <td>
+            {{ wrapped.report_datetime|date:"Y-m-d H:i" }}&nbsp;
+            {{ wrapped.get_household_status_display }}</br>
+            {{ wrapped.next_appt_datetime|default:"" }}&nbsp;{{ wrapped.next_appt_datetime_source|default:"" }}&nbsp;
+            {% if wrapped.user_created %}({{ wrapped.user_created }}/{{ wrapped.user_modified }}){% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+</div>
+
+<!-- end log entries -->

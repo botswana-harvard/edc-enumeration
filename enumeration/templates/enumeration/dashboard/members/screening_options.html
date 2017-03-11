@@ -1,0 +1,118 @@
+
+<!-- begin screening options -->
+ <div class="btn-group">
+  <button class="btn btn-{% if not wrapped.participation_status.final %}warning{% else %}default{% endif%} dropdown-toggle btn-sm"
+    type="button" data-toggle="dropdown">
+    {% if wrapped.present_today == 'No' and not wrapped.today_absent_member %}
+    	Fill absentee log
+    {% else %}
+    	{{ wrapped.participation_status.get_display|default:"Screening Options" }}
+    {% endif %}
+  </button>
+  <button type="button" class="btn btn-{% if not wrapped.participation_status.final %}warning{% else %}default{% endif%} dropdown-toggle btn-sm dropdown-toggle" data-toggle="dropdown">
+    <span class="caret"></span></button>
+
+  <ul class="dropdown-menu" role="menu">
+
+    <!-- begin consent -->
+    {% if wrapped.is_consented %}
+
+	    <li class="dropdown-header">Consent</li>
+	       {% comment %}
+	           Note: consent should only be editable in the survey
+	           that it was created in
+	       {%endcomment%}
+	      <li class="dropdown-item {% if not wrapped.editable_in_view or wrapped.consent.wrapped_object.survey_schedule_object !=  survey_schedule_object %}disabled{% endif %}">
+	        <a class="dropdown-item"
+	           data-toggle="tooltip" title="{% if wrapped.editable_in_view and wrapped.consent.wrapped_object.survey_schedule_object !=  survey_schedule_object %}This consent may only be edited in {{wrapped.consent.wrapped_object.survey_schedule_object.name}}{% endif %}"
+	            href="{% if not wrapped.editable_in_view or not wrapped.consent.wrapped_object.survey_schedule_object ==  survey_schedule_object %}#{% else %}{{ wrapped.consent.href }}{% endif %}">
+	              <i class="fa fa-pencil fa-fw"></i>
+	              {{ wrapped.consent.consent_datetime|date:"Y-m-d" }} v{{ wrapped.consent.version }}
+	        </a>
+
+    {% endif %}
+    <!-- end consent -->
+    
+    <li class="dropdown-header">Enrollment Checklist</li>
+
+    {% with may_add=current_household_log_entry %}
+
+      <li class="dropdown-item {% if not may_add and not may_edit or not wrapped.editable_in_view %}disabled{% endif %}">
+        <a class="dropdown-item "
+            href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.enrollment_checklist.href }}{% endif %}">
+                {% if wrapped.enrollment_checklist %}
+                    <i class="fa fa-pencil fa-fw"></i>
+                {% else %}
+                    <i class="fa fa-plus fa-fw"></i>
+                {% endif %}
+                {% if wrapped.enrollment_checklist %}
+                    {{ wrapped.enrollment_checklist.report_datetime|date:"Y-m-d" }}
+                {% else %}
+                    Check eligibility
+                {% endif %}
+        </a>
+      </li>
+
+
+	{% if wrapped.enrollment_checklist %}
+		{% if wrapped.enrollment_checklist.citizen == 'No' %}
+			<li>
+	        <a data-toggle="modal" data-target="#anonymousModal2" href="#">
+	        <span class="text text-danger"><i class="fa fa-user-secret"></i>
+	            Anonymous Enrollment</span>
+	        </a>
+	      </li>
+	      <li><a href="#"><i class="fa fa-plus"></i> Anonymous Refusal</a></li>
+	    {% endif %}
+	{% endif %}
+
+    {% if not wrapped.is_consented and not wrapped.enrollment_checklist.citizen == 'No' and not wrapped.enrollment_checklist.legal_marriage == 'No' %}
+	    <li class="dropdown-header">Status reports</li>
+	    
+	       <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	         <a class="dropdown-item"
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_absent_member.href }}{% endif %}">
+	             <i class="fa fa-plus fa-fw"></i>&nbsp;
+	             Absent
+	         </a>
+	       </li>
+	
+	       <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	         <a class="dropdown-item"
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_undecided_member.href }}{% endif %}">
+	             <i class="fa fa-plus fa-fw"></i>&nbsp;
+	             Undecided
+	        </a>
+	       </li>
+	
+	     <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	       <a class="dropdown-item "
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.refused_member.href }}{% endif %}">
+	           {% if wrapped.refused_member %}
+	               <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
+	           {% endif %}&nbsp;
+	           Refused 
+	           {% if wrapped.refused_member %}
+	               <span class="text text-muted">{{ wrapped.refused_member.report_date|date:"Y-m-d" }}</span>
+	           {% endif %}
+	       </a>
+	     </li>
+	
+	     <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	       <a class="dropdown-item"
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.deceased_member.href }}{% endif %}">
+	           {% if wrapped.deceased_member %}
+	               <i class="fa fa-pencil fa-fw"></i>{% else %}<i class="fa fa-plus fa-fw"></i>
+	           {% endif %}&nbsp;
+	           Deceased
+	           {% if wrapped.deceased_member %}
+	               <span class="text text-muted">{{ wrapped.deceased_member.report_date|date:"Y-m-d" }}</span>
+	           {% endif %}
+	       </a>
+	     </li>
+	  {% endif %}
+     {% endwith %}
+
+  </ul>
+</div> 
+<!-- end screening options -->
