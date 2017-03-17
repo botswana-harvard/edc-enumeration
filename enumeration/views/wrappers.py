@@ -1,12 +1,9 @@
-from uuid import uuid4
-
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
-from edc_base.utils import get_utcnow
+from edc_base.utils import get_utcnow, get_uuid
 from bcpp_subject.views.wrappers import (
     SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
-from bcpp_subject.models import SubjectConsent
 from household.exceptions import HouseholdLogRequired
 from household.views import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper,
@@ -99,7 +96,7 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
             else:
                 consent = model(
                     subject_identifier=self._original_object.subject_identifier,
-                    consent_identifier=uuid4(),
+                    consent_identifier=get_uuid(),
                     household_member=self._original_object,
                     survey_schedule=self._original_object.survey_schedule_object.field_value,
                     version=self._original_object.consent_object.version)
