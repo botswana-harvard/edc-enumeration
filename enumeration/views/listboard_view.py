@@ -32,11 +32,11 @@ class ListboardView(AppConfigViewMixin, EdcBaseViewMixin, BaseListboardView):
         map_area = settings.CURRENT_MAP_AREA
         options.update(
             {'household__plot__map_area': map_area})
-        device_name = socket.gethostname()
+        device_id = socket.gethostname()[-2:]
         plot_identifier_list = []
         try:
             plot_identifier_list = InnerContainer.objects.get(
-                device_name=device_name).identifier_labels
+                device_id=device_id).identifier_labels
         except InnerContainer.DoesNotExist:
             plot_identifier_list = []
         if plot_identifier_list:
