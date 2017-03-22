@@ -35,8 +35,15 @@
                                   <label>
                                     <input type="checkbox" value="{{ household_member.id }}" name="member_{{forloop.counter}}">
 				       	                {%if household_member.gender == MALE %}<i class="fa fa-male fa-fw"></i>{% else%}<i class="fa fa-female fa-fw"></i>{% endif %}
-				       	                 {{ household_member.first_name }}
-				       	                 {{ household_member.initials }}
+			       	                    {{ household_member.first_name }}
+			       	                    {{ household_member.initials }}
+				       	                 <span class="text text-info">
+				       	                 {% if household_member.relation == HEAD_OF_HOUSEHOLD %}
+				       	                    <b>{{ household_member.get_relation_display|upper }}</b>
+				       	                 {% else %}
+				       	                    {{ household_member.get_relation_display|upper }}
+				       	                 {% endif%}
+				       	                 </span>
 				       	                 {{ household_member.age_in_years }} years old on {{ household_member.report_datetime|date:"Y-m-d" }}
 			                        </label></div>
 			                        </a>
