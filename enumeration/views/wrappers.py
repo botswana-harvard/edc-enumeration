@@ -5,7 +5,7 @@ from edc_base.utils import get_utcnow, get_uuid
 from bcpp_subject.views.wrappers import (
     SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
 from household.exceptions import HouseholdLogRequired
-from household.views import (
+from household.view_mixins import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper,
     HouseholdLogEntryModelWrapper as BaseHouseholdLogEntryModelWrapper)
 from member.models.household_member.utils import (

@@ -11,9 +11,10 @@ from edc_dashboard.view_mixins import (
     DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin)
 
 from household.models import HouseholdLogEntry
-from household.views import (
+from household.view_mixins import (
     HouseholdViewMixin, HouseholdStructureViewMixin,
     HouseholdLogEntryViewMixin)
+from member.constants import HEAD_OF_HOUSEHOLD
 from member.models import (
     HouseholdHeadEligibility, RepresentativeEligibility, HouseholdInfo)
 from member.views import HouseholdMemberViewMixin
@@ -52,6 +53,7 @@ class DashboardView(HouseholdMemberViewMixin,
             ALIVE=ALIVE,
             YES=YES,
             MALE=MALE,
+            HEAD_OF_HOUSEHOLD=HEAD_OF_HOUSEHOLD,
             can_add_members=self.can_add_members,
             household_forms=self.household_forms_wrapped,
         )
