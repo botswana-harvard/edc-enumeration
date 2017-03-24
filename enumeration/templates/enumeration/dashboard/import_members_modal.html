@@ -5,6 +5,10 @@
 			$('#selectAllMembersButton').click( function() {
 				$(":checkbox").prop("checked", true);
 			});
+
+			$('#deSelectAllMembersButton').click( function() {
+				$(":checkbox").prop("checked", false);
+			});
 		});
 	</script>
 {% endblock extra-scripts %}
@@ -71,6 +75,8 @@
         </button>
         
         <button id="selectAllMembersButton" type="button" class="btn btn-default">Select All</button>
+        
+        <button id="deSelectAllMembersButton" type="button" class="btn btn-default">Clear Selection</button> 
 
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 
