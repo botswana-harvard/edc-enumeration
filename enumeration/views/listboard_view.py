@@ -8,13 +8,14 @@ from edc_dashboard.view_mixins import AppConfigViewMixin
 from household.models import HouseholdStructure
 from household.view_mixins import HouseholdQuerysetViewMixin
 from plot.view_mixins import PlotQuerysetViewMixin
+from survey import SurveyViewMixin, SurveyQuerysetViewMixin
 
 from .wrappers import HouseholdStructureWithLogEntryWrapper
 
 
 class ListboardView(AppConfigViewMixin, EdcBaseViewMixin,
                     HouseholdQuerysetViewMixin, PlotQuerysetViewMixin,
-                    BaseListboardView):
+                    SurveyViewMixin, SurveyQuerysetViewMixin, BaseListboardView):
 
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
@@ -27,10 +28,3 @@ class ListboardView(AppConfigViewMixin, EdcBaseViewMixin,
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-    def get_queryset_filter_options(self, request, *args, **kwargs):
-        options = super().get_queryset_filter_options(request, *args, **kwargs)
-        if kwargs.get('survey_schedule'):
-            options.update(
-                {'survey_schedule': kwargs.get('survey_schedule')})
-        return options
