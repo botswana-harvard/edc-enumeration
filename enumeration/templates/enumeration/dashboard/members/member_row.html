@@ -20,11 +20,6 @@
         data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}">
      <i class="fa fa-caret-down fa-fw"></i></a>
      </div>
-     {% if wrapped.survival_status != ALIVE %}
-        <span class="label label-info">
-          {{ wrapped.get_survival_status_display }
-        </span>
-     {% endif %}
   </td>
 
   <td>
@@ -39,14 +34,22 @@
       {{ wrapped.age_in_years }}
     </span>
     </br>
+     {% if wrapped.survival_status != ALIVE %}
+        <span class="label label-default">
+          {{ wrapped.wrapped_object.get_survival_status_display }}
+        </span></br>
+     {% endif %}
+    
     {% if wrapped.relation == HEAD_OF_HOUSEHOLD %}
 	    <span class="label label-info">
 	        {{ wrapped.get_relation_display|upper }}
 	    </span>
     {% else %}
-	    <span class="label label-default">
-	        {{ wrapped.get_relation_display|lower|capfirst }}
-	    </span>
+	    {% if wrapped.relation != NOT_APPLICABLE %}
+            <span class="label label-default">
+		       {{ wrapped.get_relation_display|lower|capfirst }}
+            </span>
+	    {% endif %}
     {% endif %}
     {% if not wrapped.wrapped_object.clone_updated %}
         <span class="label label-warning"><i class="fa fa-warning"></i> Update required</span>
@@ -58,9 +61,16 @@
 	    {% else %}
 	      <span class="label label-default">Child</span>
 	    {% endif %}
-	    <span class="label label-default">
-	        {% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}
-	    </span>
+	    
+	        {% if wrapped.study_resident == YES %}
+	           </br><span class="label label-default">
+	               Resident
+                </span>
+            {% elif wrapped.study_resident == NO %}
+               </br><span class="label label-default">
+                Non-resident
+                </span>
+            {% endif %}
     {% endif %}
   </td>
 
