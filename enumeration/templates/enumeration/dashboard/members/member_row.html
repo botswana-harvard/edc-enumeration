@@ -77,6 +77,17 @@
   <td>
     {% if wrapped.cloned and not wrapped.wrapped_object.clone_updated %}
 
+    {% elif wrapped.survival_status != ALIVE %}
+        <a title="Deceased" 
+            class="btn {% if wrapped.deceased_member.id %}btn-default{% else %}btn-warning{% endif %} btn-sm{% if not wrapped.editable_in_view %} disabled{% endif %}"
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.deceased_member.href }}{% endif %}">
+             {% if wrapped.deceased_member.id %}
+                <i class="fa fa-pencil fa-fw"></i> Death Report
+             {% else %} 
+                <i class="fa fa-plus fa-fw"></i> Death Report
+             {% endif %}
+        </a>
+    
     {% elif not wrapped.eligible_member or wrapped.refused %}
     
        {% include 'enumeration/dashboard/members/ineligible_options.html' %}
