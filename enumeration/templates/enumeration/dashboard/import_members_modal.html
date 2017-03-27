@@ -1,4 +1,17 @@
 <!-- Modal -->
+{% block extra-scripts %}
+	<script type="text/javascript" charset="utf8">
+		$(document).ready(function () {
+			$('#selectAllMembersButton').click( function() {
+				$(":checkbox").prop("checked", true);
+			});
+
+			$('#deSelectAllMembersButton').click( function() {
+				$(":checkbox").prop("checked", false);
+			});
+		});
+	</script>
+{% endblock extra-scripts %}
 <div id="importMembersModal" class="modal fade" role="dialog">
   
   <div class="modal-dialog">
@@ -16,8 +29,8 @@
       <form id="form-import-members" method="post" action="{% url 'enumeration:dashboard_import_members_url' household_identifier=household_identifier survey_schedule=survey_schedule_object.field_value %}">
       <input type='hidden' name='csrfmiddlewaretoken' value='{{ csrf_token }}'/>
       <div class="modal-body">
-        {% for schedule_object in survey_schedules reversed %}
-	        {% if schedule_object != survey_schedule_object and schedule_object != survey_schedule_object.next %}
+        {% for schedule_object in survey_schedules reversed %}            
+            {% if schedule_object == survey_schedule_object.previous %}
 		        <div class="panel-group">
 		            <div class="panel-heading">
 		              <h4 class="panel-title">
@@ -60,6 +73,10 @@
         <button class="btn btn-default" type="submit">
             <i class="fa fa-download fa-fw"></i> Import
         </button>
+        
+        <button id="selectAllMembersButton" type="button" class="btn btn-default">Select All</button>
+        
+        <button id="deSelectAllMembersButton" type="button" class="btn btn-default">Clear Selection</button> 
 
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 

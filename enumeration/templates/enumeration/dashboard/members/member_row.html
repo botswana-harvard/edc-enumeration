@@ -20,11 +20,6 @@
         data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}">
      <i class="fa fa-caret-down fa-fw"></i></a>
      </div>
-     {% if wrapped.survival_status != ALIVE %}
-        <span class="label label-info">
-          {{ wrapped.get_survival_status_display }
-        </span>
-     {% endif %}
   </td>
 
   <td>
@@ -39,28 +34,60 @@
       {{ wrapped.age_in_years }}
     </span>
     </br>
-    <span class="label label-info">
-        {{ wrapped.get_relation_display|lower|capfirst }}
-    </span>
+     {% if wrapped.survival_status != ALIVE %}
+        <span class="label label-default">
+          {{ wrapped.wrapped_object.get_survival_status_display }}
+        </span></br>
+     {% endif %}
+    
+    {% if wrapped.relation == HEAD_OF_HOUSEHOLD %}
+	    <span class="label label-info">
+	        {{ wrapped.get_relation_display|upper }}
+	    </span>
+    {% else %}
+	    {% if wrapped.relation != NOT_APPLICABLE %}
+            <span class="label label-default">
+		       {{ wrapped.get_relation_display|lower|capfirst }}
+            </span>
+	    {% endif %}
+    {% endif %}
     {% if not wrapped.wrapped_object.clone_updated %}
         <span class="label label-warning"><i class="fa fa-warning"></i> Update required</span>
     {% else %}
 	    {% if wrapped.is_minor %}
-	      <span class="label label-warning">Minor</span>
+	      <span class="label label-info">Minor</span>
 	    {% elif wrapped.is_adult %}
-	      <span class="label label-info">Adult</span>
+	      <span class="label label-default">Adult</span>
 	    {% else %}
-	      <span class="label label-info">Child</span>
+	      <span class="label label-default">Child</span>
 	    {% endif %}
-	    <span class="label label-info">
-	        {% if wrapped.study_resident == YES %}Resident{% else %}Non-resident{% endif %}
-	    </span>
+	    
+	        {% if wrapped.study_resident == YES %}
+	           </br><span class="label label-default">
+	               Resident
+                </span>
+            {% elif wrapped.study_resident == NO %}
+               </br><span class="label label-default">
+                Non-resident
+                </span>
+            {% endif %}
     {% endif %}
   </td>
 
   <td>
     {% if wrapped.cloned and not wrapped.wrapped_object.clone_updated %}
 
+    {% elif wrapped.survival_status != ALIVE %}
+        <a title="Deceased" 
+            class="btn {% if wrapped.deceased_member.id %}btn-default{% else %}btn-warning{% endif %} btn-sm{% if not wrapped.editable_in_view %} disabled{% endif %}"
+                href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.deceased_member.href }}{% endif %}">
+             {% if wrapped.deceased_member.id %}
+                <i class="fa fa-pencil fa-fw"></i> Death Report
+             {% else %} 
+                <i class="fa fa-plus fa-fw"></i> Death Report
+             {% endif %}
+        </a>
+    
     {% elif not wrapped.eligible_member or wrapped.refused %}
     
        {% include 'enumeration/dashboard/members/ineligible_options.html' %}

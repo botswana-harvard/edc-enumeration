@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from django.contrib import messages
 
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_constants.constants import ALIVE, YES, MALE
+from edc_constants.constants import ALIVE, YES, MALE, NO, NOT_APPLICABLE
 from edc_dashboard.view_mixins import (
     DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin)
 
@@ -52,7 +52,9 @@ class DashboardView(HouseholdMemberViewMixin,
         context.update(
             ALIVE=ALIVE,
             YES=YES,
+            NO=NO,
             MALE=MALE,
+            NOT_APPLICABLE=NOT_APPLICABLE,
             HEAD_OF_HOUSEHOLD=HEAD_OF_HOUSEHOLD,
             can_add_members=self.can_add_members,
             household_forms=self.household_forms_wrapped,
