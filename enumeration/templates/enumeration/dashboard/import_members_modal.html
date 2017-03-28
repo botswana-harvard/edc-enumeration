@@ -30,7 +30,8 @@
       <input type='hidden' name='csrfmiddlewaretoken' value='{{ csrf_token }}'/>
       <div class="modal-body">
         {% for schedule_object in survey_schedules reversed %}            
-            {% if schedule_object == survey_schedule_object.previous %}
+            
+            {% if schedule_object != survey_schedule_object and schedule_object != survey_schedule_object.next %}
 		        <div class="panel-group">
 		            <div class="panel-heading">
 		              <h4 class="panel-title">
@@ -58,8 +59,9 @@
 				       	                 {% endif%}
 				       	                 </span>
 				       	                 {{ household_member.age_in_years }} years old on {{ household_member.report_datetime|date:"Y-m-d" }}
-			                        </label></div>
-			                        </a>
+			                        </label>
+			                    </div>
+			                    </a>
 				            {% endif %}
 				        {% endfor %}
 		                </div>                
