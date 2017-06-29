@@ -7,8 +7,8 @@ from edc_dashboard.view_mixins import AppConfigViewMixin
 from edc_dashboard.view_mixins import ListboardFilterViewMixin
 
 from household.models import HouseholdStructure
-from household.view_mixins import HouseholdQuerysetViewMixin
-from plot.view_mixins import PlotQuerysetViewMixin
+from household_dashboard.view_mixins import HouseholdQuerysetViewMixin
+from plot_dashboard.view_mixins import PlotQuerysetViewMixin
 from survey import SurveyViewMixin, SurveyQuerysetViewMixin
 
 from .listboard_filters import HouseholdStructureListboardViewFilters
