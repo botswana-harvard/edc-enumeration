@@ -2,7 +2,7 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_base.utils import get_utcnow, get_uuid
-from bcpp_subject.views.wrappers import (
+from bcpp_subject_dashboard.views.wrappers import (
     SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
 from household.exceptions import HouseholdLogRequired
 from household.model_wrappers import (
