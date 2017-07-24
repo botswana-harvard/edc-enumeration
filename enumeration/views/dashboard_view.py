@@ -18,7 +18,7 @@ from member.constants import HEAD_OF_HOUSEHOLD
 from member.models import (
     HouseholdHeadEligibility, RepresentativeEligibility, HouseholdInfo)
 from survey.view_mixins import SurveyViewMixin
-from member_dashboard.views import HouseholdMemberViewMixin
+from member_dashboard.view_mixins import HouseholdMemberViewMixin
 
 from .wrappers import (
     HouseholdMemberModelWrapper, HouseholdLogEntryModelWrapper,
