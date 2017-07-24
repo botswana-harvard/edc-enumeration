@@ -10,8 +10,8 @@ from household.model_wrappers import (
     HouseholdLogEntryModelWrapper as BaseHouseholdLogEntryModelWrapper)
 
 from household.models.utils import todays_log_entry_or_raise
-from member.models.household_member.utils import is_minor, is_adult
 
+from member.age_helper import AgeHelper
 from member.model_wrappers.model_wrappers import (
     HouseholdMemberModelWrapper as BaseHouseholdMemberModelWrapper,
     RepresentativeEligibilityModelWrapper as BaseRepresentativeEligibilityModelWrapper,
@@ -119,9 +119,10 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
             self.study_resident = self.wrapped_object.study_resident
             self.get_relation_display = self.wrapped_object.get_relation_display
             self.get_survival_status_display = self.wrapped_object.get_survival_status_display
-
-            self.is_minor = is_minor(self.wrapped_object.age_in_years)
-            self.is_adult = is_adult(self.wrapped_object.age_in_years)
+            age_helper = AgeHelper(
+                age_in_years=self.wrapped_object.age_in_years)
+            self.is_minor = age_helper.is_minor
+            self.is_adult = age_helper.is_adult
             if self.refused:
                 self.done = True
 
