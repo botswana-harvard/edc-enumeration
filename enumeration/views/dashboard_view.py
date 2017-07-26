@@ -11,14 +11,14 @@ from edc_dashboard.view_mixins import (
     DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin)
 
 from household.models import HouseholdLogEntry
-from household.view_mixins import (
-    HouseholdViewMixin, HouseholdStructureViewMixin,
-    HouseholdLogEntryViewMixin)
+
+from household_dashboard.view_mixins import (
+    HouseholdViewMixin, HouseholdStructureViewMixin, HouseholdLogEntryViewMixin)
 from member.constants import HEAD_OF_HOUSEHOLD
 from member.models import (
     HouseholdHeadEligibility, RepresentativeEligibility, HouseholdInfo)
-from member.views import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
+from member_dashboard.view_mixins import HouseholdMemberViewMixin
 
 from .wrappers import (
     HouseholdMemberModelWrapper, HouseholdLogEntryModelWrapper,

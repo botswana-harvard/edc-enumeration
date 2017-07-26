@@ -2,15 +2,17 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_base.utils import get_utcnow, get_uuid
-from bcpp_subject.views.wrappers import (
+from bcpp_subject_dashboard.views.wrappers import (
     SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
 from household.exceptions import HouseholdLogRequired
-from household.view_mixins import (
+from household.model_wrappers import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper,
     HouseholdLogEntryModelWrapper as BaseHouseholdLogEntryModelWrapper)
-from member.models.household_member.utils import (
-    is_minor, is_adult, todays_log_entry_or_raise)
-from member.views.wrappers import (
+
+from household.models.utils import todays_log_entry_or_raise
+
+from member.age_helper import AgeHelper
+from member.model_wrappers.model_wrappers import (
     HouseholdMemberModelWrapper as BaseHouseholdMemberModelWrapper,
     RepresentativeEligibilityModelWrapper as BaseRepresentativeEligibilityModelWrapper,
     HouseholdInfoModelWrapper as BaseHouseholdInfoModelWrapper,
@@ -117,9 +119,10 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
             self.study_resident = self.wrapped_object.study_resident
             self.get_relation_display = self.wrapped_object.get_relation_display
             self.get_survival_status_display = self.wrapped_object.get_survival_status_display
-
-            self.is_minor = is_minor(self.wrapped_object.age_in_years)
-            self.is_adult = is_adult(self.wrapped_object.age_in_years)
+            age_helper = AgeHelper(
+                age_in_years=self.wrapped_object.age_in_years)
+            self.is_minor = age_helper.is_minor
+            self.is_adult = age_helper.is_adult
             if self.refused:
                 self.done = True
 
