@@ -4,12 +4,12 @@
 <td style="white-space: nowrap">
 
    <a title="plot" role="button" class="btn btn-sm btn-default"
-        href="{% url plot_listboard_url_name plot_identifier=wrapped.plot_identifier %}">
+        href="{% url plot_dashboard_listboard_url_name plot_identifier=wrapped.plot_identifier %}">
            <i class="fa fa-building-o fa-md"></i>
    </a>
 
    <a title="household" role="button" class="btn btn-sm btn-default"
-        href="{% url household_listboard_url_name wrapped.household_identifier %}">
+        href="{% url household_dashboard_listboard_url_name wrapped.household_identifier %}">
             <i class="fa fa-home fa-lg"></i> {{ wrapped.household_identifier }}
             
    </a>
@@ -23,7 +23,7 @@
             <i class="fa fa-sitemap fa-sm" aria-hidden="true"></i> Dasboard
      </a>
      <a title="members" role="button" class="btn btn-sm btn-default{% if not wrapped.members %} disabled{% endif %}"
-        href="{% url member_listboard_url_name plot_identifier=wrapped.plot_identifier survey_schedule=wrapped.survey_schedule_object.field_value %}">
+        href="{% url member_dashboard_listboard_url_name plot_identifier=wrapped.plot_identifier survey_schedule=wrapped.survey_schedule_object.field_value %}">
           <i class="fa fa-group fa-md"></i>
      </a>
 

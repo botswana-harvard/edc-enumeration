@@ -6,7 +6,6 @@ from edc_dashboard.views import ListboardView as BaseListboardView
 from edc_dashboard.view_mixins import AppConfigViewMixin
 from edc_dashboard.view_mixins import ListboardFilterViewMixin
 
-from household.models import HouseholdStructure
 from household_dashboard.view_mixins import HouseholdQuerysetViewMixin
 from plot_dashboard.view_mixins import PlotQuerysetViewMixin
 from survey import SurveyViewMixin, SurveyQuerysetViewMixin
@@ -21,7 +20,7 @@ class ListboardView(AppConfigViewMixin, EdcBaseViewMixin, ListboardFilterViewMix
 
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
-    model = HouseholdStructure
+    model = 'household.householdstructure'
     model_wrapper_class = HouseholdStructureWithLogEntryWrapper
     paginate_by = 10
     plot_queryset_lookups = ['household', 'plot']
