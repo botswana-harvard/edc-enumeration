@@ -12,7 +12,6 @@
         {% with wrapped=current_household_log_entry report_datetime=current_household_log_entry.report_datetime %}
 
             {% include 'edc_dashboard/controls/change_button_as_column.html' %}
-
         {% endwith %}
         </tr>
 		{% if not current_household_log_entry.household_status == 'refused' %}

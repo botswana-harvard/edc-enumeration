@@ -12,9 +12,9 @@
     <div class="btn-group">
      <a role="button"
         class="btn btn-sm {% if wrapped.is_clone_not_updated %}btn-warning{% else %}btn-success{% endif %} {{ disabled }}" 
-            href="{{ wrapped.href }}">
+            href="{{ wrapped.object.href }}">
         <i class="fa fa-pencil fa-sm"></i>&nbsp;
-        <i class="fa fa-{% if wrapped.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
+        <i class="fa fa-{% if wrapped.object.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
      </a>
      <a role="button" class="btn btn-sm btn-default"
         data-toggle="collapse" data-target="#tasks-{{ forloop.counter }}">
@@ -23,20 +23,20 @@
   </td>
 
   <td>
-    {% if wrapped.done %}
+    {% if wrapped.object.done %}
       <i class="fa fa-check fa-lg"></i>
     {% endif %}
   </td>
   
   <td>
     <span class="text text-default">
-      {{ wrapped.first_name|lower|capfirst }}&nbsp;{{ wrapped.initials }}&nbsp;
-      {{ wrapped.age_in_years }}
+      {{ wrapped.object.first_name|lower|capfirst }}&nbsp;{{ wrapped.object.initials }}&nbsp;
+      {{ wrapped.object.age_in_years }}
     </span>
     </br>
      {% if wrapped.survival_status != ALIVE %}
         <span class="label label-default">
-          {{ wrapped.wrapped_object.get_survival_status_display }}
+          {{ wrapped.object.get_survival_status_display }}
         </span></br>
      {% endif %}
     
@@ -51,12 +51,12 @@
             </span>
 	    {% endif %}
     {% endif %}
-    {% if not wrapped.wrapped_object.clone_updated %}
+    {% if not wrapped.object.clone_updated %}
         <span class="label label-warning"><i class="fa fa-warning"></i> Update required</span>
     {% else %}
-	    {% if wrapped.is_minor %}
+	    {% if wrapped.object.is_minor %}
 	      <span class="label label-info">Minor</span>
-	    {% elif wrapped.is_adult %}
+	    {% elif wrapped.object.is_adult %}
 	      <span class="label label-default">Adult</span>
 	    {% else %}
 	      <span class="label label-default">Child</span>
@@ -75,7 +75,7 @@
   </td>
 
   <td>
-    {% if wrapped.cloned and not wrapped.wrapped_object.clone_updated %}
+    {% if wrapped.cloned and not wrapped.object.clone_updated %}
 
     {% elif wrapped.survival_status != ALIVE %}
         <a title="Deceased" 
@@ -130,20 +130,20 @@
         <table class="table table-stripped table-condensed table-hover">
         <tr><td>Subject identifier</td><td> {{ wrapped.subject_identifier }}</td></tr>
         <tr><td>Date enumerated</td><td> {{ wrapped.report_datetime|date:"Y-m-d" }}</td></tr>
-        <tr><td>Checklist date</td><td> {{ wrapped.wrapped_object.enrollmentchecklist.report_datetime|date:"Y-m-d" }}</td></tr>
-        <tr><td>Consented</td><td> {{ wrapped.wrapped_object.is_consented }}</td></tr>
-        <tr><td>Consent date</td><td> {{ wrapped.wrapped_object.consent.consent_datetime|date:"Y-m-d" }}</td></tr>
-        <tr><td>Consent version</td><td>{{ wrapped.wrapped_object.consent.version }}</td></tr>
-        <tr><td>Consent expires on</td><td>{{ wrapped.wrapped_object.consent_object.end|date:"Y-m-d" }}</td></tr>
-        <tr><td>Non-citizen</td><td> {{ wrapped.wrapped_object.non_citizen }}</td></tr>
-        {% if wrapped.wrapped_object.cloned %}
-	        <tr><td>Cloned</td><td> {{ wrapped.wrapped_object.cloned }}</td></tr>
-	        <tr><td>Cloned date</td><td> {{ wrapped.wrapped_object.cloned_datetime }}</td></tr>
-	        <tr><td>Updated</td><td> {{ wrapped.wrapped_object.clone_updated }}</td></tr>
+        <tr><td>Checklist date</td><td> {{ wrapped.object.enrollmentchecklist.report_datetime|date:"Y-m-d" }}</td></tr>
+        <tr><td>Consented</td><td> {{ wrapped.object.is_consented }}</td></tr>
+        <tr><td>Consent date</td><td> {{ wrapped.object.consent.consent_datetime|date:"Y-m-d" }}</td></tr>
+        <tr><td>Consent version</td><td>{{ wrapped.object.consent.version }}</td></tr>
+        <tr><td>Consent expires on</td><td>{{ wrapped.object.consent_object.end|date:"Y-m-d" }}</td></tr>
+        <tr><td>Non-citizen</td><td> {{ wrapped.object.non_citizen }}</td></tr>
+        {% if wrapped.object.cloned %}
+	        <tr><td>Cloned</td><td> {{ wrapped.object.cloned }}</td></tr>
+	        <tr><td>Cloned date</td><td> {{ wrapped.object.cloned_datetime }}</td></tr>
+	        <tr><td>Updated</td><td> {{ wrapped.object.clone_updated }}</td></tr>
         {% endif %}
-        <tr><td>Eligible member</td><td> {{ wrapped.wrapped_object.eligible_member }}</td></tr>
-        <tr><td>Eligible subject</td><td> {{ wrapped.wrapped_object.eligible_subject }}</td></tr>
-        <tr><td>Internal UUID</td><td> {{ wrapped.wrapped_object.internal_identifier }}</td></tr>
+        <tr><td>Eligible member</td><td> {{ wrapped.object.eligible_member }}</td></tr>
+        <tr><td>Eligible subject</td><td> {{ wrapped.object.eligible_subject }}</td></tr>
+        <tr><td>Internal UUID</td><td> {{ wrapped.object.internal_identifier }}</td></tr>
         </table>
         </div>
     </td>
