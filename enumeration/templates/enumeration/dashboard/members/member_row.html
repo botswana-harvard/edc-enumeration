@@ -54,9 +54,9 @@
     {% if not wrapped.object.clone_updated %}
         <span class="label label-warning"><i class="fa fa-warning"></i> Update required</span>
     {% else %}
-	    {% if wrapped.object.is_minor %}
+	    {% if wrapped.is_minor %}
 	      <span class="label label-info">Minor</span>
-	    {% elif wrapped.object.is_adult %}
+	    {% elif wrapped.is_adult %}
 	      <span class="label label-default">Adult</span>
 	    {% else %}
 	      <span class="label label-default">Child</span>
@@ -75,7 +75,7 @@
   </td>
 
   <td>
-    {% if wrapped.cloned and not wrapped.object.clone_updated %}
+    {% if wrapped.object.cloned and not wrapped.object.clone_updated %}
 
     {% elif wrapped.survival_status != ALIVE %}
         <a title="Deceased" 
@@ -88,7 +88,7 @@
              {% endif %}
         </a>
     
-    {% elif not wrapped.eligible_member or wrapped.refused %}
+    {% elif not wrapped.object.eligible_member or wrapped.object.refused %}
     
        {% include 'enumeration/dashboard/members/ineligible_options.html' %}
     
