@@ -65,43 +65,43 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
 
         See dashboard_view.get().
         """
-        return self._original_object.editable_in_view
+        return self.object.editable_in_view
 
     @property
     def participation_status(self):
-        return self._original_object.participation_status
+        return self.object.participation_status
 
     @property
     def is_clone_not_updated(self):
-        if (self._original_object.cloned
-                and not self._original_object.clone_updated):
+        if (self.object.cloned
+                and not self.object.clone_updated):
             return True
         return False
 
     @property
     def is_consented(self):
-        return self._original_object.is_consented
+        return self.object.is_consented
 
     @property
     def consent(self):
         """Returns a wrapped saved or unsaved consent.
         """
-        # FIXME: self._original_object.consent_object should
+        # FIXME: self.object.consent_object should
         # return a consent object
-        if self._original_object.consent:
-            consent = self._original_object.consent
+        if self.object.consent:
+            consent = self.object.consent
         else:
             try:
-                model = self._original_object.consent_object.model
+                model = self.object.consent_object.model
             except AttributeError:
                 consent = None
             else:
                 consent = model(
-                    subject_identifier=self._original_object.subject_identifier,
+                    subject_identifier=self.object.subject_identifier,
                     consent_identifier=get_uuid(),
-                    household_member=self._original_object,
-                    survey_schedule=self._original_object.survey_schedule_object.field_value,
-                    version=self._original_object.consent_object.version)
+                    household_member=self.object,
+                    survey_schedule=self.object.survey_schedule_object.field_value,
+                    version=self.object.consent_object.version)
                 consent = self.consent_model_wrapper_class(consent)
         if consent:
             consent = self.consent_model_wrapper_class(consent)
@@ -145,4 +145,4 @@ class HouseholdStructureWithLogEntryWrapper(
 
     @property
     def members(self):
-        return self.parent._original_object.householdmember_set.all()
+        return self.parent.object.householdmember_set.all()
