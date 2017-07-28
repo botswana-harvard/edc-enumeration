@@ -56,7 +56,7 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
 
     next_url_name = django_apps.get_app_config(
         'enumeration').dashboard_url_name
-    consent_model_wrapper_class = SubjectConsentModelWrapper
+    consent_model_wrapper_cls = SubjectConsentModelWrapper
 
     @property
     def editable_in_view(self):
@@ -102,9 +102,9 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
                     household_member=self.object,
                     survey_schedule=self.object.survey_schedule_object.field_value,
                     version=self.object.consent_object.version)
-                consent = self.consent_model_wrapper_class(consent)
+                consent = self.consent_model_wrapper_cls(consent)
         if consent:
-            consent = self.consent_model_wrapper_class(consent)
+            consent = self.consent_model_wrapper_cls(consent)
         return consent
 
     def add_extra_attributes_after(self):
