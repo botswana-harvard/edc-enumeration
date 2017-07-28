@@ -12,7 +12,7 @@
     <div class="btn-group">
      <a role="button"
         class="btn btn-sm {% if wrapped.is_clone_not_updated %}btn-warning{% else %}btn-success{% endif %} {{ disabled }}" 
-            href="{{ wrapped.object.href }}">
+            href="{{ wrapped.href }}">
         <i class="fa fa-pencil fa-sm"></i>&nbsp;
         <i class="fa fa-{% if wrapped.object.gender == MALE %}male{% else %}female{% endif %} fa-lg"></i>
      </a>
