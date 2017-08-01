@@ -24,7 +24,7 @@ class TestEnumeration(MemberTestMixin, TestCase):
 
 #     def test_queryset_wrapper(self):
 #         view = ListBoardView()
-#         results = view.paginate([self.household_structure], view.filtered_model_wrapper_class)
+#         results = view.paginate([self.household_structure], view.filtered_model_wrapper_cls)
 #         self.assertEqual(
 #             results[0].plot_identifier, self.household_structure.household.plot.plot_identifier)
 #         self.assertEqual(

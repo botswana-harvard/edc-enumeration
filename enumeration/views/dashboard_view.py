@@ -38,8 +38,8 @@ class DashboardView(HouseholdMemberViewMixin,
 
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
-    household_member_model_wrapper_class = HouseholdMemberModelWrapper
-    household_log_entry_model_wrapper_class = HouseholdLogEntryModelWrapper
+    household_member_model_wrapper_cls = HouseholdMemberModelWrapper
+    household_log_entry_model_wrapper_cls = HouseholdLogEntryModelWrapper
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
