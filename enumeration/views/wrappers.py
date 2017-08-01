@@ -2,15 +2,16 @@ from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
 
 from edc_base.utils import get_utcnow, get_uuid
-from bcpp_subject.views.wrappers import (
+from bcpp_subject_dashboard.views.wrappers import (
     SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
 from household.exceptions import HouseholdLogRequired
-from household.view_mixins import (
+from household.model_wrappers import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper,
     HouseholdLogEntryModelWrapper as BaseHouseholdLogEntryModelWrapper)
-from member.models.household_member.utils import (
-    is_minor, is_adult, todays_log_entry_or_raise)
-from member.views.wrappers import (
+from household.utils import todays_log_entry_or_raise
+
+from member.age_helper import AgeHelper
+from member.model_wrappers.model_wrappers import (
     HouseholdMemberModelWrapper as BaseHouseholdMemberModelWrapper,
     RepresentativeEligibilityModelWrapper as BaseRepresentativeEligibilityModelWrapper,
     HouseholdInfoModelWrapper as BaseHouseholdInfoModelWrapper,
@@ -54,7 +55,7 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
 
     next_url_name = django_apps.get_app_config(
         'enumeration').dashboard_url_name
-    consent_model_wrapper_class = SubjectConsentModelWrapper
+    consent_model_wrapper_cls = SubjectConsentModelWrapper
 
     @property
     def editable_in_view(self):
@@ -63,63 +64,64 @@ class HouseholdMemberModelWrapper(BaseHouseholdMemberModelWrapper):
 
         See dashboard_view.get().
         """
-        return self._original_object.editable_in_view
+        return self.object.editable_in_view
 
     @property
     def participation_status(self):
-        return self._original_object.participation_status
+        return self.object.participation_status
 
     @property
     def is_clone_not_updated(self):
-        if (self._original_object.cloned
-                and not self._original_object.clone_updated):
+        if (self.object.cloned
+                and not self.object.clone_updated):
             return True
         return False
 
     @property
     def is_consented(self):
-        return self._original_object.is_consented
+        return self.object.is_consented
 
     @property
     def consent(self):
         """Returns a wrapped saved or unsaved consent.
         """
-        # FIXME: self._original_object.consent_object should
+        # FIXME: self.object.consent_object should
         # return a consent object
-        if self._original_object.consent:
-            consent = self._original_object.consent
+        if self.object.consent:
+            consent = self.object.consent
         else:
             try:
-                model = self._original_object.consent_object.model
+                model = self.object.consent_object.model
             except AttributeError:
                 consent = None
             else:
                 consent = model(
-                    subject_identifier=self._original_object.subject_identifier,
+                    subject_identifier=self.object.subject_identifier,
                     consent_identifier=get_uuid(),
-                    household_member=self._original_object,
-                    survey_schedule=self._original_object.survey_schedule_object.field_value,
-                    version=self._original_object.consent_object.version)
-                consent = self.consent_model_wrapper_class(consent)
+                    household_member=self.object,
+                    survey_schedule=self.object.survey_schedule_object.field_value,
+                    version=self.object.consent_object.version)
+                consent = self.consent_model_wrapper_cls(consent)
         if consent:
-            consent = self.consent_model_wrapper_class(consent)
+            consent = self.consent_model_wrapper_cls(consent)
         return consent
 
     def add_extra_attributes_after(self):
         super().add_extra_attributes_after()
-        if self.wrapped_object.id:
-            self.refused = self.wrapped_object.refused
+        if self.object.id:
+            self.refused = self.object.refused
             try:
-                self.dob = self.wrapped_object.enrollmentchecklist.dob
+                self.dob = self.object.enrollmentchecklist.dob
             except ObjectDoesNotExist:
                 self.dob = None
-            self.survival_status = self.wrapped_object.survival_status
-            self.study_resident = self.wrapped_object.study_resident
-            self.get_relation_display = self.wrapped_object.get_relation_display
-            self.get_survival_status_display = self.wrapped_object.get_survival_status_display
-
-            self.is_minor = is_minor(self.wrapped_object.age_in_years)
-            self.is_adult = is_adult(self.wrapped_object.age_in_years)
+            self.survival_status = self.object.survival_status
+            self.study_resident = self.object.study_resident
+            self.get_relation_display = self.object.get_relation_display
+            self.get_survival_status_display = self.object.get_survival_status_display
+            age_helper = AgeHelper(
+                age_in_years=self.object.age_in_years)
+            self.is_minor = age_helper.is_minor
+            self.is_adult = age_helper.is_adult
             if self.refused:
                 self.done = True
 
@@ -142,4 +144,4 @@ class HouseholdStructureWithLogEntryWrapper(
 
     @property
     def members(self):
-        return self.parent._original_object.householdmember_set.all()
+        return self.parent.object.householdmember_set.all()

@@ -7,17 +7,17 @@ from django.contrib import messages
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import ALIVE, YES, MALE, NO, NOT_APPLICABLE
-from edc_dashboard.view_mixins import (
-    DashboardViewMixin, SubjectIdentifierViewMixin, AppConfigViewMixin)
+from edc_dashboard.view_mixins import DashboardViewMixin
+from edc_dashboard.view_mixins import SubjectIdentifierViewMixin, AppConfigViewMixin
 
 from household.models import HouseholdLogEntry
-from household.view_mixins import (
-    HouseholdViewMixin, HouseholdStructureViewMixin,
-    HouseholdLogEntryViewMixin)
+from household_dashboard.view_mixins import HouseholdLogEntryViewMixin
+from household_dashboard.view_mixins import HouseholdStructureViewMixin
+from household_dashboard.view_mixins import HouseholdViewMixin
 from member.constants import HEAD_OF_HOUSEHOLD
-from member.models import (
-    HouseholdHeadEligibility, RepresentativeEligibility, HouseholdInfo)
-from member.views import HouseholdMemberViewMixin
+from member.models import HouseholdHeadEligibility, HouseholdInfo
+from member.models import RepresentativeEligibility
+from member_dashboard.view_mixins import HouseholdMemberViewMixin
 from survey.view_mixins import SurveyViewMixin
 
 from .wrappers import (
