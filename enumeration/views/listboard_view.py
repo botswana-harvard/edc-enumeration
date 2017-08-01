@@ -21,7 +21,7 @@ class ListboardView(AppConfigViewMixin, EdcBaseViewMixin, ListboardFilterViewMix
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
     model = 'household.householdstructure'
-    model_wrapper_class = HouseholdStructureWithLogEntryWrapper
+    model_wrapper_cls = HouseholdStructureWithLogEntryWrapper
     paginate_by = 10
     plot_queryset_lookups = ['household', 'plot']
     household_queryset_lookups = ['household']
