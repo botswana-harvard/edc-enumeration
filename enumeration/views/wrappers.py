@@ -8,8 +8,7 @@ from household.exceptions import HouseholdLogRequired
 from household.model_wrappers import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper,
     HouseholdLogEntryModelWrapper as BaseHouseholdLogEntryModelWrapper)
-
-from household.models.utils import todays_log_entry_or_raise
+from household.utils import todays_log_entry_or_raise
 
 from member.age_helper import AgeHelper
 from member.model_wrappers.model_wrappers import (
