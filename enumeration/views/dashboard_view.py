@@ -35,7 +35,7 @@ class DashboardView(HouseholdMemberViewMixin,
     app_config_name = 'enumeration'
     navbar_item_selected = 'enumeration'
     household_log_entry_model = 'household.householdlogentry'
-    household_head_eligibility_model = 'household.householdheadeligibility'
+    household_head_eligibility_model = 'member.householdheadeligibility'
     household_info_model = 'member.householdinfo'
     representative_eligibility_model = 'member.representativeeligibility'
     household_member_model_wrapper_cls = HouseholdMemberModelWrapper
