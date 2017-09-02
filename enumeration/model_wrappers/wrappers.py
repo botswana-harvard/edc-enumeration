@@ -1,22 +1,19 @@
+from bcpp_subject_dashboard.model_wrappers import (
+    SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
 from django.apps import apps as django_apps
 from django.core.exceptions import ObjectDoesNotExist
-
 from edc_base.utils import get_utcnow, get_uuid
-from bcpp_subject_dashboard.views.wrappers import (
-    SubjectConsentModelWrapper as BaseSubjectConsentModelWrapper)
 from household.exceptions import HouseholdLogRequired
-from household.model_wrappers import (
+from household_dashboard.model_wrappers import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper,
     HouseholdLogEntryModelWrapper as BaseHouseholdLogEntryModelWrapper)
 from household.utils import todays_log_entry_or_raise
-
 from member.age_helper import AgeHelper
-from member.model_wrappers.model_wrappers import (
+from member_dashboard.model_wrappers import (
     HouseholdMemberModelWrapper as BaseHouseholdMemberModelWrapper,
     RepresentativeEligibilityModelWrapper as BaseRepresentativeEligibilityModelWrapper,
     HouseholdInfoModelWrapper as BaseHouseholdInfoModelWrapper,
-    HeadOfHouseholdEligibilityModelWrapper as BaseHeadOfHouseholdEligibilityModelWrapper,
-)
+    HeadOfHouseholdEligibilityModelWrapper as BaseHeadOfHouseholdEligibilityModelWrapper)
 
 
 class HeadOfHouseholdEligibilityModelWrapper(
