@@ -13,17 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-import sys
-
 from django.conf.urls import url
 
 from edc_constants.constants import UUID_PATTERN
 
-from household.patterns import household_identifier
-from plot.patterns import plot_identifier
+from household_dashboard.patterns import household_identifier
+from plot_dashboard.patterns import plot_identifier
 from survey.patterns import survey_schedule
 
 from .views import ListboardView, DashboardView, CloneMembersView
+from django.conf import settings
 
 
 app_name = 'enumeration'
@@ -78,7 +77,7 @@ urlpatterns = [
     url(r'', ListboardView.as_view(), name='home_url'),
 ]
 
-if 'test' in sys.argv:
+if 'enumeration' in settings.APP_NAME:
     from django.conf.urls import include
     from django.contrib import admin
     from edc_base.views import LoginView, LogoutView

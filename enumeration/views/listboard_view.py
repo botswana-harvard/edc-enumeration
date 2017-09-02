@@ -11,7 +11,7 @@ from plot_dashboard.view_mixins import PlotQuerysetViewMixin
 from survey import SurveyViewMixin, SurveyQuerysetViewMixin
 
 from .listboard_filters import HouseholdStructureListboardViewFilters
-from .wrappers import HouseholdStructureWithLogEntryWrapper
+from ..model_wrappers import HouseholdStructureWithLogEntryWrapper
 
 
 class ListboardView(AppConfigViewMixin, EdcBaseViewMixin, ListboardFilterViewMixin,
