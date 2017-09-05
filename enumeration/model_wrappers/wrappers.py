@@ -6,7 +6,8 @@ from edc_base.utils import get_utcnow, get_uuid
 from household.exceptions import HouseholdLogRequired
 from household_dashboard.model_wrappers import (
     HouseholdStructureWithLogEntryWrapper as BaseHouseholdStructureWithLogEntryWrapper,
-    HouseholdLogEntryModelWrapper as BaseHouseholdLogEntryModelWrapper)
+    HouseholdLogEntryModelWrapper as BaseHouseholdLogEntryModelWrapper,
+    HouseholdAssessmentModelWrapper as BaseHouseholdAssessmentModelWrapper)
 from household.utils import todays_log_entry_or_raise
 from member.age_helper import AgeHelper
 from member_dashboard.model_wrappers import (
@@ -31,6 +32,12 @@ class HouseholdInfoModelWrapper(BaseHouseholdInfoModelWrapper):
 
 class RepresentativeEligibilityModelWrapper(
         BaseRepresentativeEligibilityModelWrapper):
+
+    next_url_name = django_apps.get_app_config(
+        'enumeration').dashboard_url_name
+
+
+class HouseholdAssessmentModelWrapper(BaseHouseholdAssessmentModelWrapper):
 
     next_url_name = django_apps.get_app_config(
         'enumeration').dashboard_url_name
