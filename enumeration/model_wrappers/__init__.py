@@ -5,3 +5,4 @@ from .wrappers import HouseholdMemberModelWrapper
 from .wrappers import HouseholdStructureWithLogEntryWrapper
 from .wrappers import RepresentativeEligibilityModelWrapper
 from .wrappers import SubjectConsentModelWrapper
+from .wrappers import HouseholdAssessmentModelWrapper

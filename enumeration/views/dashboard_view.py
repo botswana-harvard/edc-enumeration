@@ -19,7 +19,8 @@ from survey.view_mixins import SurveyViewMixin
 from ..model_wrappers import (
     HouseholdMemberModelWrapper, HouseholdLogEntryModelWrapper,
     RepresentativeEligibilityModelWrapper, HouseholdInfoModelWrapper,
-    HeadOfHouseholdEligibilityModelWrapper)
+    HeadOfHouseholdEligibilityModelWrapper, HouseholdAssessmentModelWrapper)
+from household.constants import NO_HOUSEHOLD_INFORMANT
 
 
 class DashboardView(HouseholdMemberViewMixin,
@@ -38,6 +39,7 @@ class DashboardView(HouseholdMemberViewMixin,
     household_head_eligibility_model = 'member.householdheadeligibility'
     household_info_model = 'member.householdinfo'
     representative_eligibility_model = 'member.representativeeligibility'
+    household_assessment_model = 'household.householdassessment'
     household_member_model_wrapper_cls = HouseholdMemberModelWrapper
     household_log_entry_model_wrapper_cls = HouseholdLogEntryModelWrapper
 
@@ -60,6 +62,10 @@ class DashboardView(HouseholdMemberViewMixin,
     @property
     def representative_eligibility_model_cls(self):
         return django_apps.get_model(self.representative_eligibility_model)
+
+    @property
+    def household_assessment_model_cls(self):
+        return django_apps.get_model(self.household_assessment_model)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -105,6 +111,12 @@ class DashboardView(HouseholdMemberViewMixin,
                     form=self.household_head_eligibility_model_cls._meta.verbose_name,
                     href=self.head_of_household_eligibility_wrapped.href))
             messages.add_message(self.request, messages.WARNING, msg)
+        elif self.current_household_log_entry.household_status == NO_HOUSEHOLD_INFORMANT:
+            msg = mark_safe(
+                'Please complete the <a href="{href}" class="alert-link">{form}</a> form.'.format(
+                    form=self.household_assessment_model_cls._meta.verbose_name,
+                    href=self.household_assessment_wrapped.href))
+            messages.add_message(self.request, messages.WARNING, msg)
 
     @property
     def can_add_members(self):
@@ -112,6 +124,8 @@ class DashboardView(HouseholdMemberViewMixin,
         members.
         """
         if not self.representative_eligibility or not self.current_household_log_entry:
+            return False
+        elif self.current_household_log_entry.household_status == NO_HOUSEHOLD_INFORMANT:
             return False
         return True
 
@@ -123,6 +137,10 @@ class DashboardView(HouseholdMemberViewMixin,
             self.representative_eligibility_wrapped,
             self.household_info_wrapped,
             self.head_of_household_eligibility_wrapped)
+        if self.current_household_log_entry:
+            if self.current_household_log_entry.household_status == NO_HOUSEHOLD_INFORMANT:
+                wrapped_models = wrapped_models + \
+                    (self.household_assessment_wrapped,)
         for wrapped_model in wrapped_models:
             if wrapped_model is not None:
                 if not self.current_household_log_entry:
@@ -178,6 +196,28 @@ class DashboardView(HouseholdMemberViewMixin,
             household_structure=self.household_structure)
         return RepresentativeEligibilityModelWrapper(
             obj, model_name=self.representative_eligibility_model,
+            next_url_name=self.dashboard_url_name)
+
+    @property
+    def household_assessment(self):
+        """Return a household_assessment model instance or None.
+        """
+        try:
+            obj = self.household_structure.householdassessment
+        except ObjectDoesNotExist:
+            obj = None
+        except AttributeError:
+            obj = None
+        return obj
+
+    @property
+    def household_assessment_wrapped(self):
+        """Return a wrapped model either saved or unsaved.
+        """
+        obj = self.household_assessment or self.household_assessment_model_cls(
+            household_structure=self.household_structure)
+        return HouseholdAssessmentModelWrapper(
+            obj, model_name=self.household_assessment_model,
             next_url_name=self.dashboard_url_name)
 
     @property
