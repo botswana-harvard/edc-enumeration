@@ -84,6 +84,14 @@
 	             Undecided
 	        </a>
 	       </li>
+	       
+	       <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	         <a class="dropdown-item"
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_moved_member.href }}{% endif %}">
+	             <i class="fa fa-plus fa-fw"></i>&nbsp;
+	             Moved
+	        </a>
+	       </li>
 	
 	     <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
 	       <a class="dropdown-item "
