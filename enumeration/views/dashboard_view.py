@@ -1,4 +1,5 @@
 from django.apps import apps as django_apps
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
@@ -34,7 +35,10 @@ class DashboardView(HouseholdMemberViewMixin,
                     EdcBaseViewMixin, TemplateView):
 
     app_config_name = 'enumeration'
-    navbar_item_selected = 'enumeration'
+
+    navbar_name = settings.MAIN_NAVBAR_NAME
+    navbar_selected_item = 'enumeration'
+
     household_log_entry_model = 'household.householdlogentry'
     household_head_eligibility_model = 'member.householdheadeligibility'
     household_info_model = 'member.householdinfo'

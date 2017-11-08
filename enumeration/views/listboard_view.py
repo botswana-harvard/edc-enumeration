@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from edc_base.view_mixins import EdcBaseViewMixin
@@ -17,7 +18,10 @@ class ListboardView(AppConfigViewMixin, EdcBaseViewMixin, ListboardFilterViewMix
                     SurveyViewMixin, SurveyQuerysetViewMixin, BaseListboardView):
 
     app_config_name = 'enumeration'
-    navbar_item_selected = 'enumeration'
+
+    navbar_name = settings.MAIN_NAVBAR_NAME
+    navbar_selected_item = 'enumeration'
+
     model = 'household.householdstructure'
     model_wrapper_cls = HouseholdStructureWithLogEntryWrapper
     paginate_by = 10
