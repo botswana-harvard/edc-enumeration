@@ -11,7 +11,7 @@ from django.views.generic.base import TemplateView
 
 from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
-from edc_dashboard.view_mixins.app_config_view_mixin import AppConfigViewMixin
+from edc_dashboard.view_mixins import AppConfigViewMixin
 from enumeration.views.dashboard_view import DashboardViewMixin
 from household.models import HouseholdStructure
 from member.exceptions import CloneError, EnumerationRepresentativeError

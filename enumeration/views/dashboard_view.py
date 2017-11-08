@@ -7,8 +7,8 @@ from django.views.generic import TemplateView
 from django.contrib import messages
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_constants.constants import ALIVE, YES, MALE, NO, NOT_APPLICABLE
-from edc_dashboard.view_mixins import DashboardViewMixin
-from edc_dashboard.view_mixins import SubjectIdentifierViewMixin, AppConfigViewMixin
+from edc_dashboard.view_mixins import DashboardViewMixin, AppConfigViewMixin
+from edc_subject_dashboard.view_mixins import SubjectIdentifierViewMixin
 from household_dashboard.view_mixins import HouseholdLogEntryViewMixin
 from household_dashboard.view_mixins import HouseholdStructureViewMixin
 from household_dashboard.view_mixins import HouseholdViewMixin
