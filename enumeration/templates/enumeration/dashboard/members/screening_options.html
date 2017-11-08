@@ -3,8 +3,10 @@
  <div class="btn-group">
   <button class="btn btn-{% if not wrapped.participation_status.final %}warning{% else %}default{% endif%} dropdown-toggle btn-sm"
     type="button" data-toggle="dropdown">
-    {% if wrapped.present_today == 'No' and not wrapped.today_absent_member %}
+    {% if wrapped.present_today == 'No' and not wrapped.today_absent_member and wrapped.has_moved == 'No' or wrapped.has_moved == 'N/A' %}
     	Fill absentee log
+    {% elif wrapped.has_moved == 'Yes' and not wrapped.moved %}
+    	Fill Moved form
     {% else %}
     	{{ wrapped.participation_status.get_display|default:"Screening Options" }}
     {% endif %}
@@ -82,6 +84,14 @@
 	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_undecided_member.href }}{% endif %}">
 	             <i class="fa fa-plus fa-fw"></i>&nbsp;
 	             Undecided
+	        </a>
+	       </li>
+	       
+	       <li class="dropdown-item {% if not may_add or not wrapped.editable_in_view %}disabled{% endif %}">
+	         <a class="dropdown-item"
+	           href="{% if not may_add or not wrapped.editable_in_view %}#{% else %}{{ wrapped.new_moved_member.href }}{% endif %}">
+	             <i class="fa fa-plus fa-fw"></i>&nbsp;
+	             Moved
 	        </a>
 	       </li>
 	
