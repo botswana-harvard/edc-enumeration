@@ -5,6 +5,7 @@ from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import AppConfigViewMixin
 from edc_dashboard.view_mixins import ListboardFilterViewMixin
 from edc_dashboard.views import ListboardView as BaseListboardView
+from edc_navbar import NavbarViewMixin
 from household_dashboard.view_mixins import HouseholdQuerysetViewMixin
 from plot_dashboard.view_mixins import PlotQuerysetViewMixin
 from survey import SurveyViewMixin, SurveyQuerysetViewMixin
@@ -13,7 +14,8 @@ from .listboard_filters import HouseholdStructureListboardViewFilters
 from ..model_wrappers import HouseholdStructureWithLogEntryWrapper
 
 
-class ListboardView(AppConfigViewMixin, EdcBaseViewMixin, ListboardFilterViewMixin,
+class ListboardView(AppConfigViewMixin, NavbarViewMixin, EdcBaseViewMixin,
+                    ListboardFilterViewMixin,
                     HouseholdQuerysetViewMixin, PlotQuerysetViewMixin,
                     SurveyViewMixin, SurveyQuerysetViewMixin, BaseListboardView):
 
