@@ -77,7 +77,7 @@
   <td>
     {% if wrapped.object.cloned and not wrapped.object.clone_updated %}
 
-    {% elif wrapped.survival_status != ALIVE %}
+    {% elif wrapped.survival_status == DECEASED %}
         <a title="Deceased" 
             class="btn {% if wrapped.deceased_member.id %}btn-default{% else %}btn-warning{% endif %} btn-sm{% if not wrapped.editable_in_view %} disabled{% endif %}"
                 href="{% if not wrapped.editable_in_view %}#{% else %}{{ wrapped.deceased_member.href }}{% endif %}">
